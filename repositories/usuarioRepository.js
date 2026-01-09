@@ -11,6 +11,19 @@ export default class UsuarioRepository{
         this.#banco = new Database();
     }
 
+    async validarAcesso(email, senha){
+        let sql = "select * from tb_usuario where usu_email = ? and usu_senha = ?";
+        const valores = [email, senha];
+
+        const row = await this.#banco.ExecutaComando(sql, valores);
+
+        if(row.length > 0 ){
+            return this.toMap(row);
+        }
+        
+        return null;
+    }
+
     async cadastrar(usuario){
         let sql = "insert into tb_usuario (usu_nome, usu_email, usu_ativo, usu_senha, per_id) values (?, ?, ?, ?, ?)"
         const params = [usuario.nome, usuario.email, usuario.ativo, usuario.senha, usuario.perfil.id];

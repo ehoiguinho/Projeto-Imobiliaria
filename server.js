@@ -1,5 +1,6 @@
 import express from "express";
 import usuarioRouter from './routes/usuarioRoute.js'
+import authRouter from './routes/authRoute.js'
 import swaggerUi from 'swagger-ui-express'
 import cookieParser from 'cookie-parser';
 import { createRequire } from "module";
@@ -12,6 +13,7 @@ server.use(cookieParser());
 
 server.use("/docs", swaggerUi.serve, swaggerUi.setup(outputJson));
 server.use("/usuario", usuarioRouter);
+server.use("/auth", authRouter);
 
 server.listen(3000, function(){
     console.log("backend rodando!");

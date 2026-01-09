@@ -99,6 +99,19 @@ export default class UsuarioController{
         }
     }
 
-
-    
+    async obterUsuario(req, res){
+        try{
+        let {id} = req.params;
+        let usuario = await this.#repositorio.buscarId(id);
+        if(usuario){
+            return res.status(200).json(usuario);
+        }
+        else{
+            return res.status(404).json({msg: "Nenhum usuário encontrado!"});
+        }
+        }catch(exception){
+            console.log(exception);
+            return res.status(500).json({msg: exception.message})
+        }
+}  
 }

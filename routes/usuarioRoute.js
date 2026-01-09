@@ -45,6 +45,17 @@ router.get('/', (req, res) => {
     ctrl.listar(req, res);
 });
 
+router.get("/:id", (req, res) =>{
+    /* #swagger.security = [{
+        "bearerAuth": []
+    }]
+    */
+    // #swagger.tags = ['Usuário']
+    // #swagger.summary = 'Recupera um usuário através do Id inserido'
+
+    ctrl.obterUsuario(req, res);
+})
+
 router.put("/:id", (req, res) => {
     // #swagger.tags = ['Usuário']
     // #swagger.summary = 'Altera um usuário existente'

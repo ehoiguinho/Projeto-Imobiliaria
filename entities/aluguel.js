@@ -59,6 +59,19 @@ export default class Aluguel{
     }
 
 
+    static toMap(row) {
+        let aluguel = new AluguelEntity();
+        aluguel.id = row["alu_id"];
+        aluguel.mes = row["alu_mes"];
+        aluguel.valor = row["alu_valor"];
+        aluguel.pago = row["alu_pago"];
+        aluguel.vencimento = row["alu_vencimento"];
+        aluguel.contrato = new ContratoEntity();
+        aluguel.contrato.id = row["ctr_id"];
+
+        return aluguel;
+    }
+
     toJSON(){
         return{
             id: this.#id,

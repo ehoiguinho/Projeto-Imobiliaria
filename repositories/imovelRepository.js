@@ -46,6 +46,14 @@ export default class ImovelRepository{
         return imovel;
     }
 
+    async deletar(id){
+        let sql = "delete from tb_imovel where imv_id = ?";
+        const params = [id];
+        let result = await this.#banco.ExecutaComandoNonQuery(sql, params);
+
+        return result;
+    }
+
     toMap(row){
         let imovel = new Imovel();
         imovel.id = row["imv_id"];

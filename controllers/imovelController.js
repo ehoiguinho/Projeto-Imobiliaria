@@ -62,5 +62,24 @@ export default class ImovelController{
         console.error(error);
         return res.status(500).json({msg: "Erro ao processar requisição."});
     }
-    }  
+    } 
+    
+    async deletar(req, res){
+        try{
+            let {id} = req.params;
+            let imovel = await this.#repo.obterId(id);
+            if(imovel){
+                await this.#repo.deletar(id);
+                return res.status(200).json({msg: "Imóvel deletado com sucesso."});
+            }
+            else{
+                return res.status(404).json({msg: "Não foi possivel encontrar o imóvel para deleção"});
+            }
+        }
+        catch(error){
+            console.error(error);
+            return res.status(500).json({msg: "Erro ao processar requisição."});
+        }
+
+    }
 }

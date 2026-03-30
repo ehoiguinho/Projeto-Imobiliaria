@@ -25,4 +25,11 @@ router.get("/:id", (req, res) =>{
     ctrl.obterPeloId(req, res);
 })
 
+router.delete("/:id", (req, res) =>{
+    //#swagger.tags = ['Imóvel']
+    //#swagger.summary = "Realiza a deleção de um imóvel pelo ID inserido"
+
+    ctrl.deletar(req, res);
+})
+
 export default router;

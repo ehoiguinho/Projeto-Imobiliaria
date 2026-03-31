@@ -1,6 +1,7 @@
 import express from "express";
 import usuarioRouter from './routes/usuarioRoute.js'
 import imovelRouter from './routes/imovelRoute.js'
+import locacaoRouter from './routes/locacaoRoute.js'
 import authRouter from './routes/authRoute.js'
 import swaggerUi from 'swagger-ui-express'
 import cookieParser from 'cookie-parser';
@@ -15,6 +16,7 @@ server.use(cookieParser());
 server.use("/docs", swaggerUi.serve, swaggerUi.setup(outputJson));
 server.use("/usuario", usuarioRouter);
 server.use("/imovel", imovelRouter);
+server.use("/locacao", locacaoRouter);
 server.use("/auth", authRouter);
 
 server.listen(3000, function(){

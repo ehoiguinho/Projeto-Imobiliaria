@@ -33,6 +33,35 @@ export default class ImovelController{
 
     }
 
+    async alterar(req, res){
+    try{
+        let {id, descricao, cep, endereco, bairro, cidade, valor, disponivel} = req.body;
+
+        if(!id || !descricao || !cep || !endereco || !bairro || !cidade || valor == null || disponivel == "true"){
+            return res.status(400).json({msg: "Preencha todos os campos obrigatórios"});
+        }
+        // cria entidade
+        let entidade = new Imovel(id, descricao, cep, endereco, bairro, cidade, valor, disponivel);
+
+        //  validação da regra de negócio
+        if(!entidade.validar()){
+            return res.status(400).json({msg: "Dados do imóvel inválidos"});
+        }
+        let atualizado = await this.#repo.alterar(entidade);
+
+        if(atualizado){
+            return res.status(200).json({msg: "Imóvel atualizado com sucesso"});
+        }else{
+            return res.status(404).json({msg: "Imóvel não encontrado"});
+        }
+
+    }
+    catch(error){
+        console.log(error);
+        return res.status(500).json({msg: "Erro ao processar requisição"});
+    }
+}
+
     async listar(req, res){
         try{
             let lista = await this.#repo.listar();

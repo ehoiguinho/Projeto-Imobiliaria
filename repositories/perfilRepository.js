@@ -1,19 +1,18 @@
 import Database from "../db/database.js";
 import Perfil from "../entities/perfil.js";
+import Repository from "./repository.js";
 
 
-export default class PerfilRepository{
-
-    #banco;
+export default class PerfilRepository extends Repository{
 
     constructor(){
-        this.#banco = new Database();
+        super();
     }
 
     async listar(){
         let sql = "select * from tb_perfil";
 
-        const rows = await this.#banco.ExecutaComando(sql);
+        const rows = await this.banco.ExecutaComando(sql);
         const lista = [];
 
         for(const row of rows){

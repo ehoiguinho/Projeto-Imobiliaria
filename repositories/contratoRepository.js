@@ -1,22 +1,21 @@
-import Database from "../db/database";
-import Aluguel from "../entities/aluguel";
-import Contrato from "../entities/contrato";
-import Imovel from "../entities/imovel";
-import Usuario from "../entities/usuario";
+import Database from "../db/database.js";
+import Aluguel from "../entities/aluguel.js";
+import Contrato from "../entities/contrato.js";
+import Imovel from "../entities/imovel.js";
+import Usuario from "../entities/usuario.js";
+import Repository from "./repository.js";
 
 
-export default class ContratoRepository{
+export default class ContratoRepository extends Repository{
 
-    #banco;
-
-    constructor(){
-        this.#banco = new Database();
+     constructor(){
+        super();
     }
 
 
     async listarPorUsuario(id){
         let sql = "select * from tb_contrato c inner join tb_imovel i on c.imv_id = i.imv_id inner join tb_aluguel a on c.ctr_id = a.ctr_id where c.usu_id = ?";
-        let rows = await this.#banco.ExecutaComando(sql, [id]);
+        let rows = await this.banco.ExecutaComando(sql, [id]);
 
         let lista = [];
         
@@ -49,7 +48,7 @@ export default class ContratoRepository{
         let sql = "insert into tb_contrato (imv_id, usu_id) VALUES (?, ?)";
         let valores = [entidade.imovel.id, entidade.usuario.id];
         
-        const result = await this.#banco.ExecutaComandoNonQuery(sql, valores);
+        const result = await this.banco.ExecutaComandoNonQuery(sql, valores);
 
         entidade.id = result;
 

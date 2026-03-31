@@ -1,5 +1,5 @@
 import express from 'express';
-import LocacaoController from '../controllers/locacaoController';
+import LocacaoController from '../controllers/locacaoController.js';
 const router = express.Router();
 
 let ctrl = new LocacaoController();

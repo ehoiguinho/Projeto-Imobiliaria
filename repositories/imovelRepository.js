@@ -1,19 +1,18 @@
 import Database from "../db/database.js";
 import Imovel from "../entities/imovel.js";
+import Repository from "./repository.js";
 
 
-export default class ImovelRepository{
+export default class ImovelRepository extends Repository{
 
-    #banco;
-
-    constructor(){
-        this.#banco = new Database();
+     constructor(){
+        super();
     }
 
     async obterId(id){
         let sql = "select * from tb_imovel where imv_id = ?"
         let params = [id];
-        const rows = await this.#banco.ExecutaComando(sql, params);
+        const rows = await this.banco.ExecutaComando(sql, params);
         if(rows.length > 0){
             const row = rows[0];
             const imovel = this.toMap(row);
@@ -27,7 +26,7 @@ export default class ImovelRepository{
         let sql = "insert into tb_imovel (imv_descricao, imv_cep, imv_endereco, imv_bairro, imv_cidade, imv_valor, imv_disponivel) VALUES (?, ?, ?, ?, ?, ?, ?)";
         let valores = [entidade.descricao, entidade.cep, entidade.endereco, entidade.bairro, entidade.cidade, entidade.valor, entidade.disponivel];
 
-        let result = await this.#banco.ExecutaComandoNonQuery(sql, valores);
+        let result = await this.banco.ExecutaComandoNonQuery(sql, valores);
         entidade.id = result;
 
         return result;
@@ -35,7 +34,7 @@ export default class ImovelRepository{
 
     async listar(){
         let sql = "select * from tb_imovel";
-        const rows = await this.#banco.ExecutaComando(sql);
+        const rows = await this.banco.ExecutaComando(sql);
         const imovel = [];
 
         for(let i = 0; i < rows.length; i++){
@@ -46,10 +45,30 @@ export default class ImovelRepository{
         return imovel;
     }
 
+    async alterar(entidade) {
+
+        let sql = `update tb_imovel set imv_descricao = ?, 
+                                        imv_endereco = ?, 
+                                        imv_cep = ?, 
+                                        imv_bairro = ?,
+                                        imv_cidade = ?,
+                                        imv_valor = ?, 
+                                        imv_disponivel = ?
+                    where imv_id = ?`;
+
+        let valores = [entidade.descricao, entidade.endereco, entidade.cep,
+            entidade.bairro, entidade.cidade, entidade.valor, 
+            entidade.disponivel, entidade.id];
+            
+        let result = await this.banco.ExecutaComandoNonQuery(sql, valores);
+
+        return result;
+    }
+
     async deletar(id){
         let sql = "delete from tb_imovel where imv_id = ?";
         const params = [id];
-        let result = await this.#banco.ExecutaComandoNonQuery(sql, params);
+        let result = await this.banco.ExecutaComandoNonQuery(sql, params);
 
         return result;
     }

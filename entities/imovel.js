@@ -76,6 +76,25 @@ export default class Imovel{
         this.#disponivel = value;
     }
 
+    validar() {
+        if(this.#descricao 
+            && this.#endereco 
+            && this.#cidade 
+            && this.#cep  
+            && this.#bairro 
+            && this.#valor > 0) {
+
+            let arrEndereco = this.#endereco.split(",");
+            if(arrEndereco.length > 0) {
+                let numero = arrEndereco[1];
+                if(isNaN(numero) == false)
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
     toJSON(){
         return {
             id: this.#id,

@@ -1,21 +1,20 @@
 import Database from "../db/database.js";
 import Perfil from "../entities/perfil.js";
 import Usuario from "../entities/usuario.js";
+import Repository from "./repository.js";
 
 
-export default class UsuarioRepository{
+export default class UsuarioRepository extends Repository{
 
-    #banco;
-
-    constructor(){
-        this.#banco = new Database();
+     constructor(){
+        super();
     }
 
     async validarAcesso(email, senha){
         let sql = "select * from tb_usuario where usu_email = ? and usu_senha = ?";
         const valores = [email, senha];
 
-        const row = await this.#banco.ExecutaComando(sql, valores);
+        const row = await this.banco.ExecutaComando(sql, valores);
 
         if(row.length > 0 ){
             return this.toMap(row);
@@ -28,7 +27,7 @@ export default class UsuarioRepository{
         let sql = "insert into tb_usuario (usu_nome, usu_email, usu_ativo, usu_senha, per_id) values (?, ?, ?, ?, ?)"
         const params = [usuario.nome, usuario.email, usuario.ativo, usuario.senha, usuario.perfil.id];
 
-        const result = await this.#banco.ExecutaComandoNonQuery(sql, params);
+        const result = await this.banco.ExecutaComandoNonQuery(sql, params);
 
         return result;
 
@@ -36,7 +35,7 @@ export default class UsuarioRepository{
 
     async listar(){
         let sql = "select * from tb_usuario";
-        const rows = await this.#banco.ExecutaComando(sql);
+        const rows = await this.banco.ExecutaComando(sql);
         const usuarios = [];
 
         for(let i = 0; i < rows.length; i ++){
@@ -52,7 +51,7 @@ export default class UsuarioRepository{
         let sql = "delete from tb_usuario where usu_id = ?";
         const params = [id];
 
-        const result = await this.#banco.ExecutaComandoNonQuery(sql, params);
+        const result = await this.banco.ExecutaComandoNonQuery(sql, params);
 
         return result;
     }
@@ -61,7 +60,7 @@ export default class UsuarioRepository{
         let sql = "update tb_usuario set usu_nome = ?, usu_email = ?, usu_ativo = ?, usu_senha = ?, per_id = ? where usu_id = ?";
         const valores = [entidadeAtualizada.nome, entidadeAtualizada.email, entidadeAtualizada.ativo, entidadeAtualizada.senha, entidadeAtualizada.perfil.id, entidadeAtualizada.id];
 
-        const result = await this.#banco.ExecutaComandoNonQuery(sql, valores);
+        const result = await this.banco.ExecutaComandoNonQuery(sql, valores);
 
         return result;
     }
@@ -70,7 +69,7 @@ export default class UsuarioRepository{
         let sql = "select * from tb_usuario where usu_id = ?";
         const params = [id];
         
-        const rows = await this.#banco.ExecutaComando(sql, params);
+        const rows = await this.banco.ExecutaComando(sql, params);
         if(rows.length > 0 ){
             let row = rows[0];
             const usuario = this.toMap(row);

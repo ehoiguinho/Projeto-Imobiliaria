@@ -24,6 +24,12 @@ router.get("/:id", (req, res) =>{
 
     ctrl.obterPeloId(req, res);
 })
+router.put("/", (req, res) => {
+    // #swagger.tags = ['Imóvel']
+    // #swagger.summary = "Altera um imóvel existente"
+   
+    ctrl.alterar(req, res);
+})
 
 router.delete("/:id", (req, res) =>{
     //#swagger.tags = ['Imóvel']

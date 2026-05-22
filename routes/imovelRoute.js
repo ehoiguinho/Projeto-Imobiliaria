@@ -5,6 +5,9 @@ const router = express.Router();
 let ctrl = new ImovelController();
 
 router.post("/", (req, res) => {
+    /* #swagger.security = [{
+            "jwt": []
+    }] */
     //#swagger.tags = ['Imóvel']
     //#swagger.summary = "Realiza o cadastro de um imóvel"
 
@@ -19,12 +22,18 @@ router.get("/", (req, res) =>{
 })
 
 router.get("/:id", (req, res) =>{
+    /* #swagger.security = [{
+            "jwt": []
+    }] */
     //#swagger.tags = ['Imóvel']
     //#swagger.summary = "Realiza a busca de imóvel pelo ID inserido"
 
     ctrl.obterPeloId(req, res);
 })
-router.put("/", (req, res) => {
+router.put("/:id", (req, res) => {
+    /* #swagger.security = [{
+            "jwt": []
+    }] */
     // #swagger.tags = ['Imóvel']
     // #swagger.summary = "Altera um imóvel existente"
    
@@ -32,6 +41,9 @@ router.put("/", (req, res) => {
 })
 
 router.delete("/:id", (req, res) =>{
+    /* #swagger.security = [{
+            "jwt": []
+    }] */
     //#swagger.tags = ['Imóvel']
     //#swagger.summary = "Realiza a deleção de um imóvel pelo ID inserido"
 

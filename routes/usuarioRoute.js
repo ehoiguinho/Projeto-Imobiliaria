@@ -31,10 +31,6 @@ router.get('/', (req, res) => {
     // #swagger.tags = ['Usuário']
     // #swagger.summary = 'Listar todos os usuários cadastrados'
 
-    /* #swagger.security = [{
-        "bearerAuth": []
-    }]
-    */
 
     /* #swagger.responses[404] = {
         description: 'Nenhum usuário encontrado na consulta',
@@ -47,9 +43,8 @@ router.get('/', (req, res) => {
 
 router.get("/:id", (req, res) =>{
     /* #swagger.security = [{
-        "bearerAuth": []
-    }]
-    */
+            "jwt": []
+    }] */
     // #swagger.tags = ['Usuário']
     // #swagger.summary = 'Recupera um usuário através do Id inserido'
 
@@ -59,13 +54,9 @@ router.get("/:id", (req, res) =>{
 router.put("/:id", (req, res) => {
     // #swagger.tags = ['Usuário']
     // #swagger.summary = 'Altera um usuário existente'
-    // #swagger.parameters['id'] = {
-    //   in: 'path',
-    //   required: true,
-    //   type: 'integer',
-    //   description: 'ID do usuário'
-    // }
-
+    /* #swagger.security = [{
+            "jwt": []
+    }] */
     /* #swagger.requestBody = {
         required: true,
         content: {
@@ -82,9 +73,8 @@ router.put("/:id", (req, res) => {
 
 router.delete("/:id", (req, res) =>{
     /* #swagger.security = [{
-        "bearerAuth": []
-    }]
-    */
+            "jwt": []
+    }] */
     // #swagger.tags = ['Usuário']
     // #swagger.summary = 'Deleta permanentemente um usuário'
     ctrl.deletar(req, res);

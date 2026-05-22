@@ -29,12 +29,10 @@ export default class LocacaoController{
         if(id){
             let imovel = await this.#imovelRepository.obterId(id);
 
-            console.log(imovel.toJSON()); // melhor log
-
-            if(imovel && imovel.disponivel === "S"){
+            if(imovel.length > 0 && imovel[0].disponivel === "S"){
 
                 let contrato = new Contrato();
-                contrato.imovel = imovel;
+                contrato.imovel = imovel[0];
                 contrato.usuario = req.usuarioLogado;
 
                 await banco.AbreTransacao();
@@ -44,7 +42,7 @@ export default class LocacaoController{
                     for(let i = 1; i <= 12; i++){
                         let aluguel = new Aluguel();
 
-                        aluguel.valor = imovel.valor;
+                        aluguel.valor = imovel[0].valor;
                         aluguel.contrato = contrato;
                         aluguel.pago = 'N';
 
@@ -62,9 +60,9 @@ export default class LocacaoController{
                     }
 
                     // marcar como indisponível
-                    imovel.disponivel = "N";
+                    imovel[0].disponivel = "N";
 
-                    if(await this.#imovelRepository.alterar(imovel)){
+                    if(await this.#imovelRepository.alterar(imovel[0])){
                         await banco.Commit();
                         return res.status(200).json({msg: "Imóvel locado com sucesso!"});
                     } else {

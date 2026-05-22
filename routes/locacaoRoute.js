@@ -7,6 +7,9 @@ let ctrl = new LocacaoController();
 let auth = new AuthMiddleware();
 
 router.post("/", auth.validarToken.bind(auth), (req, res) => {
+    /* #swagger.security = [{
+            "jwt": []
+    }] */
     //#swagger.tags = ['Locação']
     //#swagger.summary = "Inicia o processo de locação de imóvel"
 
@@ -14,6 +17,9 @@ router.post("/", auth.validarToken.bind(auth), (req, res) => {
 })
 
 router.get("/:id", auth.validarToken.bind(auth), (req, res) =>{
+    /* #swagger.security = [{
+            "jwt": []
+    }] */
     //#swagger.tags = ['Locação']
     //#swagger.summary = "Faz uma busca do contrato de locação de um determinado usuário"
 

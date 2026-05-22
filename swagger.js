@@ -22,12 +22,14 @@ const doc = {
             },
         }
     },
-    securitySchemes: {
-        bearerAuth: {
-            type: "http",
-            scheme: "bearer"
+    securityDefinitions: {
+        jwt: {
+            type: 'apiKey',
+            in: 'cookie', // can be 'header', 'query' or 'cookie'
+            name: 'token', // name of the header, query parameter or cookie
+            description: 'JWT gerado a partir da autenticação'
         }
-    }
+  }
 };
 
 const routes = ["./server.js"];

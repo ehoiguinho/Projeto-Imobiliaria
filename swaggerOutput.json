@@ -73,12 +73,7 @@
           "500": {
             "description": "Internal Server Error"
           }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
+        }
       }
     },
     "/usuario/{id}": {
@@ -111,7 +106,7 @@
         },
         "security": [
           {
-            "bearerAuth": []
+            "jwt": []
           }
         ]
       },
@@ -142,6 +137,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -182,7 +182,7 @@
         },
         "security": [
           {
-            "bearerAuth": []
+            "jwt": []
           }
         ]
       }
@@ -205,6 +205,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -255,62 +260,6 @@
             "description": "Internal Server Error"
           }
         }
-      },
-      "put": {
-        "tags": [
-          "Imóvel"
-        ],
-        "summary": "Altera um imóvel existente",
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "example": "any"
-                  },
-                  "descricao": {
-                    "example": "any"
-                  },
-                  "cep": {
-                    "example": "any"
-                  },
-                  "endereco": {
-                    "example": "any"
-                  },
-                  "bairro": {
-                    "example": "any"
-                  },
-                  "cidade": {
-                    "example": "any"
-                  },
-                  "valor": {
-                    "example": "any"
-                  },
-                  "disponivel": {
-                    "example": "any"
-                  }
-                }
-              }
-            }
-          }
-        }
       }
     },
     "/imovel/{id}": {
@@ -340,6 +289,79 @@
           "500": {
             "description": "Internal Server Error"
           }
+        },
+        "security": [
+          {
+            "jwt": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Imóvel"
+        ],
+        "summary": "Altera um imóvel existente",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "descricao": {
+                    "example": "any"
+                  },
+                  "cep": {
+                    "example": "any"
+                  },
+                  "endereco": {
+                    "example": "any"
+                  },
+                  "bairro": {
+                    "example": "any"
+                  },
+                  "cidade": {
+                    "example": "any"
+                  },
+                  "valor": {
+                    "example": "any"
+                  },
+                  "disponivel": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
         }
       },
       "delete": {
@@ -368,7 +390,12 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "jwt": []
+          }
+        ]
       }
     },
     "/locacao/": {
@@ -395,6 +422,11 @@
             "description": "Internal Server Error"
           }
         },
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -441,7 +473,12 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "jwt": []
+          }
+        ]
       }
     },
     "/auth/usuario": {

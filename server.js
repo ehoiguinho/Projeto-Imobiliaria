@@ -13,7 +13,11 @@ const server = express();
 server.use(express.json());
 server.use(cookieParser());
 
-server.use("/docs", swaggerUi.serve, swaggerUi.setup(outputJson));
+server.use("/docs", swaggerUi.serve, swaggerUi.setup(outputJson, {
+    swaggerOptions: {
+        withCredentials: true //para permitir o envio de cookies da nossa rota /docs
+    }
+}));
 server.use("/usuario", usuarioRouter);
 server.use("/imovel", imovelRouter);
 server.use("/locacao", locacaoRouter);

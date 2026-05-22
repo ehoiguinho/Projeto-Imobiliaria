@@ -48,7 +48,7 @@ export default class ContratoRepository extends Repository{
         let sql = "insert into tb_contrato (imv_id, usu_id) VALUES (?, ?)";
         let valores = [entidade.imovel.id, entidade.usuario.id];
         
-        const result = await this.banco.ExecutaComandoNonQuery(sql, valores);
+        const result = await this.banco.ExecutaComandoLastInserted(sql, valores);
 
         entidade.id = result;
 

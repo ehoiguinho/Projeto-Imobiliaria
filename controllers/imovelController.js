@@ -35,7 +35,8 @@ export default class ImovelController{
 
     async alterar(req, res){
     try{
-        let {id, descricao, cep, endereco, bairro, cidade, valor, disponivel} = req.body;
+        const {id} = req.params;
+        let {descricao, cep, endereco, bairro, cidade, valor, disponivel} = req.body;
 
         if(!id || !descricao || !cep || !endereco || !bairro || !cidade || valor == null || disponivel == "true"){
             return res.status(400).json({msg: "Preencha todos os campos obrigatórios"});

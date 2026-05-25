@@ -2,13 +2,12 @@ import express from 'express';
 import UsuarioController from '../controllers/usuarioController.js';
 import AuthMiddleware from '../middlewares/authMiddleware.js';
 
-
 const router = express.Router();
 
 let ctrl = new UsuarioController();
-let auth = new AuthMiddleware();
+let authMiddleware = new AuthMiddleware();
 
-router.post('/', (req, res) => {
+router.post('/', authMiddleware.validar, (req, res) => {
    /* #swagger.security = [{
         "bearerAuth": []
     }]
@@ -29,7 +28,7 @@ router.post('/', (req, res) => {
     ctrl.cadastrar(req, res);
 });
 
-router.get('/', (req, res) => {
+router.get('/',  authMiddleware.validar, (req, res) => {
     // #swagger.tags = ['Usuário']
     // #swagger.summary = 'Listar todos os usuários cadastrados'
 
@@ -43,7 +42,7 @@ router.get('/', (req, res) => {
     ctrl.listar(req, res);
 });
 
-router.get("/:id", (req, res) =>{
+router.get("/:id", authMiddleware.validar, (req, res) =>{
     /* #swagger.security = [{
             "jwt": []
     }] */
@@ -53,7 +52,7 @@ router.get("/:id", (req, res) =>{
     ctrl.obterUsuario(req, res);
 })
 
-router.put("/:id", (req, res) => {
+router.put("/:id", authMiddleware.validar, (req, res) => {
     // #swagger.tags = ['Usuário']
     // #swagger.summary = 'Altera um usuário existente'
     /* #swagger.security = [{
@@ -73,7 +72,7 @@ router.put("/:id", (req, res) => {
     ctrl.alterar(req, res);
 });
 
-router.delete("/:id", (req, res) =>{
+router.delete("/:id", authMiddleware.validar, (req, res) =>{
     /* #swagger.security = [{
             "jwt": []
     }] */

@@ -5,15 +5,17 @@ import AuthMiddleware from '../middlewares/authMiddleware.js';
 const router = express.Router();
 
 let controller = new LoginController();
-let auth = new AuthMiddleware();
+let authMiddleware = new AuthMiddleware();
 router.post("/", (req, res) => {
 
     // #swagger.tags = ['Login']
     // #swagger.summary = 'Gerar token de autenticação'
     controller.token(req, res);
 })
-router.get("/usuario", auth.validar, (req, res) => {
-
+router.get("/usuario", authMiddleware.validar, (req, res) => {
+     /* #swagger.security = [{
+            "jwt": []
+    }] */
     // #swagger.tags = ['Login']
     // #swagger.summary = 'Retorna o usuário logado através da cookie'
 

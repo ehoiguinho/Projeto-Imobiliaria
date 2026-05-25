@@ -7,7 +7,7 @@ import AuthMiddleware from '../middlewares/authMiddleware.js';
 let ctrl = new LocacaoController();
 let authMiddleware = new AuthMiddleware();
 
-router.put("/:id", authMiddleware.validar.bind(authMiddleware), (req, res) => {
+router.put("/:id", authMiddleware.validar, (req, res) => {
      /* #swagger.security = [{
             "jwt": []
     }] */

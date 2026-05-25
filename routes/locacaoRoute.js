@@ -4,9 +4,9 @@ import AuthMiddleware from '../middlewares/authMiddleware.js';
 const router = express.Router();
 
 let ctrl = new LocacaoController();
-let auth = new AuthMiddleware();
+let authMiddleware = new AuthMiddleware();
 
-router.post("/", auth.validar.bind(auth), (req, res) => {
+router.post("/", authMiddleware.validar, (req, res) => {
     /* #swagger.security = [{
             "jwt": []
     }] */
@@ -16,7 +16,7 @@ router.post("/", auth.validar.bind(auth), (req, res) => {
     ctrl.locar(req, res);
 })
 
-router.get("/:id", auth.validar.bind(auth), (req, res) =>{
+router.get("/:id", authMiddleware.validar, (req, res) =>{
     /* #swagger.security = [{
             "jwt": []
     }] */
@@ -27,7 +27,7 @@ router.get("/:id", auth.validar.bind(auth), (req, res) =>{
 
 });
 
-router.put("/:id", auth.validar.bind(auth), (req, res) => {
+router.put("/:id", authMiddleware.validar, (req, res) => {
     /* #swagger.security = [{
             "jwt": []
     }] */

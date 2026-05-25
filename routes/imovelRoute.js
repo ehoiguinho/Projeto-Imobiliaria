@@ -1,10 +1,12 @@
 import express from 'express';
 import ImovelController from '../controllers/imovelController.js';
+import AuthMiddleware from '../middlewares/authMiddleware.js';
 const router = express.Router();
 
 let ctrl = new ImovelController();
+let authMiddleware = new AuthMiddleware();
 
-router.post("/", (req, res) => {
+router.post("/", authMiddleware.validar, (req, res) => {
     /* #swagger.security = [{
             "jwt": []
     }] */
@@ -26,7 +28,7 @@ router.get("/", (req, res) =>{
     ctrl.listar(req, res);
 })
 
-router.get("/:id", (req, res) =>{
+router.get("/:id", authMiddleware.validar, (req, res) =>{
     /* #swagger.security = [{
             "jwt": []
     }] */
@@ -35,7 +37,7 @@ router.get("/:id", (req, res) =>{
 
     ctrl.obterPeloId(req, res);
 })
-router.put("/:id", (req, res) => {
+router.put("/:id", authMiddleware.validar, (req, res) => {
     /* #swagger.security = [{
             "jwt": []
     }] */
@@ -45,7 +47,7 @@ router.put("/:id", (req, res) => {
     ctrl.alterar(req, res);
 })
 
-router.delete("/:id", (req, res) =>{
+router.delete("/:id", authMiddleware.validar, (req, res) =>{
     /* #swagger.security = [{
             "jwt": []
     }] */

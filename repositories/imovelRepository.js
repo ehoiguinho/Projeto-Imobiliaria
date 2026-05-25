@@ -48,6 +48,21 @@ export default class ImovelRepository extends Repository{
         return imovel;
     }
 
+    async listarDisponivel() {
+
+        let sql = "select * from tb_imovel where imv_disponivel = 'S'";
+
+        let rows = await this.banco.ExecutaComando(sql);
+        let lista = [];
+        for(let i = 0; i < rows.length; i++) {
+            let row = rows[i];
+            lista.push(Imovel.toMap(row));
+        }
+
+        return lista;
+
+    }
+
     async alterar(entidade) {
 
         let sql = `update tb_imovel set imv_descricao = ?, 

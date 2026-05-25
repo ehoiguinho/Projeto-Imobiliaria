@@ -262,6 +262,23 @@
         }
       }
     },
+    "/imovel/disponivel": {
+      "get": {
+        "tags": [
+          "Imóvel"
+        ],
+        "summary": "Lista todos os imóveis disponíveis para locação",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/imovel/{id}": {
       "get": {
         "tags": [

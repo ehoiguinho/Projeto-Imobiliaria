@@ -79,6 +79,14 @@ export default class ImovelController{
         
     }
 
+      async listarDisponivel(req, res) {
+        var lista = await this.#repo.listarDisponivel();
+        if(lista.length == 0)
+            return res.status(404).json({msg: "Nenhum imóvel encontrado"});
+
+        return res.status(200).json(lista);
+    }
+
     async obterPeloId(req, res){
         try{
         let {id} = req.params;

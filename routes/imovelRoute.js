@@ -13,6 +13,11 @@ router.post("/", (req, res) => {
 
     ctrl.cadastrar(req, res);
 })
+router.get("/disponivel",  (req, res) => {
+    // #swagger.tags = ['Imóvel']
+    // #swagger.summary = "Lista todos os imóveis disponíveis para locação"
+    ctrl.listarDisponivel(req, res);
+});
 
 router.get("/", (req, res) =>{
     //#swagger.tags = ['Imóvel']

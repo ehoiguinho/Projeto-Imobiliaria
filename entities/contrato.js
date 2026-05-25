@@ -19,7 +19,7 @@ export default class Contrato{
     }
 
     get imovel(){
-        return this.#id;
+        return this.#imovel;
     }
     set imovel(value){
         this.#imovel = value;

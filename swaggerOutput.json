@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "API REST",
-    "description": "API REST para a construção do backend",
+    "description": "API para o gerenciamento de locação de imóveis.",
     "version": "1.0.0"
   },
   "servers": [
@@ -479,21 +479,35 @@
             "jwt": []
           }
         ]
-      }
-    },
-    "/auth/usuario": {
-      "get": {
+      },
+      "put": {
         "tags": [
-          "Autenticação"
+          "Locação"
         ],
-        "summary": "Obtem as informações do usuário através da cookie",
+        "summary": "Cancela um contrato de locação ativo",
         "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
           },
+          "400": {
+            "description": "Bad Request"
+          },
           "401": {
             "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           },
           "404": {
             "description": "Not Found"
@@ -501,15 +515,20 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "jwt": []
+          }
+        ]
       }
     },
-    "/auth/token": {
+    "/login/": {
       "post": {
         "tags": [
-          "Autenticação"
+          "Login"
         ],
-        "summary": "Gera um token de acesso atráves das credenciais do usuário",
+        "summary": "Gerar token de autenticação",
         "description": "",
         "responses": {
           "200": {
@@ -542,6 +561,70 @@
             }
           }
         }
+      }
+    },
+    "/login/usuario": {
+      "get": {
+        "tags": [
+          "Login"
+        ],
+        "summary": "Retorna o usuário logado através da cookie",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/aluguel/{id}": {
+      "put": {
+        "tags": [
+          "Aluguel"
+        ],
+        "summary": "Realiza o pagamento de um aluguel específico pelo ID inserido",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          }
+        ]
       }
     }
   },
@@ -592,12 +675,14 @@
           "name": "usuario"
         }
       }
-    }
-  },
-  "securitySchemes": {
-    "bearerAuth": {
-      "type": "http",
-      "scheme": "bearer"
+    },
+    "securitySchemes": {
+      "jwt": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "token",
+        "description": "JWT gerado a partir da autenticação"
+      }
     }
   }
 }

@@ -1,10 +1,12 @@
 import express from 'express';
 import UsuarioController from '../controllers/usuarioController.js';
+import AuthMiddleware from '../middlewares/authMiddleware.js';
 
 
 const router = express.Router();
 
 let ctrl = new UsuarioController();
+let auth = new AuthMiddleware();
 
 router.post('/', (req, res) => {
    /* #swagger.security = [{

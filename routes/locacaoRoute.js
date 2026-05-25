@@ -6,7 +6,7 @@ const router = express.Router();
 let ctrl = new LocacaoController();
 let auth = new AuthMiddleware();
 
-router.post("/", auth.validarToken.bind(auth), (req, res) => {
+router.post("/", auth.validar.bind(auth), (req, res) => {
     /* #swagger.security = [{
             "jwt": []
     }] */
@@ -16,7 +16,7 @@ router.post("/", auth.validarToken.bind(auth), (req, res) => {
     ctrl.locar(req, res);
 })
 
-router.get("/:id", auth.validarToken.bind(auth), (req, res) =>{
+router.get("/:id", auth.validar.bind(auth), (req, res) =>{
     /* #swagger.security = [{
             "jwt": []
     }] */
@@ -24,6 +24,17 @@ router.get("/:id", auth.validarToken.bind(auth), (req, res) =>{
     //#swagger.summary = "Faz uma busca do contrato de locação de um determinado usuário"
 
     ctrl.listar(req, res);
+
+});
+
+router.put("/:id", auth.validar.bind(auth), (req, res) => {
+    /* #swagger.security = [{
+            "jwt": []
+    }] */
+    //#swagger.tags = ['Locação']
+    //#swagger.summary = "Cancela um contrato de locação ativo";
+
+    ctrl.cancelar(req, res);
 
 });
 

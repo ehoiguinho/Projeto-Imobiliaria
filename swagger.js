@@ -4,7 +4,7 @@ const doc = {
     host: "localhost:3000",
     info: {
         title: "API REST",
-        description: "API REST para a construção do backend"
+        description: "API para o gerenciamento de locação de imóveis."
     },
     components: {
         schemas: {

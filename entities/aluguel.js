@@ -6,14 +6,16 @@ export default class Aluguel{
     #valor;
     #pago;
     #contrato;
+    #status
 
-    constructor(id, mes, vencimento, valor, pago, contrato){
+    constructor(id, mes, vencimento, valor, pago, contrato, status){
         this.#id = id;
         this.#mes = mes;
         this.#vencimento = vencimento;
         this.#valor = valor;
         this.#pago = pago;
         this.#contrato = contrato;
+        this.#status = status;
     }
 
     get id(){
@@ -58,6 +60,14 @@ export default class Aluguel{
         this.#contrato = value;
     }
 
+    get status(){
+        return this.#status;
+    }
+
+    set status(value){
+        this.#status = value;
+    }
+
 
     static toMap(row) {
         let aluguel = new AluguelEntity();
@@ -68,7 +78,7 @@ export default class Aluguel{
         aluguel.vencimento = row["alu_vencimento"];
         aluguel.contrato = new ContratoEntity();
         aluguel.contrato.id = row["ctr_id"];
-
+        aluguel.status = row["alu_status"];
         return aluguel;
     }
 
@@ -79,7 +89,8 @@ export default class Aluguel{
             vencimento: this.#vencimento,
             valor: this.#valor,
             pago: this.#pago,
-            contrato: this.#contrato.id
+            contrato: this.#contrato.id,
+            status: this.#status
         }
     }
 }

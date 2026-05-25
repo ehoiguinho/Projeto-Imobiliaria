@@ -19,7 +19,7 @@ export default class ImovelController{
             }
               let entidade = new Imovel(0, descricao, cep, endereco, bairro, cidade, valor, disponivel);
               let inseriu = await this.#repo.gravar(entidade);
-              if(inseriu == true){
+              if(inseriu){
                 return res.status(200).json({msg: "Imóvel cadastrado com sucesso!"});
               }
               else{

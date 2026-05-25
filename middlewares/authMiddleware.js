@@ -5,9 +5,8 @@ const secret = "segredo@"
 
 export default class AuthMiddleware{
 
-
+        
     async gerarToken(id, nome, email, perfil){
-
         let jsonwebtoken = jwt.sign(
             {
                 id: id,
@@ -24,7 +23,7 @@ export default class AuthMiddleware{
         return jsonwebtoken;
     }
 
-    async validarToken(req, res, next){
+    async validar(req, res, next){
         if(req.cookies.token){
             let token = req.cookies.token;
         

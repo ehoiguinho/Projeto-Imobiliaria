@@ -25,7 +25,7 @@ export default class AluguelRepository extends Repository{
         let sql = "select * from tb_aluguel a inner join tb_contrato c on a.ctr_id = c.ctr_id where c.ctr_id = ?";
         let valores = [id];
 
-        const rows = await this.banco.ExecutaComandoNonQuery(sql, valores);
+        const rows = await this.banco.ExecutaComando(sql, valores);
 
         let lista = [];
         for(let i = 0; i< rows.length; i++){
@@ -35,12 +35,29 @@ export default class AluguelRepository extends Repository{
         return lista;
     }
 
+    async obterPorId(id){
+    let sql = "select  alu_id as id, alu_mes as mes, alu_pago as pago, alu_status as status, alu_valor as valor, alu_vencimento as vencimento, ctr_id as contratoId from tb_aluguel where alu_id = ? ";
+    let valores = [id];
+
+    return await this.banco.ExecutaComando(sql, valores);
+}
+
     async marcarComoPago(id){
-        let sql = "update tb_aluguel set alu_pago = 'S' where alu_id = ?";
-        let valores = [id];
+    let sql = "update tb_aluguel set alu_pago = 'S', alu_status = 'PAGO' where alu_id = ? and alu_pago = 'N' and alu_status = 'PENDENTE' ";
+    let valores = [id];
 
-        const result = await this.banco.ExecutaComandoNonQuery(sql, valores);
+    let result = await this.banco.ExecutaComandoNonQuery(sql, valores);
 
-        return result;
-    }
+    return result;
+}
+
+    async cancelarPendentesPorContrato(contratoId) {
+    let sql = " update tb_aluguel set alu_status = 'CANCELADO' where ctr_id = ? and alu_pago = 'N' ";
+
+    let valores = [contratoId];
+
+    let result = await this.banco.ExecutaComandoNonQuery(sql, valores);
+
+    return result;
+}
 }

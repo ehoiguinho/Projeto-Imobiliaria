@@ -17,7 +17,7 @@ export default class UsuarioRepository extends Repository{
         const row = await this.banco.ExecutaComando(sql, valores);
 
         if(row.length > 0 ){
-            return this.toMap(row);
+            return this.toMap(row[0]);
         }
         
         return null;

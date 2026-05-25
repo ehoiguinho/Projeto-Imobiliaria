@@ -34,6 +34,7 @@ export default class AutenticaoController{
             if(usuario){
                 let auth = new AuthMiddleware();
                 let token = await auth.gerarToken(usuario.id, usuario.nome, usuario.email, usuario.perfil.id);
+                res.clearCookie("token");
                 res.cookie("token", token, {
                     httpOnly: true,
                 })

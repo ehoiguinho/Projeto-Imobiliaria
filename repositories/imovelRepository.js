@@ -9,17 +9,20 @@ export default class ImovelRepository extends Repository{
         super();
     }
 
-    async obterId(id){
-        let sql = "select * from tb_imovel where imv_id = ?"
-        let params = [id];
-        const rows = await this.banco.ExecutaComando(sql, params);
-        if(rows.length > 0){
-            const row = rows[0];
-            const imovel = this.toMap(row);
-            return imovel;
+  async obterId(id) {
+
+        let sql = "select * from tb_imovel where imv_id = ?";
+        let valores = [id];
+
+        let rows = await this.banco.ExecutaComando(sql, valores);
+        let lista = [];
+        for(let i = 0; i < rows.length; i++) {
+            let row = rows[i];
+            lista.push(Imovel.toMap(row));
         }
 
-        return null;
+        return lista;
+
     }
 
     async gravar(entidade){
@@ -71,6 +74,16 @@ export default class ImovelRepository extends Repository{
         let result = await this.banco.ExecutaComandoNonQuery(sql, params);
 
         return result;
+    }
+
+    async liberar(id) {
+    let sql = "update tb_imovel set imv_disponivel = 'S' where imv_id = ? ";
+    let valores = [id];
+
+    let result = await this.banco.ExecutaComandoNonQuery(sql, valores);
+
+    return result;
+
     }
 
     toMap(row){

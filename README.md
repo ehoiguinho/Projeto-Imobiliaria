@@ -54,7 +54,7 @@ O projeto foi criado com foco em estudo de backend utilizando Node.js, Express e
 ## Clonar repositório
 
 ```bash
-git clone [https://github.com/seu-usuario/projeto-imobiliaria.git](https://github.com/ehoiguinho/Projeto-Imobiliaria)
+git clone https://github.com/ehoiguinho/Projeto-Imobiliaria
 ```
 
 ## Instalar dependências

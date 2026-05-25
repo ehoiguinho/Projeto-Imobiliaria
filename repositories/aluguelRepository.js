@@ -60,4 +60,22 @@ export default class AluguelRepository extends Repository{
 
     return result;
 }
+
+    async atualizarAtrasados(){
+    let sql = "update tb_aluguel SET alu_status = 'ATRASADO' where alu_vencimento < CURDATE() and alu_pago = 'N' and alu_status = 'PENDENTE' ";
+
+    let result = await this.banco.ExecutaComandoNonQuery(sql);
+
+    return result;
+}
+
+async listarPorContrato(contratoId){
+    let sql = "select alu_id as id, alu_mes as mes, alu_pago as pago, alu_status as status, alu_valor as valor, alu_vencimento as vencimento, ctr_id as contratoId from tb_aluguel where ctr_id = ? order by  alu_vencimento";
+    let valores = [contratoId];
+
+    let result = await this.banco.ExecutaComando(sql, valores);
+    
+    return result;
+}
+
 }

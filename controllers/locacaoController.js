@@ -199,5 +199,35 @@ export default class LocacaoController {
         console.log(ex);
         return res.status(500).json({ msg: "Erro interno ao pagar aluguel!" });
     }
+}   
+
+    async listarAlugueis(req, res){
+    try{
+
+        let { id } = req.params;
+        this.#aluguelRepository.banco = new Database();
+
+        if(!id){
+            return res.status(400).json({
+                msg: "O id do contrato não foi enviado!"
+            });
+        }
+
+        // atualiza automaticamente os atrasados
+        await this.#aluguelRepository.atualizarAtrasados();
+
+        let lista = await this.#aluguelRepository.listarPorContrato(id);
+
+        if(lista.length > 0){
+            return res.status(200).json(lista);
+        }
+
+        return res.status(404).json({msg: "Nenhum aluguel encontrado!"});
+
+    }catch(ex){
+        console.log(ex);
+
+        return res.status(500).json({msg: "Erro ao listar aluguéis!"});
+    }
 }
 }

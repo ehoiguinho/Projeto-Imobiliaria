@@ -591,7 +591,48 @@
         "tags": [
           "Aluguel"
         ],
-        "summary": "Realiza o pagamento de um aluguel específico pelo ID inserido",
+        "summary": "Realiza o pagamento do aluguel do mês específico pelo ID inserido",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          }
+        ]
+      }
+    },
+    "/aluguel/contrato/{id}": {
+      "get": {
+        "tags": [
+          "Aluguel"
+        ],
+        "summary": "Lista os alugueis de um contrato específico pelo ID inserido",
         "description": "",
         "parameters": [
           {

@@ -76,9 +76,3 @@ db/database.js
 ```bash
 npm start
 ```
-
-
-
-# 👨‍💻 Autor
-
-Igor Lins

@@ -1,9 +1,35 @@
 "use client"
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+
+
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const [usuario, setUsuario] = useState(null);
+
+useEffect(() => {
+  async function buscarUsuarioLogado() {
+    try {
+      const resposta = await fetch("http://localhost:3000/login/usuario", {
+        method: "GET",
+        credentials: "include"
+      });
+
+      if (!resposta.ok) {
+        return;
+      }
+
+      const dados = await resposta.json();
+      setUsuario(dados);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  buscarUsuarioLogado();
+}, []);
 
   const links = [
     {
@@ -46,7 +72,17 @@ export default function Sidebar() {
           );
         })}
       </nav>
+        {usuario && (
+            <div className="mb-4 rounded-xl bg-slate-100 p-4">
+                <span className="block text-xs font-medium text-slate-500">
+                Usuário logado
+                </span>
 
+                <strong className="mt-1 block text-sm text-slate-900">
+                {usuario.nome}
+                </strong>
+            </div>
+            )}
       <Link
         href="/login"
         className="rounded-lg border border-slate-200 px-4 py-3 text-center text-sm font-medium text-slate-600 transition hover:bg-slate-100"

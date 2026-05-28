@@ -13,7 +13,7 @@ export default function LoginPage() {
     const [carregando, setCarregando] = useState(false);
 
     async function fazerLogin(event){
-        evenet.preventDefault();
+        event.preventDefault();
 
         setCarregando(true);
         setErro("");
@@ -37,7 +37,7 @@ export default function LoginPage() {
         throw new Error(dados.msg || "Erro ao fazer login");
       }
 
-      router.push("/");
+      router.push("/imoveis");
     } catch (error) {
       setErro(error.message);
     } finally {

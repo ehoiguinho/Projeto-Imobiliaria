@@ -22,4 +22,9 @@ router.get("/usuario", authMiddleware.validar, (req, res) => {
     controller.usuario(req, res);
 })
 
+router.post("/logout", (req, res) => {
+    res.clearCookie("token");
+    return res.status(200).json({ msg: "Logout realizado com sucesso!" });
+});
+
 export default router;

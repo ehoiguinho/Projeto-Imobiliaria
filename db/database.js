@@ -72,8 +72,13 @@ export default class Database {
             cnn.query(sql, valores, function (error, results, fields) {
                 if (error) 
                     rej(error);
-                else 
+                else{
+                       if(results.insertId > 0)
+                    res(results.insertId);
+                else
                     res(results.affectedRows > 0);
+
+            }
             });
         })
     }

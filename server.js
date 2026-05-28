@@ -8,10 +8,12 @@ import aluguelRouter from './routes/aluguelRoute.js'
 import swaggerUi from 'swagger-ui-express'
 import cookieParser from 'cookie-parser';
 import { createRequire } from "module";
+
 const require = createRequire(import.meta.url);
 const outputJson = require("./swaggerOutput.json");
 const server = express();
 
+server.use('/uploads', express.static('uploads'));
 server.use(express.json());
 server.use(cookieParser());
 server.use(cors({

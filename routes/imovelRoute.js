@@ -1,17 +1,61 @@
 import express from 'express';
 import ImovelController from '../controllers/imovelController.js';
 import AuthMiddleware from '../middlewares/authMiddleware.js';
+import upload from "../config/multer.js";
 const router = express.Router();
 
 let ctrl = new ImovelController();
 let authMiddleware = new AuthMiddleware();
 
-router.post("/", authMiddleware.validar, (req, res) => {
-    /* #swagger.security = [{
-            "jwt": []
-    }] */
-    //#swagger.tags = ['Imóvel']
-    //#swagger.summary = "Realiza o cadastro de um imóvel"
+router.post("/", authMiddleware.validar, upload.array("imagens", 5), (req, res) => {
+
+        /* #swagger.security = [{
+                "jwt": []
+        }] */
+
+        //#swagger.tags = ['Imóvel']
+        //#swagger.summary = "Realiza o cadastro de um imóvel"
+
+        /* #swagger.requestBody = {
+                required: true,
+                content: {
+                    "multipart/form-data": {
+                        schema: {
+                            type: "object",
+                            properties: {
+                                descricao: {
+                                    type: "string"
+                                },
+                                cep: {
+                                    type: "string"
+                                },
+                                endereco: {
+                                    type: "string"
+                                },
+                                bairro: {
+                                    type: "string"
+                                },
+                                cidade: {
+                                    type: "string"
+                                },
+                                valor: {
+                                    type: "number"
+                                },
+                                disponivel: {
+                                    type: "string"
+                                },
+                                imagens: {
+                                    type: "array",
+                                    items: {
+                                        type: "string",
+                                        format: "binary"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+        } */
 
     ctrl.cadastrar(req, res);
 })
@@ -56,5 +100,50 @@ router.delete("/:id", authMiddleware.validar, (req, res) =>{
 
     ctrl.deletar(req, res);
 })
+
+router.get("/imagens/:id", authMiddleware.validar, (req, res) => {
+    /* #swagger.security = [{
+            "jwt": []
+    }] */
+    // #swagger.tags = ['Imóvel']
+    // #swagger.summary = "Realiza a consulta das imagens de um imóvel pelo ID do imóvel"
+
+    ctrl.imagem(req, res);
+});
+
+router.post("/imagens/:id", authMiddleware.validar, upload.array("imagens", 5), (req, res) => {
+   // #swagger.tags = ['Imóvel']
+        // #swagger.summary = "Adiciona imagens a um imóvel"
+
+        /* #swagger.requestBody = {
+            required: true,
+            content: {
+                "multipart/form-data": {
+                    schema: {
+                        type: "object",
+                        properties: {
+                            imagens: {
+                                type: "array",
+                                items: {
+                                    type: "string",
+                                    format: "binary"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } */
+    ctrl.adicionarImagens(req, res);
+});
+
+router.delete("/imagens/:id", authMiddleware.validar, (req, res) => {
+    /* #swagger.security = [{
+            "jwt": []
+    }] */
+    // #swagger.tags = ['Imóvel']
+    // #swagger.summary = "Realiza a deleção de uma imagem pelo ID da imagem"
+    ctrl.deletarImagem(req, res);
+});
 
 export default router;

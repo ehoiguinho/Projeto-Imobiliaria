@@ -60,7 +60,7 @@ export default function CadastroImovelPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-100 px-6 py-10">
+    <main className="px-8 py-10">
       <section className="mx-auto max-w-2xl rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-900">

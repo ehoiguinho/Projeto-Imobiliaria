@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
@@ -169,6 +170,12 @@ export default function DetalheImovelPage() {
               </div>
             </div>
           )}
+          <Link
+            href={`/imoveis/${imovel.id}/locar`}
+            className="mt-8 block rounded-lg bg-blue-600 px-4 py-3 text-center font-semibold text-white transition hover:bg-blue-700"
+            >
+            Locar este imóvel
+            </Link>
         </div>
       </section>
     </main>

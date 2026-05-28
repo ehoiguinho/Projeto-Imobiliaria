@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function ImovelCard({ imovel }) {
   const imagem = imovel.imagem
     ? `http://localhost:3000${imovel.imagem}`
@@ -39,6 +41,12 @@ export default function ImovelCard({ imovel }) {
           </span>
         </div>
       </div>
-    </article>
+      <Link
+        href={`/imoveis/${imovel.id}`}
+        className="mt-5 block rounded-lg bg-blue-600 px-4 py-3 text-center font-semibold text-white transition hover:bg-blue-700"
+        >
+        Ver detalhes
+    </Link>
+</article>
   );
 }

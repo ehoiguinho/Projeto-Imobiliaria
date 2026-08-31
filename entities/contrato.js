@@ -1,16 +1,17 @@
 export default class Contrato {
+
     #id;
     #imovel;
     #usuario;
-    #alugueis;
     #status;
+    #alugueis;
 
-    constructor(id, imovel, usuario, alugueis = [], status = null) {
+    constructor(id, imovel, usuario, status, alugueis = []) {
         this.#id = id;
         this.#imovel = imovel;
         this.#usuario = usuario;
-        this.#alugueis = alugueis;
         this.#status = status;
+        this.#alugueis = alugueis;
     }
 
     get id() {
@@ -37,14 +38,6 @@ export default class Contrato {
         this.#usuario = value;
     }
 
-    get alugueis() {
-        return this.#alugueis;
-    }
-
-    set alugueis(value) {
-        this.#alugueis = value;
-    }
-
     get status() {
         return this.#status;
     }
@@ -53,11 +46,19 @@ export default class Contrato {
         this.#status = value;
     }
 
+    get alugueis() {
+        return this.#alugueis;
+    }
+
+    set alugueis(value) {
+        this.#alugueis = value;
+    }
+
     toJSON() {
         return {
             id: this.#id,
-            imovel: this.#imovel.id,
-            usuario: this.#usuario.id,
+            imovel: this.#imovel?.id,
+            usuario: this.#usuario?.id,
             status: this.#status,
             alugueis: this.#alugueis
         };

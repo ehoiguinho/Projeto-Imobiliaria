@@ -1,3 +1,4 @@
+import Contrato from "./contrato.js";
 
 export default class Aluguel{
     #id;
@@ -76,21 +77,21 @@ export default class Aluguel{
         aluguel.valor = row["alu_valor"];
         aluguel.pago = row["alu_pago"];
         aluguel.vencimento = row["alu_vencimento"];
-        aluguel.contrato = new ContratoEntity();
+        aluguel.contrato = new Contrato();
         aluguel.contrato.id = row["ctr_id"];
         aluguel.status = row["alu_status"];
         return aluguel;
     }
 
-    toJSON(){
-        return{
-            id: this.#id,
-            mes: this.#mes,
-            vencimento: this.#vencimento,
-            valor: this.#valor,
-            pago: this.#pago,
-            contrato: this.#contrato.id,
-            status: this.#status
-        }
-    }
+   toJSON() {
+    return {
+        id: this.#id,
+        mes: this.#mes,
+        vencimento: this.#vencimento,
+        valor: this.#valor,
+        pago: this.#pago,
+        contrato: this.#contrato?.id,
+        status: this.#status
+    };
+}
 }

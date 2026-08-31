@@ -101,7 +101,7 @@ export default class AluguelRepository extends Repository {
     return await this.banco.ExecutaComandoNonQuery(sql, valores);
 }
 
-    async cancelarPendentesPorContrato(contratoId) {
+    async cancelarPendentesPorContrato(contratoId, client) {
 
         const sql = `
             UPDATE tb_aluguel
@@ -113,7 +113,7 @@ export default class AluguelRepository extends Repository {
 
         const valores = [contratoId];
 
-        return await this.banco.ExecutaComandoNonQuery(sql, valores);
+        return await this.banco.ExecutaComandoNonQuery(sql, valores, client);
     }
 
     async atualizarAtrasados() {
@@ -140,7 +140,7 @@ export default class AluguelRepository extends Repository {
             a.alu_status AS status,
             a.alu_valor AS valor,
             a.alu_vencimento AS vencimento,
-            a.ctr_id AS contrato_id
+            a.ctr_id AS contratoId
         FROM tb_aluguel a
         INNER JOIN tb_contrato c
             ON a.ctr_id = c.ctr_id
@@ -153,7 +153,7 @@ export default class AluguelRepository extends Repository {
     return await this.banco.ExecutaComando(sql, valores);
 }
 
-    async listarPorContrato(contratoId, usuarioId) {
+ async listarPorContrato(contratoId, usuarioId) {
 
     const sql = `
         SELECT

@@ -134,21 +134,44 @@ console.log("TIPO DISPONIVEL:", typeof imovel[0]?.disponivel);
     }
 }
 
-    async listar(req, res) {
-        try {
-            let usuarioId = req.usuarioLogado.id;
-            var lista = await this.#contratoRepository.listarPorUsuario(usuarioId);
-            if(lista.length > 0)
-                res.status(200).json(lista);
-            else
-                res.status(404).json("Nenhum contrato de locação encontrado!");
+   async listar(req, res) {
+
+    try {
+
+        const contratoId = req.params.id;
+        const usuarioId = req.usuarioLogado.id;
+
+        if (!contratoId) {
+            return res.status(400).json({
+                msg: "O id do contrato não foi enviado!"
+            });
         }
-        catch(ex) {
-            
-            console.log(ex);
-            return res.status(500).json({msg: "Erro interno de servidor"})
+
+        this.#contratoRepository.banco = new Database();
+
+        const contrato =
+            await this.#contratoRepository.obterPorIdUsuario(
+                contratoId,
+                usuarioId
+            );
+
+        if (!contrato) {
+            return res.status(404).json({
+                msg: "Contrato não encontrado!"
+            });
         }
+
+        return res.status(200).json(contrato);
+
+    } catch (ex) {
+
+        console.log(ex);
+
+        return res.status(500).json({
+            msg: "Erro interno de servidor"
+        });
     }
+}
 
     async cancelar(req, res) {
 

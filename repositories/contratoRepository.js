@@ -84,6 +84,102 @@ export default class ContratoRepository extends Repository{
 
     return lista;
 }
+
+
+async obterPorIdUsuario(contratoId, usuarioId) {
+
+    const sql = `
+        SELECT
+            c.ctr_id,
+            c.imv_id,
+            c.usu_id,
+            c.con_status,
+
+            i.imv_descricao,
+            i.imv_cep,
+            i.imv_endereco,
+            i.imv_bairro,
+            i.imv_cidade,
+            i.imv_valor,
+            i.imv_disponivel,
+
+            a.alu_id,
+            a.alu_mes,
+            a.alu_vencimento,
+            a.alu_valor,
+            a.alu_pago,
+            a.alu_status
+
+        FROM tb_contrato c
+
+        INNER JOIN tb_imovel i
+            ON c.imv_id = i.imv_id
+
+        LEFT JOIN tb_aluguel a
+            ON c.ctr_id = a.ctr_id
+
+        WHERE c.ctr_id = $1
+        AND c.usu_id = $2
+
+        ORDER BY a.alu_vencimento
+    `;
+
+    const valores = [contratoId, usuarioId];
+
+    const rows = await this.banco.ExecutaComando(sql, valores);
+
+    if (rows.length === 0) {
+        return null;
+    }
+
+    const row = rows[0];
+
+    const imovel = new Imovel(
+        row.imv_id,
+        row.imv_descricao,
+        row.imv_cep,
+        row.imv_endereco,
+        row.imv_bairro,
+        row.imv_cidade,
+        row.imv_valor,
+        row.imv_disponivel
+    );
+
+    const usuario = new Usuario();
+
+    usuario.id = row.usu_id;
+
+    const alugueis = [];
+
+    for (const row of rows) {
+
+        if (row.alu_id) {
+
+            const aluguel = new Aluguel(
+                row.alu_id,
+                row.alu_mes,
+                row.alu_vencimento,
+                row.alu_valor,
+                row.alu_pago,
+                null,
+                row.alu_status
+            );
+
+            alugueis.push(aluguel);
+        }
+    }
+
+    const contrato = new Contrato(
+        row.ctr_id,
+        imovel,
+        usuario,
+        row.con_status,
+        alugueis
+    );
+
+    return contrato;
+}
+
 async gravar(entidade, client) {
 
     let sql = `
@@ -120,11 +216,11 @@ async gravar(entidade, client) {
     return rows;
 }
 
-async cancelar(id) {
+async cancelar(id, client) {
     let sql = "update tb_contrato SET con_status = 'CANCELADO' where ctr_id = $1";
     let valores = [id];
 
-    let result = await this.banco.ExecutaComandoNonQuery(sql, valores);
+    let result = await this.banco.ExecutaComandoNonQuery(sql, valores, client);
 
     return result;
 }

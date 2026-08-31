@@ -144,16 +144,19 @@ console.log("TIPO DISPONIVEL:", typeof imovel[0]?.disponivel);
                 res.status(404).json("Nenhum contrato de locação encontrado!");
         }
         catch(ex) {
-            await banco.Rollback();
+            
             console.log(ex);
             return res.status(500).json({msg: "Erro interno de servidor"})
         }
     }
 
     async cancelar(req, res) {
+
     let banco = new Database();
+    let client = null;
 
     try {
+
         let { id } = req.params;
 
         this.#contratoRepository.banco = banco;
@@ -161,47 +164,69 @@ console.log("TIPO DISPONIVEL:", typeof imovel[0]?.disponivel);
         this.#imovelRepository.banco = banco;
 
         if (!id) {
-            return res.status(400).json({ msg: "O id do contrato não foi enviado!" });
+            return res.status(400).json({
+                msg: "O id do contrato não foi enviado!"
+            });
         }
 
+        // Busca o contrato
         let contrato = await this.#contratoRepository.obterPorId(id);
 
         if (!contrato || contrato.length === 0) {
-            return res.status(404).json({ msg: "Contrato não encontrado!" });
+            return res.status(404).json({
+                msg: "Contrato não encontrado!"
+            });
         }
 
         contrato = contrato[0];
 
+        // Verifica se o contrato pertence ao usuário logado
         if (contrato.usu_id !== req.usuarioLogado.id) {
-            return res.status(403).json({ msg: "Você não tem permissão para cancelar este contrato!" });
+            return res.status(403).json({
+                msg: "Você não tem permissão para cancelar este contrato!"
+            });
         }
 
+        // Verifica se já está cancelado
         if (contrato.con_status === "CANCELADO") {
-            return res.status(400).json({ msg: "Este contrato já está cancelado!" });
+            return res.status(400).json({
+                msg: "Este contrato já está cancelado!"
+            });
         }
 
-        await banco.AbreTransacao();
+        // INICIA TRANSAÇÃO
+        client = await banco.AbreTransacao();
 
-        if (await this.#contratoRepository.cancelar(id)) {
-
-            await this.#aluguelRepository.cancelarPendentesPorContrato(id);
-
-            if (await this.#imovelRepository.liberar(contrato.imv_id)) {
-                await banco.Commit();
-
-                return res.status(200).json({
-                    msg: "Contrato cancelado com sucesso!"
-                });
-            } else {
-                throw new Error("Erro ao liberar imóvel");
-            }
-
-        } else {
+        // Cancela contrato
+        if (!await this.#contratoRepository.cancelar(id, client)) {
             throw new Error("Erro ao cancelar contrato");
         }
 
+        // Cancela aluguéis pendentes
+        if (!await this.#aluguelRepository.cancelarPendentesPorContrato(id, client)) {
+            throw new Error("Erro ao cancelar aluguéis");
+        }
+
+        // Libera imóvel
+        if (!await this.#imovelRepository.liberar(contrato.imv_id, client)) {
+            throw new Error("Erro ao liberar imóvel");
+        }
+
+        // CONFIRMA TRANSAÇÃO
+        await banco.Commit(client);
+        client = null;
+
+        return res.status(200).json({
+            msg: "Contrato cancelado com sucesso!"
+        });
+
     } catch (ex) {
+
         console.log(ex);
+
+        if (client) {
+            await banco.Rollback(client);
+        }
 
         return res.status(500).json({
             msg: "Erro durante o cancelamento do contrato"

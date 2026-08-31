@@ -96,9 +96,8 @@ export default class Imovel{
     }
 
       static toMap(row) {
-        return new Imovel(row["imv_id"], row["imv_descricao"], 
-                row["imv_endereco"],
-                row["imv_cep"], row["imv_bairro"], row["imv_cidade"], 
+        return new Imovel(row["imv_id"], row["imv_descricao"], row["imv_cep"],
+                row["imv_endereco"], row["imv_bairro"], row["imv_cidade"], 
                 row["imv_valor"], 
                 row["imv_disponivel"]
             )

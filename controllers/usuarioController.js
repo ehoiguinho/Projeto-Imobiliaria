@@ -16,7 +16,7 @@ export default class UsuarioController{
      try{
         const { id } = req.params; // id vem da url
         let {nome, email, ativo, senha, perfil} = req.body;
-        if(id, nome && email && senha && ativo !== 'undefined' && perfil !== 'undefined'){
+        if(id && nome && email && senha && ativo !== 'undefined' && perfil !== 'undefined'){
             if(await this.#repositorio.buscarId(id)){
                 let entidade = new Usuario(id, nome, email, ativo, senha, new Perfil(perfil.id));
                 if(await this.#repositorio.alterar(entidade))
@@ -34,34 +34,47 @@ export default class UsuarioController{
      } 
     }
 
-    async cadastrar(req, res){
+    async cadastrar(req, res) {
     console.log("BODY:", req.body);
-        try{
-        let {nome, email, ativo, senha, perfil} = req.body;
 
-        if(nome && email && ativo && senha && perfil && perfil.id){
+    try {
+        let { nome, email, ativo, senha, perfil } = req.body;
 
-            let entidade = new Usuario(0, nome, email, ativo, senha, new Perfil(perfil.id));
-            let inseriu = await this.#repositorio.cadastrar(entidade);
-            if(inseriu == true){
-                return res.status(200).json({msg: "Usuário cadastrado com sucesso!"});
-            }
-            else{
-                throw new Error ("Erro ao cadastrar usuário.")
-            }
-            
+        if (!nome || !email || !ativo || !senha || !perfil || !perfil.id) {
+            return res.status(400).json({
+                msg: "Erro ao cadastrar usuário, verifique as credenciais e insira os valores corretamente!"
+            });
         }
-        else{
-            return res.status(400).json({msg: "Erro ao cadastrar usuário, verifique as credenciais e insira os valores corretamente!"});
-        }
-            }
-                catch(exception){
-                    console.log(exception);
-                    return res.status(500).json({msg: exception.message});
 
+        let entidade = new Usuario(
+            0,
+            nome,
+            email,
+            ativo,
+            senha,
+            new Perfil(perfil.id)
+        );
+
+        let idUsuario = await this.#repositorio.cadastrar(entidade);
+
+        if (idUsuario) {
+            entidade.id = idUsuario;
+
+            return res.status(201).json({
+                msg: "Usuário cadastrado com sucesso!",
+                id: idUsuario
+            });
         }
-        
+
+        throw new Error("Erro ao cadastrar usuário.");
+
+    } catch (exception) {
+        console.log(exception);
+        return res.status(500).json({
+            msg: exception.message
+        });
     }
+}
 
     async listar(req, res){
         try{

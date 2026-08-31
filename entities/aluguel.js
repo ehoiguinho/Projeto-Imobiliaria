@@ -70,7 +70,7 @@ export default class Aluguel{
 
 
     static toMap(row) {
-        let aluguel = new AluguelEntity();
+        let aluguel = new Aluguel();
         aluguel.id = row["alu_id"];
         aluguel.mes = row["alu_mes"];
         aluguel.valor = row["alu_valor"];

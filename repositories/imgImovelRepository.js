@@ -1,47 +1,79 @@
 import Repository from "./repository.js";
 import Imagem from "../entities/imagem.js";
 
-export default class imgImovelRepository extends Repository{
+export default class imgImovelRepository extends Repository {
 
-     constructor(){
+    constructor() {
         super();
     }
 
-    async gravar(entidade){
-        let sql = "insert into tb_imgimovel (imv_id, img_caminho) values (?, ?)";
-        let valores = [entidade.imovel.id, entidade.caminho];
+    async gravar(entidade) {
 
-        let result = await this.banco.ExecutaComandoNonQuery(sql, valores);
-        entidade.id = result;
+        const sql = `
+            INSERT INTO tb_imgimovel
+                (imv_id, img_caminho, img_extensao)
+            VALUES
+                ($1, $2, $3)
+            RETURNING img_id
+        `;
 
-        return result;
+        const valores = [
+            entidade.imovel.id,
+            entidade.caminho,
+            entidade.extensao
+        ];
+
+        const result = await this.banco.ExecutaComando(sql, valores);
+
+        const id = result[0].img_id;
+
+        entidade.id = id;
+
+        return id;
     }
 
     async deletar(id) {
-        let sql = "delete from tb_imgimovel where img_id = ?";
-        let valores = [id];
+
+        const sql = `
+            DELETE FROM tb_imgimovel
+            WHERE img_id = $1
+        `;
+
+        const valores = [id];
 
         return await this.banco.ExecutaComandoNonQuery(sql, valores);
     }
 
     async listarPorImovel(idImovel) {
-        let sql = "select * from tb_imgimovel where imv_id = ?";
-        let valores = [idImovel];
 
-        let rows = await this.banco.ExecutaComando(sql, valores);
-        let lista = [];
-        for(let row of rows) {
+        const sql = `
+            SELECT *
+            FROM tb_imgimovel
+            WHERE imv_id = $1
+        `;
+
+        const valores = [idImovel];
+
+        const rows = await this.banco.ExecutaComando(sql, valores);
+
+        const lista = [];
+
+        for (const row of rows) {
             lista.push(Imagem.toMap(row));
+        }
+
+        return lista;
     }
 
-    return lista;
-
-}
-
     async deletarPorImovel(idImovel) {
-        let sql = "delete from tb_imgimovel where imv_id = ?";
-        let valores = [idImovel];
 
-        return this.banco.ExecutaComandoNonQuery(sql, valores);
+        const sql = `
+            DELETE FROM tb_imgimovel
+            WHERE imv_id = $1
+        `;
+
+        const valores = [idImovel];
+
+        return await this.banco.ExecutaComandoNonQuery(sql, valores);
     }
 }

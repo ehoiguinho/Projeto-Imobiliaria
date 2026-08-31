@@ -7,6 +7,7 @@
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.1.1",
     "mysql2": "^3.16.0",
+    "pg": "^8.23.0",
     "swagger-autogen": "^2.23.7",
     "swagger-ui-express": "^5.0.1"
   }

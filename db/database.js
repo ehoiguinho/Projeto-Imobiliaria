@@ -1,100 +1,111 @@
-import mysql from 'mysql2'
+import pg from "pg";
+
+const { Pool } = pg;
 
 export default class Database {
 
     #conexao;
 
-    get conexao() { return this.#conexao;} set conexao(conexao) { this.#conexao = conexao; }
+    get conexao() {
+        return this.#conexao;
+    }
+
+    set conexao(conexao) {
+        this.#conexao = conexao;
+    }
 
     constructor() {
 
-        this.#conexao = mysql.createPool({
-            host: '132.226.245.178', //endereço do nosso banco de dados na nuvem
-            database: 'PFS2_10442313118', //a database de cada um de vocês possui a nomenclatura PFS2_(RA)
-            user: '10442313118', // usuario e senha de cada um de vocês é o RA
-            password: '10442313118',
-            idleTimeout: 30000,
-            connectionLimit: 50
+        this.#conexao = new Pool({
+            host: "localhost",
+            port: 5432,
+            database: "imobiliaria",
+            user: "postgres",
+            password: "postgres",
+            max: 50,
+            idleTimeoutMillis: 30000
         });
     }
 
-    AbreTransacao() {
-        var cnn = this.#conexao;
-        return new Promise(function(res, rej) {
-            cnn.query("START TRANSACTION", function (error, results, fields) {
-                if (error) 
-                    rej(error);
-                else
-                    res(results);
-            });
-        })
-    }
-    
-    Rollback() {
-        var cnn = this.#conexao;
-        return new Promise(function(res, rej) {
-            cnn.query("ROLLBACK", function (error, results, fields) {
-                if (error) 
-                    rej(error);
-                else
-                    res(results);
-            });
-        })
-    }
-    
-    Commit() {
-        var cnn = this.#conexao;
-        return new Promise(function(res, rej) {
-            cnn.query("COMMIT", function (error, results, fields) {
-                if (error) 
-                    rej(error);
-                else
-                    res(results);
-            });
-        })
+    async AbreTransacao() {
+
+        const client = await this.#conexao.connect();
+
+        try {
+
+            await client.query("BEGIN");
+
+            return client;
+
+        } catch (error) {
+
+            client.release();
+
+            throw error;
+        }
     }
 
-    ExecutaComando(sql, valores) {
-        var cnn = this.#conexao;
-        return new Promise(function(res, rej) {
-            cnn.query(sql, valores, function (error, results, fields) {
-                if (error) 
-                    rej(error);
-                else 
-                    res(results);
-            });
-        })
-    }
-    
-    ExecutaComandoNonQuery(sql, valores) {
-        var cnn = this.#conexao;
-        return new Promise(function(res, rej) {
-            cnn.query(sql, valores, function (error, results, fields) {
-                if (error) 
-                    rej(error);
-                else{
-                       if(results.insertId > 0)
-                    res(results.insertId);
-                else
-                    res(results.affectedRows > 0);
+    async Rollback(client) {
 
-            }
-            });
-        })
+        if (client) {
+            await client.query("ROLLBACK");
+            client.release();
+        }
     }
 
-    ExecutaComandoLastInserted(sql, valores) {
-        var cnn = this.#conexao;
-        return new Promise(function(res, rej) {
-            cnn.query(sql, valores, function (error, results, fields) {
-                if (error) 
-                    rej(error);
-                else 
-                    res(results.insertId);
-            });
-        })
+    async Commit(client) {
+
+        if (client) {
+            await client.query("COMMIT");
+            client.release();
+        }
     }
 
+    async ExecutaComando(sql, valores = [], client = null) {
+
+        console.log("SQL:", sql);
+        console.log("VALORES:", valores);
+
+        const conexao = client || this.#conexao;
+
+        const result = await conexao.query(sql, valores);
+
+        return result.rows;
+    }
+
+    async ExecutaComandoNonQuery(sql, valores = [], client = null) {
+
+        const conexao = client || this.#conexao;
+
+        const result = await conexao.query(sql, valores);
+
+        if (result.rows.length > 0) {
+
+            const primeiraLinha = result.rows[0];
+
+            const chave = Object.keys(primeiraLinha)[0];
+
+            return primeiraLinha[chave];
+        }
+
+        return result.rowCount > 0;
+    }
+
+    async ExecutaComandoLastInserted(sql, valores = [], client = null) {
+
+        const conexao = client || this.#conexao;
+
+        const result = await conexao.query(sql, valores);
+
+        if (result.rows.length > 0) {
+
+            const primeiraLinha = result.rows[0];
+
+            const chave = Object.keys(primeiraLinha)[0];
+
+            return primeiraLinha[chave];
+        }
+
+        return null;
+    }
 }
-
-

@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: imobiliaria-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: imobiliaria
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - imobiliaria_data:/var/lib/postgresql/data
+
+volumes:
+  imobiliaria_data:

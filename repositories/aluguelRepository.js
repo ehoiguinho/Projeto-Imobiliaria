@@ -1,81 +1,179 @@
-import Database from "../db/database.js";
 import Aluguel from "../entities/aluguel.js";
 import Repository from "./repository.js";
 
-export default class AluguelRepository extends Repository{ 
+export default class AluguelRepository extends Repository {
 
-    
-    constructor(){
+    constructor() {
         super();
     }
 
+        async gravar(entidade, client) {
 
-    async gravar(entidade){
-        let sql = "insert into tb_aluguel (alu_mes, alu_vencimento, alu_valor, alu_pago, ctr_id) VALUES (?, ?, ?, ?, ?)";
-        let valores = [entidade.mes, entidade.vencimento, entidade.valor, entidade.pago, entidade.contrato.id];
+    let sql = `
+        INSERT INTO tb_aluguel
+            (alu_mes, alu_vencimento, alu_valor, alu_pago, alu_status, ctr_id)
+        VALUES
+            ($1, $2, $3, $4, $5, $6)
+        RETURNING alu_id
+    `;
 
-        let result = await this.banco.ExecutaComandoNonQuery(sql, valores);
+    let valores = [
+        entidade.mes,
+        entidade.vencimento,
+        entidade.valor,
+        entidade.pago,
+        entidade.status,
+        entidade.contrato.id
+    ];
 
-        entidade.id = result;
+    let result = await this.banco.ExecutaComandoLastInserted(
+        sql,
+        valores,
+        client
+    );
 
-        return result;
-    }
+    entidade.id = result;
 
-    async listarPorUsuario(id){
-        let sql = "select * from tb_aluguel a inner join tb_contrato c on a.ctr_id = c.ctr_id where c.ctr_id = ?";
-        let valores = [id];
+    return result;
+}
+
+    async listarPorUsuario(id) {
+
+        const sql = `
+            SELECT *
+            FROM tb_aluguel a
+            INNER JOIN tb_contrato c
+                ON a.ctr_id = c.ctr_id
+            WHERE c.usu_id = $1
+        `;
+
+        const valores = [id];
 
         const rows = await this.banco.ExecutaComando(sql, valores);
 
-        let lista = [];
-        for(let i = 0; i< rows.length; i++){
-            lista.push(Aluguel.toMap(rows[i]))
+        const lista = [];
+
+        for (const row of rows) {
+            lista.push(Aluguel.toMap(row));
         }
 
         return lista;
     }
 
-    async obterPorId(id){
-    let sql = "select  alu_id as id, alu_mes as mes, alu_pago as pago, alu_status as status, alu_valor as valor, alu_vencimento as vencimento, ctr_id as contratoId from tb_aluguel where alu_id = ? ";
-    let valores = [id];
+   async obterPorId(id) {
+
+    const sql = `
+        SELECT
+            a.alu_id AS id,
+            a.alu_mes AS mes,
+            a.alu_pago AS pago,
+            a.alu_status AS status,
+            a.alu_valor AS valor,
+            a.alu_vencimento AS vencimento,
+            a.ctr_id AS contratoId,
+            c.usu_id AS usuarioId
+        FROM tb_aluguel a
+        INNER JOIN tb_contrato c
+            ON a.ctr_id = c.ctr_id
+        WHERE a.alu_id = $1
+    `;
+
+    const valores = [id];
 
     return await this.banco.ExecutaComando(sql, valores);
 }
 
-    async marcarComoPago(id){
-    let sql = "update tb_aluguel set alu_pago = 'S', alu_status = 'PAGO' where alu_id = ? and alu_pago = 'N' and alu_status = 'PENDENTE' ";
-    let valores = [id];
+    async marcarComoPago(id) {
 
-    let result = await this.banco.ExecutaComandoNonQuery(sql, valores);
+    const sql = `
+        UPDATE tb_aluguel
+        SET
+            alu_pago = 'S',
+            alu_status = 'PAGO'
+        WHERE
+            alu_id = $1
+            AND alu_pago = 'N'
+            AND alu_status IN ('PENDENTE', 'ATRASADO')
+    `;
 
-    return result;
+    const valores = [id];
+
+    return await this.banco.ExecutaComandoNonQuery(sql, valores);
 }
 
     async cancelarPendentesPorContrato(contratoId) {
-    let sql = " update tb_aluguel set alu_status = 'CANCELADO' where ctr_id = ? and alu_pago = 'N' ";
 
-    let valores = [contratoId];
+        const sql = `
+            UPDATE tb_aluguel
+            SET alu_status = 'CANCELADO'
+            WHERE
+                ctr_id = $1
+                AND alu_pago = 'N'
+        `;
 
-    let result = await this.banco.ExecutaComandoNonQuery(sql, valores);
+        const valores = [contratoId];
 
-    return result;
+        return await this.banco.ExecutaComandoNonQuery(sql, valores);
+    }
+
+    async atualizarAtrasados() {
+
+        const sql = `
+            UPDATE tb_aluguel
+            SET alu_status = 'ATRASADO'
+            WHERE
+                alu_vencimento < CURRENT_DATE
+                AND alu_pago = 'N'
+                AND alu_status = 'PENDENTE'
+        `;
+
+        return await this.banco.ExecutaComandoNonQuery(sql);
+    }
+
+    async obterPorIdUsuario(id, usuarioId) {
+
+    const sql = `
+        SELECT
+            a.alu_id AS id,
+            a.alu_mes AS mes,
+            a.alu_pago AS pago,
+            a.alu_status AS status,
+            a.alu_valor AS valor,
+            a.alu_vencimento AS vencimento,
+            a.ctr_id AS contrato_id
+        FROM tb_aluguel a
+        INNER JOIN tb_contrato c
+            ON a.ctr_id = c.ctr_id
+        WHERE a.alu_id = $1
+        AND c.usu_id = $2
+    `;
+
+    const valores = [id, usuarioId];
+
+    return await this.banco.ExecutaComando(sql, valores);
 }
 
-    async atualizarAtrasados(){
-    let sql = "update tb_aluguel SET alu_status = 'ATRASADO' where alu_vencimento < CURDATE() and alu_pago = 'N' and alu_status = 'PENDENTE' ";
+    async listarPorContrato(contratoId, usuarioId) {
 
-    let result = await this.banco.ExecutaComandoNonQuery(sql);
+    const sql = `
+        SELECT
+            a.alu_id AS id,
+            a.alu_mes AS mes,
+            a.alu_pago AS pago,
+            a.alu_status AS status,
+            a.alu_valor AS valor,
+            a.alu_vencimento AS vencimento,
+            a.ctr_id AS contratoId
+        FROM tb_aluguel a
+        INNER JOIN tb_contrato c
+            ON a.ctr_id = c.ctr_id
+        WHERE a.ctr_id = $1
+        AND c.usu_id = $2
+        ORDER BY a.alu_vencimento
+    `;
 
-    return result;
+    const valores = [contratoId, usuarioId];
+
+    return await this.banco.ExecutaComando(sql, valores);
 }
-
-async listarPorContrato(contratoId){
-    let sql = "select alu_id as id, alu_mes as mes, alu_pago as pago, alu_status as status, alu_valor as valor, alu_vencimento as vencimento, ctr_id as contratoId from tb_aluguel where ctr_id = ? order by  alu_vencimento";
-    let valores = [contratoId];
-
-    let result = await this.banco.ExecutaComando(sql, valores);
-    
-    return result;
-}
-
 }

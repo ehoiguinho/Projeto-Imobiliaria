@@ -54,7 +54,7 @@ export default class Imagem{
     static toMap(row) {
         return new Imagem(
             row["img_id"],
-            new ImovelEntity(row["imo_id"]),
+            new ImovelEntity(row["imv_id"]),
             row["img_caminho"],
             row["img_extensao"]
         );

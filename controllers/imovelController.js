@@ -186,8 +186,10 @@ export default class ImovelController{
 
                 let imagem = new Imagem(0, imovel, caminho, extensao);
 
-                if(!imagem.validar){
-                    return res.status(400).json({msg: "Formato de imagem inválido, use JPG, JPEG ou PNG!"});
+                if(!imagem.validar()){
+                    return res.status(400).json({
+                        msg: "Formato de imagem inválido, use JPG, JPEG ou PNG!"
+                    });
                 }
 
                 await this.#imagemRepository.gravar(imagem);

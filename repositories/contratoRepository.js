@@ -13,53 +13,106 @@ export default class ContratoRepository extends Repository{
     }
 
 
-    async listarPorUsuario(id){
-        let sql = "select * from tb_contrato c inner join tb_imovel i on c.imv_id = i.imv_id inner join tb_aluguel a on c.ctr_id = a.ctr_id where c.usu_id = ?";
-        let rows = await this.banco.ExecutaComando(sql, [id]);
+    async listarPorUsuario(id) {
 
-        let lista = [];
-        
-        for(let i = 0;i < rows.length; i++){
-            let row = rows[i];
-            let id = row["ctr_id"];
-            let listaAlugueis = [];
+    let sql = `
+        SELECT
+            c.ctr_id,
+            c.imv_id,
+            c.usu_id,
+            c.con_status,
 
-            for(let j =0;j< rows.length; j++){
-                if(id == rows[j]["ctr_id"]){
-                    j++;
-                    listaAlugueis.push(new Aluguel(rows[j]["alu_id"],
-                        rows[j]["alu_mes"], rows[j]["alu_vencimento"],
-                        rows[j]["alu_valor"], rows[j]["alu_pago"]));
-                }
-            }
-                lista.push(new Contrato(row["ctr_id"],
-                    new Imovel(row["imv_id"], row["imv_descricao"],
-                        row["imv_endereco"]),
-                    new Usuario(row["usu_id"], listaAlugueis))
-                )
-            
+            i.imv_descricao,
+            i.imv_endereco,
+
+            a.alu_id,
+            a.alu_mes,
+            a.alu_vencimento,
+            a.alu_valor,
+            a.alu_pago,
+            a.alu_status
+
+        FROM tb_contrato c
+        INNER JOIN tb_imovel i
+            ON c.imv_id = i.imv_id
+        INNER JOIN tb_aluguel a
+            ON c.ctr_id = a.ctr_id
+        WHERE c.usu_id = $1
+        ORDER BY a.alu_vencimento
+    `;
+
+    let rows = await this.banco.ExecutaComando(sql, [id]);
+
+    let lista = [];
+
+    for (let row of rows) {
+
+        let contrato = lista.find(
+            c => c.id === row["ctr_id"]
+        );
+
+        if (!contrato) {
+
+            contrato = new Contrato(
+                row["ctr_id"],
+                new Imovel(
+                    row["imv_id"],
+                    row["imv_descricao"],
+                    row["imv_endereco"]
+                ),
+                new Usuario(
+                    row["usu_id"]
+                ),
+                [],
+                row["con_status"]
+            );
+
+            lista.push(contrato);
         }
 
-        return lista;
-
+        contrato.alugueis.push(
+            new Aluguel(
+                row["alu_id"],
+                row["alu_mes"],
+                row["alu_vencimento"],
+                row["alu_valor"],
+                row["alu_pago"],
+                row["alu_status"]
+            )
+        );
     }
 
-    async gravar(entidade){
-        let sql = "insert into tb_contrato (imv_id, usu_id) VALUES (?, ?)";
-        let valores = [entidade.imovel.id, entidade.usuario.id];
-        const result = await this.banco.ExecutaComandoLastInserted(sql, valores);
+    return lista;
+}
+async gravar(entidade, client) {
 
-           if(result) {
-            entidade.id = result;
+    let sql = `
+        insert into tb_contrato (imv_id, usu_id)
+        VALUES ($1, $2)
+        returning ctr_id
+    `;
 
-            return true;
-        }
+    let valores = [
+        entidade.imovel.id,
+        entidade.usuario.id
+    ];
 
-        return result;
+    const result = await this.banco.ExecutaComando(
+        sql,
+        valores,
+        client
+    );
+
+    if (result.length > 0) {
+        entidade.id = result[0].ctr_id;
+        return true;
     }
+
+    return false;
+}
 
     async obterPorId(id) {
-    let sql = "select c.ctr_id, c.imv_id, c.usu_id, c.con_status from tb_contrato c where c.ctr_id = ?";
+    let sql = "select c.ctr_id, c.imv_id, c.usu_id, c.con_status from tb_contrato c where c.ctr_id = $1";
     let valores = [id];
 
     let rows = await this.banco.ExecutaComando(sql, valores);
@@ -68,7 +121,7 @@ export default class ContratoRepository extends Repository{
 }
 
 async cancelar(id) {
-    let sql = "update tb_contrato SET con_status = 'CANCELADO' where ctr_id = ?";
+    let sql = "update tb_contrato SET con_status = 'CANCELADO' where ctr_id = $1";
     let valores = [id];
 
     let result = await this.banco.ExecutaComandoNonQuery(sql, valores);

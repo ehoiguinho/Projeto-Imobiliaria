@@ -1,95 +1,156 @@
-import Database from "../db/database.js";
 import Perfil from "../entities/perfil.js";
 import Usuario from "../entities/usuario.js";
 import Repository from "./repository.js";
 
+export default class UsuarioRepository extends Repository {
 
-export default class UsuarioRepository extends Repository{
-
-     constructor(){
+    constructor() {
         super();
     }
 
-    async validarAcesso(email, senha){
-        let sql = "select * from tb_usuario where usu_email = ? and usu_senha = ?";
+    async validarAcesso(email, senha) {
+
+        const sql = `
+            SELECT 
+                u.*,
+                p.per_descricao
+            FROM tb_usuario u
+            INNER JOIN tb_perfil p
+                ON u.per_id = p.per_id
+            WHERE u.usu_email = $1
+            AND u.usu_senha = $2
+        `;
+
         const valores = [email, senha];
 
-        const row = await this.banco.ExecutaComando(sql, valores);
+        const rows = await this.banco.ExecutaComando(sql, valores);
 
-        if(row.length > 0 ){
-            return this.toMap(row[0]);
+        if (rows.length > 0) {
+            return this.toMap(rows[0]);
         }
-        
+
         return null;
     }
 
-    async cadastrar(usuario){
-        let sql = "insert into tb_usuario (usu_nome, usu_email, usu_ativo, usu_senha, per_id) values (?, ?, ?, ?, ?)"
-        const params = [usuario.nome, usuario.email, usuario.ativo, usuario.senha, usuario.perfil.id];
+    async cadastrar(usuario) {
 
-        const result = await this.banco.ExecutaComandoNonQuery(sql, params);
+        const sql = `
+            INSERT INTO tb_usuario
+                (usu_nome, usu_email, usu_ativo, usu_senha, per_id)
+            VALUES
+                ($1, $2, $3, $4, $5)
+            RETURNING usu_id
+        `;
 
-        return result;
+        const valores = [
+            usuario.nome,
+            usuario.email,
+            usuario.ativo,
+            usuario.senha,
+            usuario.perfil.id
+        ];
 
+        const rows = await this.banco.ExecutaComando(sql, valores);
+
+        return rows[0].usu_id;
     }
 
-    async listar(){
-        let sql = "select * from tb_usuario";
+    async listar() {
+
+        const sql = `
+            SELECT
+                u.*,
+                p.per_descricao
+            FROM tb_usuario u
+            INNER JOIN tb_perfil p
+                ON u.per_id = p.per_id
+        `;
+
         const rows = await this.banco.ExecutaComando(sql);
+
         const usuarios = [];
 
-        for(let i = 0; i < rows.length; i ++){
-            const row = rows[i];
+        for (const row of rows) {
             usuarios.push(this.toMap(row));
-
         }
+
         return usuarios;
     }
 
+    async deletar(id) {
 
-    async deletar(id){
-        let sql = "delete from tb_usuario where usu_id = ?";
-        const params = [id];
+        const sql = `
+            DELETE FROM tb_usuario
+            WHERE usu_id = $1
+        `;
 
-        const result = await this.banco.ExecutaComandoNonQuery(sql, params);
+        const valores = [id];
 
-        return result;
+        return await this.banco.ExecutaComandoNonQuery(sql, valores);
     }
 
-    async alterar(entidadeAtualizada){
-        let sql = "update tb_usuario set usu_nome = ?, usu_email = ?, usu_ativo = ?, usu_senha = ?, per_id = ? where usu_id = ?";
-        const valores = [entidadeAtualizada.nome, entidadeAtualizada.email, entidadeAtualizada.ativo, entidadeAtualizada.senha, entidadeAtualizada.perfil.id, entidadeAtualizada.id];
+    async alterar(entidadeAtualizada) {
 
-        const result = await this.banco.ExecutaComandoNonQuery(sql, valores);
+        const sql = `
+            UPDATE tb_usuario
+            SET
+                usu_nome = $1,
+                usu_email = $2,
+                usu_ativo = $3,
+                usu_senha = $4,
+                per_id = $5
+            WHERE usu_id = $6
+        `;
 
-        return result;
+        const valores = [
+            entidadeAtualizada.nome,
+            entidadeAtualizada.email,
+            entidadeAtualizada.ativo,
+            entidadeAtualizada.senha,
+            entidadeAtualizada.perfil.id,
+            entidadeAtualizada.id
+        ];
+
+        return await this.banco.ExecutaComandoNonQuery(sql, valores);
     }
 
-    async buscarId(id){
-        let sql = "select * from tb_usuario where usu_id = ?";
-        const params = [id];
-        
-        const rows = await this.banco.ExecutaComando(sql, params);
-        if(rows.length > 0 ){
-            let row = rows[0];
-            const usuario = this.toMap(row);
-            return usuario;
+    async buscarId(id) {
+
+        const sql = `
+            SELECT
+                u.*,
+                p.per_descricao
+            FROM tb_usuario u
+            INNER JOIN tb_perfil p
+                ON u.per_id = p.per_id
+            WHERE u.usu_id = $1
+        `;
+
+        const valores = [id];
+
+        const rows = await this.banco.ExecutaComando(sql, valores);
+
+        if (rows.length > 0) {
+            return this.toMap(rows[0]);
         }
 
         return null;
     }
 
     toMap(row) {
-        let usuario = new Usuario();
+
+        const usuario = new Usuario();
+
         usuario.id = row["usu_id"];
         usuario.nome = row["usu_nome"];
         usuario.email = row["usu_email"];
         usuario.senha = row["usu_senha"];
         usuario.ativo = row["usu_ativo"];
-        usuario.perfil = new Perfil(row["per_id"]);
-        if(row["per_descricao"]){
-            usuario.perfil.descricao = row["per_descricao"];
-        }
+
+        usuario.perfil = new Perfil(
+            row["per_id"],
+            row["per_descricao"]
+        );
 
         return usuario;
     }

@@ -1,130 +1,125 @@
-import Perfil from "../entities/perfil.js";
-import Usuario from "../entities/usuario.js";
-import UsuarioRepository from "../repositories/usuarioRepository.js";
+import UsuarioService from "../services/usuarioService.js";
 
+export default class UsuarioController {
 
-export default class UsuarioController{
+    #service;
 
-    #repositorio;
-
-    constructor(){
-        this.#repositorio = new UsuarioRepository();
-        
-    }
-
-    async alterar(req, res){
-     try{
-        const { id } = req.params; // id vem da url
-        let {nome, email, ativo, senha, perfil} = req.body;
-        if(id && nome && email && senha && ativo !== 'undefined' && perfil !== 'undefined'){
-            if(await this.#repositorio.buscarId(id)){
-                let entidade = new Usuario(id, nome, email, ativo, senha, new Perfil(perfil.id));
-                if(await this.#repositorio.alterar(entidade))
-                res.status(200).json({msg: "Usuário alterado com sucesso!"});
-                else
-                    throw new Error("Erro ao alterar dados do usuário");
-            }else{
-                return res.status(404).json({msg: "Não foi possível encontrar o usuário para a alteração dos dados."});
-            }
-        }
-
-     }catch(exception){
-        console.log(exception);
-        return res.status(500).json({msg: exception.message})
-     } 
+    constructor() {
+        this.#service = new UsuarioService();
     }
 
     async cadastrar(req, res) {
-    console.log("BODY:", req.body);
 
-    try {
-        let { nome, email, ativo, senha, perfil } = req.body;
+        try {
 
-        if (!nome || !email || !ativo || !senha || !perfil || !perfil.id) {
-            return res.status(400).json({
-                msg: "Erro ao cadastrar usuário, verifique as credenciais e insira os valores corretamente!"
-            });
-        }
+            const { nome, email, ativo, senha, perfil } = req.body;
 
-        let entidade = new Usuario(
-            0,
-            nome,
-            email,
-            ativo,
-            senha,
-            new Perfil(perfil.id)
-        );
-
-        let idUsuario = await this.#repositorio.cadastrar(entidade);
-
-        if (idUsuario) {
-            entidade.id = idUsuario;
+            const usuario = await this.#service.cadastrar(
+                nome,
+                email,
+                ativo,
+                senha,
+                perfil?.id
+            );
 
             return res.status(201).json({
                 msg: "Usuário cadastrado com sucesso!",
-                id: idUsuario
+                id: usuario.id
+            });
+
+        } catch (ex) {
+
+            console.log(ex.message);
+
+            return res.status(ex.status || 400).json({
+                msg: ex.message
             });
         }
-
-        throw new Error("Erro ao cadastrar usuário.");
-
-    } catch (exception) {
-        console.log(exception);
-        return res.status(500).json({
-            msg: exception.message
-        });
-    }
-}
-
-    async listar(req, res){
-        try{
-            let lista = await this.#repositorio.listar();
-            if(lista.length > 0 ){
-                return res.status(200).json(lista);
-            }
-            else{
-                return res.status(404).json({msg: "Nenhum usuário encontrado para listagem!"});
-            }
-        }
-        catch(exception){
-            console.log(exception);
-            return res.status(500).json({msg: exception.message})
-        }
     }
 
-    async deletar(req, res){
-        try{
-            let {id} = req.params;
-            if(await this.#repositorio.buscarId(id)){
-                if(await this.#repositorio.deletar(id))
-                    return res.status(200).json({msg: "Usuário deletado com sucesso!"});
-                else
-                    throw new Error("Erro ao deletar usuário do banco de dados.");
-            }
-            else{
-                return res.status(400).json({msg:"Usuário não encontrado para a deleção!"});
-            }
+    async alterar(req, res) {
 
-        }
-        catch(exception){
-            console.log(exception);
-            return res.status(500).json({msg: exception.message});
+        try {
+
+            const { id } = req.params;
+            const { nome, email, ativo, senha, perfil } = req.body;
+
+            const resultado = await this.#service.alterar(
+                id,
+                nome,
+                email,
+                ativo,
+                senha,
+                perfil?.id
+            );
+
+            return res.status(200).json(resultado);
+
+        } catch (ex) {
+
+            console.log(ex.message);
+
+            return res.status(ex.status || 400).json({
+                msg: ex.message
+            });
         }
     }
 
-    async obterUsuario(req, res){
-        try{
-        let {id} = req.params;
-        let usuario = await this.#repositorio.buscarId(id);
-        if(usuario){
+    async listar(req, res) {
+
+        try {
+
+            const lista = await this.#service.listar();
+
+            return res.status(200).json(lista);
+
+        } catch (ex) {
+
+            console.log(ex.message);
+
+            return res.status(ex.status || 500).json({
+                msg: ex.message
+            });
+        }
+    }
+
+    async deletar(req, res) {
+
+        try {
+
+            const { id } = req.params;
+
+            const resultado = await this.#service.deletar(id);
+
+            return res.status(200).json(resultado);
+
+        } catch (ex) {
+
+            console.log(ex.message);
+
+            return res.status(ex.status || 400).json({
+                msg: ex.message
+            });
+        }
+    }
+
+    async obterUsuario(req, res) {
+
+        try {
+
+            const { id } = req.params;
+
+            const usuario = await this.#service.obterUsuario(id);
+
             return res.status(200).json(usuario);
+
+        } catch (ex) {
+
+            console.log(ex.message);
+
+            return res.status(ex.status || 500).json({
+                msg: ex.message
+            });
         }
-        else{
-            return res.status(404).json({msg: "Nenhum usuário encontrado!"});
-        }
-        }catch(exception){
-            console.log(exception);
-            return res.status(500).json({msg: exception.message})
-        }
-}  
+    }
 }

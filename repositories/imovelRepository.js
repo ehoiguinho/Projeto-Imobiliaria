@@ -103,11 +103,11 @@ export default class ImovelRepository extends Repository{
         return result;
     }
 
-    async liberar(id) {
+    async liberar(id, client) {
     let sql = "update tb_imovel set imv_disponivel = 'S' where imv_id = $1 ";
     let valores = [id];
 
-    let result = await this.banco.ExecutaComandoNonQuery(sql, valores);
+    let result = await this.banco.ExecutaComandoNonQuery(sql, valores, client);
 
     return result;
 

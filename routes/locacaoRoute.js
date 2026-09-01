@@ -15,6 +15,25 @@ router.post("/", authMiddleware.validar, (req, res) => {
 
     ctrl.locar(req, res);
 })
+router.get("/alugueis/:id", authMiddleware.validar, (req, res) => {
+    /* #swagger.security = [{
+            "jwt": []
+    }] */
+    //#swagger.tags = ['Locação']
+    //#swagger.summary = "Lista os aluguéis de um contrato"
+
+    ctrl.listarAlugueis(req, res);
+});
+
+router.put("/alugueis/:id", authMiddleware.validar, (req, res) => {
+    /* #swagger.security = [{
+            "jwt": []
+    }] */
+    //#swagger.tags = ['Locação']
+    //#swagger.summary = "Realiza o pagamento de um aluguel"
+
+    ctrl.pagarAluguel(req, res);
+});
 
 router.get("/:id", authMiddleware.validar, (req, res) =>{
     /* #swagger.security = [{

@@ -1,228 +1,213 @@
-import Imovel from "../entities/imovel.js";
-import ImovelRepository from "../repositories/imovelRepository.js";
-import ImagemRepository from "../repositories/imgImovelRepository.js";
-import Imagem from "../entities/imagem.js";
+import ImovelService from "../services/imovelService.js";
 
+export default class ImovelController {
 
-export default class ImovelController{
+    #service;
 
-    #repo;
-    #imagemRepository;
-
-    constructor(){
-        this.#repo = new ImovelRepository();
-        this.#imagemRepository = new ImagemRepository();
+    constructor() {
+        this.#service = new ImovelService();
     }
 
-    async cadastrar(req, res){
-        try{
-            let {descricao, cep, endereco, bairro, cidade, valor, disponivel} = req.body;
+    async cadastrar(req, res) {
 
-            if(!descricao || !cep || !endereco || !bairro || !cidade || valor == null || !disponivel){
-                return res.status(400).json({msg: "Preencha os campos corretamente!"});
-            }
-            let entidade = new Imovel(0, descricao, cep, endereco, bairro, cidade, valor, disponivel);
+    try {
 
-            let idImovel = await this.#repo.gravar(entidade);
+        const resultado = await this.#service.cadastrar(
+            req.body,
+            req.files
+        );
 
-        if (!idImovel) {
-            throw new Error("Erro ao cadastrar imóvel.");
+        return res.status(201).json(resultado);
+
+    } catch (error) {
+
+        if (error.status) {
+            return res.status(error.status).json({
+                msg: error.message
+            });
         }
 
-        entidade.id = idImovel;
+        console.error(error);
 
-        if (req.files && req.files.length > 0) {
-            for (let arquivo of req.files) {
-                let caminho = `/uploads/imoveis/${arquivo.filename}`;
-
-                let imagem = new Imagem(0, entidade, caminho, arquivo.mimetype.split("/")[1]);
-
-                imagem.imovel.id = idImovel;
-
-                if (!imagem.validar()) {
-                    return res.status(400).json({
-                        msg: "Formato de imagem inválido. Use jpg, jpeg ou png."
-                    });
-                }
-
-                await this.#imagemRepository.gravar(imagem);
-            }
-        }
-
-        return res.status(200).json({msg: "Imóvel cadastrado com sucesso!"});
-        }
-        catch(error){
-            console.error(error);
-            return res.status(500).json({msg: "Erro ao processar requisição."});
-        }
-
-    }
-
-     async imagem(req, res){
-        try{
-            let {id} = req.params;
-            if(!id) {
-                return res.status(400).json({msg: "O id do imóvel não foi enviado!"});
-            }
-
-            let imagens = await this.#imagemRepository.listarPorImovel(id);
-
-            if(imagens.length > 0)
-                res.status(200).json(imagens);
-            else
-                res.status(404).json({msg: "Nenhuma imagem encontrada para o imóvel especificado"});
-        }
-        catch(ex) {
-            console.log(ex);
-            return res.status(500).json({msg: "Erro durante a consulta de imagens"})
-        }
-    }
-
-
-    async alterar(req, res){
-    try{
-        const {id} = req.params;
-        let {descricao, cep, endereco, bairro, cidade, valor, disponivel} = req.body;
-
-        if(!id || !descricao || !cep || !endereco || !bairro || !cidade || valor == null || disponivel == "true"){
-            return res.status(400).json({msg: "Preencha todos os campos obrigatórios"});
-        }
-        // cria entidade
-        let entidade = new Imovel(id, descricao, cep, endereco, bairro, cidade, valor, disponivel);
-
-        //  validação da regra de negócio
-        if(!entidade.validar()){
-            return res.status(400).json({msg: "Dados do imóvel inválidos"});
-        }
-        let atualizado = await this.#repo.alterar(entidade);
-
-        if(atualizado){
-            return res.status(200).json({msg: "Imóvel atualizado com sucesso"});
-        }else{
-            return res.status(404).json({msg: "Imóvel não encontrado"});
-        }
-
-    }
-    catch(error){
-        console.log(error);
-        return res.status(500).json({msg: "Erro ao processar requisição"});
+        return res.status(500).json({
+            msg: "Erro interno do servidor."
+        });
     }
 }
 
-    async listar(req, res){
-        try{
-            let lista = await this.#repo.listar();
-            if(lista.length > 0){
-                return res.status(200).json(lista);
-            }
-            else
-                return res.status(400).json({msg: "Nenhum imóvel encontrado."});
+    async listar(req, res) {
 
-        }catch(error){
-        console.error(error);
-        return res.status(500).json({msg: "Erro ao processar requisição"});
+        try {
+
+            const lista =
+                await this.#service.listar();
+
+            return res.status(200).json(lista);
+
+        } catch (error) {
+
+            console.error(error);
+
+            return res.status(404).json({
+                msg: error.message
+            });
         }
-        
     }
 
-      async listarDisponivel(req, res) {
-        var lista = await this.#repo.listarDisponivel();
-        if(lista.length == 0)
-            return res.status(404).json({msg: "Nenhum imóvel encontrado"});
+    async listarDisponivel(req, res) {
 
-        return res.status(200).json(lista);
-    }
+        try {
 
-    async obterPeloId(req, res){
-        try{
-        let {id} = req.params;
-        let imovel = await this.#repo.obterId(id);
-        if(imovel){
-            return res.status(200).json(imovel);
+            const lista =
+                await this.#service.listarDisponivel();
+
+            return res.status(200).json(lista);
+
+        } catch (error) {
+
+            console.error(error);
+
+            return res.status(404).json({
+                msg: error.message
+            });
         }
-        else
-            return res.status(404).json({msg: "Não foi possível encontrar o imóvel com o ID inserido."});
-    }catch(error){
-        console.error(error);
-        return res.status(500).json({msg: "Erro ao processar requisição."});
     }
-    } 
+
+    async obterPeloId(req, res) {
+
+    try {
+
+        const { id } = req.params;
+
+        const imovel = await this.#service.obterPeloId(id);
+
+        return res.status(200).json(imovel);
+
+    } catch (error) {
+
+        if (error.status) {
+            return res.status(error.status).json({
+                msg: error.message
+            });
+        }
+
+        console.error(error);
+
+        return res.status(500).json({
+            msg: "Erro interno do servidor."
+        });
+    }
     
-    async deletar(req, res){
-        try{
-            let {id} = req.params;
-            let imovel = await this.#repo.obterId(id);
-            if(imovel){
-                await this.#repo.deletar(id);
-                return res.status(200).json({msg: "Imóvel deletado com sucesso."});
-            }
-            else{
-                return res.status(404).json({msg: "Não foi possivel encontrar o imóvel para deleção"});
-            }
-        }
-        catch(error){
+}
+
+    async alterar(req, res) {
+
+        try {
+
+            const { id } = req.params;
+
+            const resultado =
+                await this.#service.alterar(
+                    id,
+                    req.body
+                );
+
+            return res.status(200).json(resultado);
+
+        } catch (error) {
+
             console.error(error);
-            return res.status(500).json({msg: "Erro ao processar requisição."});
-        }
 
+            return res.status(400).json({
+                msg: error.message
+            });
+        }
     }
 
-    async adicionarImagens(req, res){
-        try{
-            let {id} = req.params;
+    async deletar(req, res) {
 
-            if(!id){
-                return res.status(400).json({msg: "Id do imóvel não foi encontrado!"});
-            }
-            if(!req.files || req.files.length === 0){
-                return res.status(400).json({msg: "Nenhuma imagem foi enviada!"});
-            }
-            let imovel = new Imovel();
-            imovel.id = id;
+        try {
 
-            for(let arquivo of req.files){
-                let caminho = `/uploads/imoveis/${arquivo.filename}`;
-                let extensao = arquivo.mimetype.split("/")[1];
+            const { id } = req.params;
 
-                let imagem = new Imagem(0, imovel, caminho, extensao);
+            const resultado =
+                await this.#service.deletar(id);
 
-                if(!imagem.validar()){
-                    return res.status(400).json({
-                        msg: "Formato de imagem inválido, use JPG, JPEG ou PNG!"
-                    });
-                }
+            return res.status(200).json(resultado);
 
-                await this.#imagemRepository.gravar(imagem);
-            }
+        } catch (error) {
 
-            return res.status(200).json({msg: "Imagens adicionadas com sucesso!"});
+            console.error(error);
+
+            return res.status(404).json({
+                msg: error.message
+            });
         }
-    catch(error){
-        console.error(error);
-        return res.status(500).json({msg: "Erro ao processar requisição."});
     }
-}
 
-    async deletarImagem(req, res){
-     try{
-        let {id} = req.params;
+    async imagem(req, res) {
 
-        if(!id){
-            return res.status(400).json({msg: "Id da imagem não foi encontrado!"});
+        try {
+
+            const { id } = req.params;
+
+            const imagens =
+                await this.#service.listarImagens(id);
+
+            return res.status(200).json(imagens);
+
+        } catch (error) {
+
+            console.error(error);
+
+            return res.status(404).json({
+                msg: error.message
+            });
         }
+    }
 
-        let deletar = await this.#imagemRepository.deletar(id);
+    async adicionarImagens(req, res) {
 
-        if(deletar){
-            return res.status(200).json({msg: "Imagem deletada com sucesso!"});
+        try {
+
+            const { id } = req.params;
+
+            const resultado =
+                await this.#service.adicionarImagens(
+                    id,
+                    req.files
+                );
+
+            return res.status(200).json(resultado);
+
+        } catch (error) {
+
+            console.error(error);
+
+            return res.status(400).json({
+                msg: error.message
+            });
         }
+    }
 
-        return res.status(404).json({msg: "Não foi possível encontrar a imagem para deleção!"});
+    async deletarImagem(req, res) {
 
-    }catch(error){
-        console.error(error);
-        return res.status(500).json({msg: "Erro ao processar requisição."});
-     }
+        try {
 
-}
+            const { id } = req.params;
+
+            const resultado =
+                await this.#service.deletarImagem(id);
+
+            return res.status(200).json(resultado);
+
+        } catch (error) {
+
+            console.error(error);
+
+            return res.status(404).json({
+                msg: error.message
+            });
+        }
+    }
 }

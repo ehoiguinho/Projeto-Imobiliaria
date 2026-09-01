@@ -65,6 +65,25 @@ export default class imgImovelRepository extends Repository {
         return lista;
     }
 
+    async obterPorId(id) {
+
+    const sql = `
+        SELECT *
+        FROM tb_imgimovel
+        WHERE img_id = $1
+    `;
+
+    const valores = [id];
+
+    const rows = await this.banco.ExecutaComando(sql, valores);
+
+    if (rows.length === 0) {
+        return null;
+    }
+
+    return Imagem.toMap(rows[0]);
+}
+
     async deletarPorImovel(idImovel) {
 
         const sql = `

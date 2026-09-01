@@ -42,8 +42,7 @@ export default class ImovelRepository extends Repository{
 
         for(let i = 0; i < rows.length; i++){
             const row = rows[i];
-            imovel.push(this.toMap(row));
-        }
+        imovel.push(Imovel.toMap(row));        }
 
         return imovel;
     }

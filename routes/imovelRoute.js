@@ -101,17 +101,11 @@ router.delete("/:id", authMiddleware.validar, (req, res) =>{
     ctrl.deletar(req, res);
 })
 
-router.get("/imagens/:id", authMiddleware.validar, (req, res) => {
-    /* #swagger.security = [{
-            "jwt": []
-    }] */
-    // #swagger.tags = ['Imóvel']
-    // #swagger.summary = "Realiza a consulta das imagens de um imóvel pelo ID do imóvel"
-
+router.get("/:id/imagem", authMiddleware.validar, (req, res) => {
     ctrl.imagem(req, res);
 });
 
-router.post("/imagens/:id", authMiddleware.validar, upload.array("imagens", 5), (req, res) => {
+router.post("/:id/imagem", authMiddleware.validar, upload.array("imagens", 5), (req, res) => {
    // #swagger.tags = ['Imóvel']
         // #swagger.summary = "Adiciona imagens a um imóvel"
 
@@ -137,7 +131,11 @@ router.post("/imagens/:id", authMiddleware.validar, upload.array("imagens", 5), 
     ctrl.adicionarImagens(req, res);
 });
 
-router.delete("/imagens/:id", authMiddleware.validar, (req, res) => {
+router.delete("/imagem/:id", authMiddleware.validar, (req, res) => {
+    ctrl.deletarImagem(req, res);
+});
+
+router.delete("/imagem/:id", authMiddleware.validar, (req, res) => {
     /* #swagger.security = [{
             "jwt": []
     }] */

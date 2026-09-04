@@ -36,4 +36,25 @@ router.get("/alugueis", authMiddleware.validar, authMiddleware.validarAdmin,(req
     ctrl.listarAlugueis(req, res)
 );
 
+router.get("/contratos/:id", authMiddleware.validar, authMiddleware.validarAdmin,(req, res) => 
+      /* #swagger.security = [{
+            "jwt": []
+    }] */
+    // #swagger.tags = ['Administrador']
+    // #swagger.summary = "Consulta os contratos do sistema"
+    ctrl.obterContrato(req, res)
+);
+router.put("/contratos/:id/cancelar", authMiddleware.validar, authMiddleware.validarAdmin, (req, res) => {
+
+        /* #swagger.security = [{
+                "jwt": []
+        }] */
+
+        //#swagger.tags = ['Administrador']
+        //#swagger.summary = "Cancelamento de um contrato ativo"
+
+        ctrl.cancelarContrato(req, res);
+    }
+);
+
 export default router;

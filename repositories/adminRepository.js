@@ -101,4 +101,84 @@ export default class adminRepository extends Repository{
 
         return await this.banco.ExecutaComando(sql);
     }
+
+    async cancelarContrato(id, client) {
+    const sql = `
+        UPDATE tb_contrato
+        SET con_status = 'CANCELADO'
+        WHERE ctr_id = $1
+        AND con_status = 'ATIVO'
+    `;
+
+    return await this.banco.ExecutaComandoNonQuery(
+        sql, [id], client
+    );
+}
+
+    async obterContrato(id) {
+    const sql = `
+        SELECT
+            c.ctr_id,
+            c.imv_id,
+            c.usu_id,
+            c.con_status,
+
+            i.imv_descricao,
+            i.imv_cep,
+            i.imv_endereco,
+            i.imv_bairro,
+            i.imv_cidade,
+            i.imv_valor,
+            i.imv_disponivel,
+
+            u.usu_nome,
+            u.usu_email
+
+        FROM tb_contrato c
+
+        INNER JOIN tb_imovel i
+            ON c.imv_id = i.imv_id
+
+        INNER JOIN tb_usuario u
+            ON c.usu_id = u.usu_id
+
+        WHERE c.ctr_id = $1
+    `;
+
+    return await this.banco.ExecutaComando(sql, [id]);
+}
+
+async cancelarAlugueisPendentes(id, client) {
+    const sql = `
+        UPDATE tb_aluguel
+        SET alu_status = 'CANCELADO'
+        WHERE ctr_id = $1
+        AND alu_pago = 'N'
+        AND alu_status <> 'CANCELADO'
+    `;
+
+    console.log("EXECUTANDO cancelarAlugueisPendentes");
+console.log(sql);
+
+    return await this.banco.ExecutaComandoNonQuery(
+        sql, [id], client
+    );
+}
+
+async liberarImovelContrato(id, client) {
+    const sql = `
+        UPDATE tb_imovel
+        SET imv_disponivel = 'S'
+        WHERE imv_id = (
+            SELECT imv_id
+            FROM tb_contrato
+            WHERE ctr_id = $1
+        )
+    `;
+
+    return await this.banco.ExecutaComandoNonQuery(
+
+        sql, [id], client
+    );
+}
 }

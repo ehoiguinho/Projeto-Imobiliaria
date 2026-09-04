@@ -42,23 +42,22 @@ export default function Sidebar() {
   const ehAdministrador = usuario?.perfil === 1;
 
   const links = [
-    {
-      href: "/imoveis",
-      label: "Imóveis"
-    },
-    {
-      href: "/locacoes",
-      label: "Minhas locações"
-    }
-  ];
+    { href: "/imoveis", label: "Imóveis" },
+    { href: "/locacoes", label: "Minhas locações" }
+];
 
-  // Apenas administradores podem cadastrar imóveis
-  if (ehAdministrador) {
-    links.push({
-      href: "/imoveis/cadastro",
-      label: "Cadastrar imóvel"
-    });
-  }
+if (ehAdministrador) {
+    links.push(
+        {
+            href: "/admin",
+            label: "Gerenciar"
+        },
+        {
+            href: "/imoveis/cadastro",
+            label: "Cadastrar imóvel"
+        }
+    );
+}
 
   async function fazerLogout() {
     try {
@@ -98,6 +97,7 @@ export default function Sidebar() {
         <p className="mt-1 text-sm text-slate-500">
           Painel administrativo
         </p>
+        <br></br>
       </div>)}
 
       {/* Navegação */}

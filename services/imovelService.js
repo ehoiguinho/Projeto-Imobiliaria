@@ -195,32 +195,49 @@ export default class ImovelService {
 
     async deletar(id) {
 
-        if (!id) {
-            throw new Error(
-                "O id do imóvel não foi enviado!"
-            );
-        }
+    if (!id) {
+        const erro = new Error(
+            "O id do imóvel não foi enviado!"
+        );
 
-        const imovel = await this.#repo.obterId(id);
-
-        if (!imovel || imovel.length === 0) {
-            throw new Error(
-                "Não foi possível encontrar o imóvel para deleção"
-            );
-        }
-
-        const deletado = await this.#repo.deletar(id);
-
-        if (!deletado) {
-            throw new Error(
-                "Erro ao deletar imóvel"
-            );
-        }
-
-        return {
-            msg: "Imóvel deletado com sucesso."
-        };
+        erro.status = 400;
+        throw erro;
     }
+
+    const imovel = await this.#repo.obterId(id);
+
+    if (!imovel || imovel.length === 0) {
+        const erro = new Error(
+            "Não foi possível encontrar o imóvel para deleção"
+        );
+
+        erro.status = 404;
+        throw erro;
+    }
+
+    const possuiContrato = await this.#repo.possuiContrato(id);
+
+    if (possuiContrato) {
+        const erro = new Error(
+            "Não é possível excluir este imóvel, pois existem contratos vinculados a ele."
+        );
+
+        erro.status = 409;
+        throw erro;
+    }
+
+    const deletado = await this.#repo.deletar(id);
+
+    if (!deletado) {
+        throw new Error(
+            "Erro ao deletar imóvel"
+        );
+    }
+
+    return {
+        msg: "Imóvel deletado com sucesso."
+    };
+}
 
     async listarImagens(id) {
 

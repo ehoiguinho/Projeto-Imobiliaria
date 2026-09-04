@@ -128,25 +128,28 @@ export default class ImovelController {
     }
 
     async deletar(req, res) {
+    try {
+        const { id } = req.params;
 
-        try {
+        const resultado = await this.#service.deletar(id);
 
-            const { id } = req.params;
+        return res.status(200).json(resultado);
 
-            const resultado =
-                await this.#service.deletar(id);
+    } catch (error) {
 
-            return res.status(200).json(resultado);
+        console.error(error);
 
-        } catch (error) {
-
-            console.error(error);
-
-            return res.status(404).json({
-                msg: error.message
-            });
+        if (error.status) {
+            return res
+                .status(error.status)
+                .json({ msg: error.message });
         }
+
+        return res
+            .status(500)
+            .json({ msg: "Erro interno do servidor." });
     }
+}
 
     async imagem(req, res) {
 

@@ -95,36 +95,26 @@ export default class ImovelRepository extends Repository{
     );
 }
 
-    async deletar(id){
-        let sql = "delete from tb_imovel where imv_id = $1";
-        const params = [id];
-        let result = await this.banco.ExecutaComandoNonQuery(sql, params);
+    async possuiContrato(id) {
+        const sql = `
+            SELECT 1
+            FROM tb_contrato
+            WHERE imv_id = $1
+            LIMIT 1
+        `;
 
-        return result;
-    }
+        const rows = await this.banco.ExecutaComando(sql, [id]);
 
-    async liberar(id, client) {
-    let sql = "update tb_imovel set imv_disponivel = 'S' where imv_id = $1 ";
-    let valores = [id];
+        return rows.length > 0;
+}
 
-    let result = await this.banco.ExecutaComandoNonQuery(sql, valores, client);
+    async deletar(id) {
+    const sql = `
+        DELETE FROM tb_imovel
+        WHERE imv_id = $1
+    `;
 
-    return result;
+    return await this.banco.ExecutaComandoNonQuery(sql, [id]);
+}
 
-    }
-
-    toMap(row){
-        let imovel = new Imovel();
-        imovel.id = row["imv_id"];
-        imovel.descricao = row["imv_descricao"];
-        imovel.cep = row["imv_cep"];
-        imovel.endereco = row["imv_endereco"];
-        imovel.bairro = row["imv_bairro"];
-        imovel.cidade = row["imv_cidade"];
-        imovel.valor = row["imv_valor"];
-        imovel.disponivel = row["imv_disponivel"];
-
-        return imovel;
-
-    }
 }

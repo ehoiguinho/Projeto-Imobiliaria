@@ -17,7 +17,7 @@ server.use('/uploads', express.static('uploads'));
 server.use(express.json());
 server.use(cookieParser());
 server.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:5001'], // endereço do frontend da nossa documentação (temporariamente ele está sendo o nosso cliente)
+  origin: [ 'http://localhost:5001'], // endereço do frontend da nossa documentação (temporariamente ele está sendo o nosso cliente)
   credentials: true                // cookies com http only serão enviadados automaticamente apenas se essa flag estiver true
 }));
 server.use("/docs", swaggerUi.serve, swaggerUi.setup(outputJson, {

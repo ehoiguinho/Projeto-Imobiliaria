@@ -16,7 +16,7 @@ export default function LocacoesPage() {
       setCarregandoContratos(true);
       setErro("");
 
-      const resposta = await fetch("http://localhost:3000/locacao/0", {
+      const resposta = await fetch("http://localhost:3000/locacao/minhas", {
         method: "GET",
         credentials: "include"
       });
@@ -217,7 +217,7 @@ export default function LocacoesPage() {
                     {aluguel.status}
                   </span>
 
-                  {aluguel.status === "PENDENTE" && (
+                  {(aluguel.status === "PENDENTE" || aluguel.status === "ATRASADO") && (
                     <button
                       onClick={() => pagarAluguel(aluguel.id)}
                       className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"

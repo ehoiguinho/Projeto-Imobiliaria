@@ -10,6 +10,9 @@ export default class ImovelController {
 
     async cadastrar(req, res) {
 
+            console.log("🚨 CADASTRAR FOI CHAMADO");
+
+
     try {
 
         const resultado = await this.#service.cadastrar(

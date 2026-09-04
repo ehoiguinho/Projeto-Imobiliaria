@@ -35,12 +35,12 @@ export default function DetalheImovelPage() {
       setImovel(dadosImovel[0] || dadosImovel);
 
       const respostaImagens = await fetch(
-        `http://localhost:3000/imovel/imagens/${params.id}`,
-        {
-          method: "GET",
-          credentials: "include"
-        }
-      );
+      `http://localhost:3000/imovel/${params.id}/imagem`,
+      {
+        method: "GET",
+        credentials: "include"
+      }
+    );
 
       if (respostaImagens.ok) {
         const dadosImagens = await respostaImagens.json();

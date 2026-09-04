@@ -7,7 +7,7 @@ const router = express.Router();
 let ctrl = new ImovelController();
 let authMiddleware = new AuthMiddleware();
 
-router.post("/", authMiddleware.validar, upload.array("imagens", 5), (req, res) => {
+router.post("/", authMiddleware.validar, authMiddleware.validarAdmin, upload.array("imagens", 5), (req, res) => {
 
         /* #swagger.security = [{
                 "jwt": []
@@ -81,7 +81,7 @@ router.get("/:id", authMiddleware.validar, (req, res) =>{
 
     ctrl.obterPeloId(req, res);
 })
-router.put("/:id", authMiddleware.validar, (req, res) => {
+router.put("/:id", authMiddleware.validar, authMiddleware.validarAdmin, (req, res) => {
     /* #swagger.security = [{
             "jwt": []
     }] */
@@ -91,7 +91,7 @@ router.put("/:id", authMiddleware.validar, (req, res) => {
     ctrl.alterar(req, res);
 })
 
-router.delete("/:id", authMiddleware.validar, (req, res) =>{
+router.delete("/:id", authMiddleware.validar, authMiddleware.validarAdmin, (req, res) =>{
     /* #swagger.security = [{
             "jwt": []
     }] */
@@ -105,7 +105,7 @@ router.get("/:id/imagem", authMiddleware.validar, (req, res) => {
     ctrl.imagem(req, res);
 });
 
-router.post("/:id/imagem", authMiddleware.validar, upload.array("imagens", 5), (req, res) => {
+router.post("/:id/imagem", authMiddleware.validar, authMiddleware.validarAdmin, upload.array("imagens", 5), (req, res) => {
    // #swagger.tags = ['Imóvel']
         // #swagger.summary = "Adiciona imagens a um imóvel"
 
@@ -131,11 +131,7 @@ router.post("/:id/imagem", authMiddleware.validar, upload.array("imagens", 5), (
     ctrl.adicionarImagens(req, res);
 });
 
-router.delete("/imagem/:id", authMiddleware.validar, (req, res) => {
-    ctrl.deletarImagem(req, res);
-});
-
-router.delete("/imagem/:id", authMiddleware.validar, (req, res) => {
+router.delete("/imagem/:id", authMiddleware.validar, authMiddleware.validarAdmin, (req, res) => {
     /* #swagger.security = [{
             "jwt": []
     }] */

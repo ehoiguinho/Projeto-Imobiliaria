@@ -26,11 +26,12 @@ export default class ImovelRepository extends Repository{
     }
 
     async gravar(entidade){
-        let sql = "insert into tb_imovel (imv_descricao, imv_cep, imv_endereco, imv_bairro, imv_cidade, imv_valor, imv_disponivel) VALUES ($1, $2, $3, $4, $5, $6, $7)";
+        let sql = "insert into tb_imovel (imv_descricao, imv_cep, imv_endereco, imv_bairro, imv_cidade, imv_valor, imv_disponivel) VALUES ($1, $2, $3, $4, $5, $6, $7) returning imv_id";
         let valores = [entidade.descricao, entidade.cep, entidade.endereco, entidade.bairro, entidade.cidade, entidade.valor, entidade.disponivel];
 
-        let result = await this.banco.ExecutaComandoNonQuery(sql, valores);
-        entidade.id = result;
+        let result = await this.banco.ExecutaComandoLastInserted(sql, valores);
+
+            entidade.id = result;
 
         return result;
     }

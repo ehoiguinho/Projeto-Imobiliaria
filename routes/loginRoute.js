@@ -27,4 +27,5 @@ router.post("/logout", (req, res) => {
     return res.status(200).json({ msg: "Logout realizado com sucesso!" });
 });
 
+
 export default router;

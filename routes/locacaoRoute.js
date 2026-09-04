@@ -15,6 +15,17 @@ router.post("/", authMiddleware.validar, (req, res) => {
 
     ctrl.locar(req, res);
 })
+
+router.get("/minhas", authMiddleware.validar, (req, res) => {
+    /* #swagger.security = [{
+            "jwt": []
+    }] */
+    //#swagger.tags = ['Locação']
+    //#swagger.summary = "Lista todas as locações do usuário logado"
+
+    ctrl.listarPorUsuario(req, res);
+});
+
 router.get("/alugueis/:id", authMiddleware.validar, (req, res) => {
     /* #swagger.security = [{
             "jwt": []

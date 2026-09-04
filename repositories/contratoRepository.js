@@ -38,7 +38,7 @@ export default class ContratoRepository extends Repository{
         INNER JOIN tb_aluguel a
             ON c.ctr_id = a.ctr_id
         WHERE c.usu_id = $1
-        ORDER BY a.alu_vencimento
+        ORDER BY c.ctr_id ASC, a.alu_vencimento ASC
     `;
 
     let rows = await this.banco.ExecutaComando(sql, [id]);
@@ -60,11 +60,9 @@ export default class ContratoRepository extends Repository{
                     row["imv_descricao"],
                     row["imv_endereco"]
                 ),
-                new Usuario(
-                    row["usu_id"]
-                ),
-                [],
-                row["con_status"]
+                new Usuario(row["usu_id"]),
+                row["con_status"],
+                []
             );
 
             lista.push(contrato);

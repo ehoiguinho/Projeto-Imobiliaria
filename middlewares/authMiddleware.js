@@ -53,4 +53,21 @@ export default class AuthMiddleware{
             return res.status(401).json({msg: "Token não encontrado!"});
         }
     }
+
+
+    async validarAdmin(req, res, next) {
+    if (!req.usuarioLogado) {
+        return res.status(401).json({
+            msg: "Usuário não autenticado!"
+        });
+    }
+
+    if (req.usuarioLogado.perfil.descricao !== "ADMIN") {
+        return res.status(403).json({
+            msg: "Acesso permitido somente para administradores!"
+        });
+    }
+
+    next();
+}
 }

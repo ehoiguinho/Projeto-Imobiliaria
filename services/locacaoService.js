@@ -126,6 +126,20 @@ export default class LocacaoService {
     return contrato;
 }
 
+async listarPorUsuario(usuarioId) {
+    const banco = new Database();
+
+    this.#contratoRepository.banco = banco;
+
+    const lista = await this.#contratoRepository.listarPorUsuario(usuarioId);
+
+    if (!lista || lista.length === 0) {
+        throw new Error("Nenhuma locação encontrada!");
+    }
+
+    return lista;
+}
+
     async cancelar(id, usuarioId) {
 
     const banco = new Database();

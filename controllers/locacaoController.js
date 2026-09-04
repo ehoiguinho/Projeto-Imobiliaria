@@ -56,6 +56,21 @@ export default class LocacaoController {
     }
 }
 
+async listarPorUsuario(req, res) {
+    try {
+        const usuarioId = req.usuarioLogado.id;
+
+        const lista = await this.#locacaoService.listarPorUsuario(usuarioId);
+
+        return res.status(200).json(lista);
+    } catch (ex) {
+        console.log(ex);
+        return res.status(ex.status || 404).json({
+            msg: ex.message
+        });
+    }
+}
+
     async cancelar(req, res) {
 
         try {

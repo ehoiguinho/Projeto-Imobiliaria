@@ -4,6 +4,7 @@ import usuarioRouter from './routes/usuarioRoute.js'
 import imovelRouter from './routes/imovelRoute.js'
 import locacaoRouter from './routes/locacaoRoute.js'
 import loginRouter from './routes/loginRoute.js'
+import adminRouter from './routes/adminRoute.js'
 import aluguelRouter from './routes/aluguelRoute.js'
 import swaggerUi from 'swagger-ui-express'
 import cookieParser from 'cookie-parser';
@@ -30,6 +31,7 @@ server.use("/usuario", usuarioRouter);
 server.use("/imovel", imovelRouter);
 server.use("/locacao", locacaoRouter);
 server.use("/login", loginRouter);
+server.use("/admin", adminRouter);
 server.use("/aluguel", aluguelRouter);
 
 server.listen(3000, function(){

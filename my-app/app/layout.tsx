@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import AppShell from "../components/AppShell.jsx";
 
 export const metadata: Metadata = {
   title: "Imobiliária",
@@ -14,9 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body>
-        <AppShell>{children}</AppShell>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

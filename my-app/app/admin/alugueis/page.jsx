@@ -271,10 +271,12 @@ export default function AlugueisAdmin() {
 
                                         <span
                                             className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${
-                                                aluguel.alu_pago ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
+                                                aluguel.alu_pago === "S"
+                                                    ? "bg-green-100 text-green-700"
+                                                    : "bg-yellow-100 text-yellow-700"
                                             }`}
                                         >
-                                            {aluguel.alu_pago ? "Pago" : "Não pago"}
+                                            {aluguel.alu_pago === "S" ? "Pago" : "Não pago"}
                                         </span>
 
                                     </td>

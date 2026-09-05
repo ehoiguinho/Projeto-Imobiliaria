@@ -1,19 +1,24 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import AppShell from "../components/AppShell.jsx";
 
 export const metadata: Metadata = {
-  title: "Imobiliária",
-  description: "Sistema de gerenciamento de imóveis"
+    title: "Sua Imobiliária",
+    description: "Sistema de gerenciamento de imóveis"
 };
 
 export default function RootLayout({
-  children
+    children
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="pt-BR">
-      <body>{children}</body>
-    </html>
-  );
+    return (
+        <html lang="pt-BR">
+            <body>
+                <AppShell>
+                    {children}
+                </AppShell>
+            </body>
+        </html>
+    );
 }

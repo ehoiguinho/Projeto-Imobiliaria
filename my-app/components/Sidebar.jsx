@@ -83,9 +83,7 @@ if (ehAdministrador) {
   }
 
   return (
-    <aside className="fixed left-0 top-0 flex h-screen w-64 flex-col border-r border-slate-200 bg-white px-5 py-6 shadow-sm">
-
-      {/* Cabeçalho */}
+<aside className="flex h-full w-64 shrink-0 flex-col border-r border-slate-200 bg-white px-5 py-6 shadow-sm">      {/* Cabeçalho */}
       
       <div className="mb-10">
         <h1 className="text-xl font-bold text-slate-900">
@@ -120,32 +118,6 @@ if (ehAdministrador) {
           );
         })}
       </nav>
-
-      {/* Usuário logado */}
-      {usuario && (
-        <div className="mb-4 rounded-xl bg-slate-100 p-4">
-          <span className="block text-xs font-medium text-slate-500">
-            Usuário logado
-          </span>
-
-          <strong className="mt-1 block text-sm text-slate-900">
-            {usuario.nome}
-          </strong>
-
-          <span className="mt-1 block text-xs font-medium text-blue-600">
-            {ehAdministrador ? "Administrador" : "Usuário"}
-          </span>
-        </div>
-      )}
-
-      {/* Logout */}
-      <button
-        type="button"
-        onClick={fazerLogout}
-        className="rounded-lg border border-slate-200 px-4 py-3 text-sm font-medium text-slate-600 transition hover:bg-red-50 hover:text-red-600"
-      >
-        Sair
-      </button>
 
     </aside>
   );

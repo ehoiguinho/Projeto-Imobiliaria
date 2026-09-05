@@ -86,74 +86,7 @@ export default function Home() {
     }
 
     return (
-        <main className="min-h-screen bg-white text-zinc-900">
-
-            {/* NAVBAR */}
-            <nav className="h-20 w-full border-b border-zinc-100 bg-white">
-
-                <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-6 lg:px-8">
-
-                    {/* LOGO */}
-                    <a
-                        href="/"
-                        className="flex items-center gap-2"
-                    >
-
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-900 text-white">
-
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="1.8"
-                                className="h-6 w-6"
-                            >
-
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="m3 10 9-7 9 7"
-                                />
-
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M5 9.5V21h14V9.5"
-                                />
-
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M9 21v-6h6v6"
-                                />
-
-                            </svg>
-
-                        </div>
-
-                        <span className="text-xl font-semibold tracking-tight">
-                            Sua Imobiliária
-                        </span>
-
-                    </a>
-
-                    {/* MENU */}
-                    <div className="flex items-center gap-3">
-
-                        <a
-                            href="/login"
-                            className="rounded-full border border-zinc-200 px-6 py-2.5 text-sm font-medium transition hover:bg-zinc-50"
-                        >
-                            Entrar
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </nav>
-
+        <main className="min-h-screen bg-white text-zinc-900">            
             {/* HERO */}
             <section className="relative min-h-[calc(100vh-80px)] overflow-hidden">
 
@@ -187,10 +120,6 @@ export default function Home() {
                                     <h1 className="text-3xl font-bold leading-tight text-zinc-900">
                                         Encontre o lugar ideal para chamar de lar.
                                     </h1>
-
-                                    <p className="mt-3 text-sm leading-relaxed text-zinc-500">
-                                        Encontre imóveis que combinam com o que você procura.
-                                    </p>
 
                                 </div>
 
@@ -348,8 +277,6 @@ export default function Home() {
                                                    transition hover:bg-blue-700
                                                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                                     >
-
-                                        <Search size={19} />
 
                                         Buscar imóveis
 

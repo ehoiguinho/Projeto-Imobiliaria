@@ -63,6 +63,16 @@ export default class ImovelRepository extends Repository{
 
     }
 
+    async listarDestaques() { 
+        
+        const sql = ` SELECT i.*, img.img_caminho, img.img_extensao FROM tb_imovel i LEFT JOIN LATERAL ( SELECT img_caminho, img_extensao FROM tb_imgimovel WHERE imv_id = i.imv_id ORDER BY img_id LIMIT 1 ) img ON true WHERE i.imv_disponivel = 'S' ORDER BY i.imv_id DESC LIMIT 3 `;
+
+         const rows = await this.banco.ExecutaComando(sql);
+
+        return rows.map((row) => ({
+        ...Imovel.toMap(row).toJSON(), imagem: row.img_caminho ? { caminho: row.img_caminho, extensao: row.img_extensao }: null })); 
+    }
+
     async alterar(entidade, client) {
 
     let sql = `

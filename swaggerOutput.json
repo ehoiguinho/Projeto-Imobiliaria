@@ -305,6 +305,28 @@
         }
       }
     },
+    "/imovel/destaques": {
+      "get": {
+        "tags": [
+          "Imóvel"
+        ],
+        "summary": "Listagem dos 3 imoveis em destaque na pagina inicial da imobiliaria",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          }
+        ]
+      }
+    },
     "/imovel/{id}": {
       "get": {
         "tags": [

@@ -114,6 +114,19 @@ export default class ImovelService {
         return lista;
     }
 
+    async listarDestaques() {
+        
+        const lista = await this.#repo.listarDestaques();
+
+        if (!lista || lista.length === 0) {
+            throw new Error("Nenhum imóvel disponível para destaque.");
+        }
+
+        return lista;
+    }
+    
+
+
     async obterPeloId(id) {
 
     const banco = new Database();

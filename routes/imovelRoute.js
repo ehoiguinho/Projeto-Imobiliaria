@@ -72,6 +72,15 @@ router.get("/", (req, res) =>{
     ctrl.listar(req, res);
 })
 
+router.get("/destaques", (req, res) => {
+      /* #swagger.security = [{
+            "jwt": []
+    }] */
+    //#swagger.tags = ['Imóvel']
+    //#swagger.summary = "Listagem dos 3 imoveis em destaque na pagina inicial da imobiliaria
+    ctrl.listarDestaques(req, res);
+});
+
 router.get("/:id", authMiddleware.validar, (req, res) =>{
     /* #swagger.security = [{
             "jwt": []

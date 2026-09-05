@@ -348,6 +348,8 @@ export default function ImoveisPage() {
           )}
 
       </div>
+      
     </main>
+    
   );
 }

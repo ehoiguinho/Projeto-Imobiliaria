@@ -76,6 +76,23 @@ export default class ImovelController {
         }
     }
 
+        async listarDestaques(req, res) {
+            try {
+                const lista = await this.#service.listarDestaques();
+
+                return res.status(200).json(lista);
+
+            } catch (error) {
+                console.error(error);
+
+                return res.status(404).json({
+                    msg: error.message
+                });
+            }
+}
+
+
+
     async obterPeloId(req, res) {
 
     try {

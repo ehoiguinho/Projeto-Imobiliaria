@@ -7,6 +7,8 @@ export default function LocacoesPage() {
   const [contratoSelecionado, setContratoSelecionado] = useState(null);
   const [alugueis, setAlugueis] = useState([]);
 
+  const [mostrarContratos, setMostrarContratos] = useState(false);
+
   const [carregandoContratos, setCarregandoContratos] = useState(true);
   const [carregandoAlugueis, setCarregandoAlugueis] = useState(false);
   const [pagandoAluguel, setPagandoAluguel] = useState(null);
@@ -35,11 +37,6 @@ export default function LocacoesPage() {
       });
 
       setContratos(contratosUnicos);
-
-      // Seleciona automaticamente o primeiro contrato
-      if (contratosUnicos.length > 0) {
-        carregarAlugueis(contratosUnicos[0].id);
-      }
     } catch (error) {
       setErro(error.message);
     } finally {
@@ -53,6 +50,7 @@ export default function LocacoesPage() {
       setErro("");
       setContratoSelecionado(contratoId);
       setAlugueis([]);
+      setMostrarContratos(false);
 
       const resposta = await fetch(
         `http://localhost:3000/aluguel/contrato/${contratoId}`,
@@ -114,8 +112,6 @@ export default function LocacoesPage() {
     (contrato) => contrato.id === contratoSelecionado
   );
 
-  const totalAlugueis = alugueis.length;
-
   const alugueisPagos = alugueis.filter(
     (aluguel) => aluguel.status === "PAGO"
   ).length;
@@ -132,7 +128,10 @@ export default function LocacoesPage() {
         aluguel.status === "PENDENTE" ||
         aluguel.status === "ATRASADO"
     )
-    .reduce((total, aluguel) => total + Number(aluguel.valor || 0), 0);
+    .reduce(
+      (total, aluguel) => total + Number(aluguel.valor || 0),
+      0
+    );
 
   function obterEstiloStatus(status) {
     switch (status) {
@@ -167,461 +166,452 @@ export default function LocacoesPage() {
   }
 
   return (
-    <main className="min-h-full bg-slate-50 px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
+    <main className="min-h-full bg-slate-50 px-4 py-5 sm:px-6 lg:px-10 lg:py-6">
 
       {/* Cabeçalho */}
-      <header className="mb-8">
-        <div>
-          <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-blue-600">
-            Área do cliente
-          </p>
+      <header className="mb-6">
+        <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-blue-600">
+          Área do cliente
+        </p>
 
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-            Minhas locações
-          </h1>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+          Minhas locações
+        </h1>
 
-          <p className="mt-2 max-w-2xl text-sm text-slate-500 sm:text-base">
-            Acompanhe seus contratos, consulte os pagamentos e mantenha
-            suas locações em dia.
-          </p>
-        </div>
+        <p className="mt-1 text-sm text-slate-500">
+          Consulte seus contratos e acompanhe seus pagamentos.
+        </p>
       </header>
 
       {/* Erro */}
       {erro && (
-        <div className="mb-6 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">
-          <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-100 font-bold">
-            !
-          </div>
-
-          <div>
-            <p className="font-semibold">Não foi possível concluir a operação</p>
-            <p className="mt-1 text-sm text-red-600">{erro}</p>
-          </div>
+        <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <strong>Erro:</strong> {erro}
         </div>
       )}
 
-      {/* Loading contratos */}
+      {/* Loading inicial */}
       {carregandoContratos ? (
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[320px_1fr]">
-
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="mb-5 h-6 w-32 animate-pulse rounded bg-slate-200" />
-
-            <div className="space-y-3">
-              {[1, 2, 3].map((item) => (
-                <div
-                  key={item}
-                  className="h-20 animate-pulse rounded-xl bg-slate-100"
-                />
-              ))}
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="h-7 w-40 animate-pulse rounded bg-slate-200" />
-
-            <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-              {[1, 2, 3].map((item) => (
-                <div
-                  key={item}
-                  className="h-24 animate-pulse rounded-xl bg-slate-100"
-                />
-              ))}
-            </div>
-          </div>
-
+        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="h-5 w-32 animate-pulse rounded bg-slate-200" />
+          <div className="mt-3 h-12 animate-pulse rounded-lg bg-slate-100" />
         </div>
       ) : contratos.length === 0 ? (
 
-        /* Estado vazio */
-        <div className="rounded-2xl border border-slate-200 bg-white px-6 py-16 text-center shadow-sm">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 text-2xl">
+        <div className="rounded-xl border border-slate-200 bg-white px-6 py-12 text-center shadow-sm">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100">
             🏠
           </div>
 
-          <h2 className="mt-5 text-xl font-bold text-slate-900">
+          <h2 className="mt-4 font-bold text-slate-900">
             Nenhuma locação encontrada
           </h2>
 
-          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
-            Você ainda não possui contratos de locação vinculados à sua
-            conta.
+          <p className="mx-auto mt-1 max-w-md text-sm text-slate-500">
+            Você ainda não possui contratos de locação vinculados à sua conta.
           </p>
         </div>
 
       ) : (
 
-        <section className="grid grid-cols-1 gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
+        <section className="space-y-4">
 
-          {/* Lista de contratos */}
-          <aside className="h-fit rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          {/* Seletor de contratos */}
+          <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
 
-            <div className="mb-4 flex items-center justify-between px-1">
-              <div>
-                <h2 className="text-lg font-bold text-slate-900">
-                  Contratos
-                </h2>
+            <button
+              type="button"
+              onClick={() => setMostrarContratos(!mostrarContratos)}
+              className="flex w-full items-center justify-between gap-4 px-4 py-4 text-left transition hover:bg-slate-50 sm:px-5"
+            >
+              <div className="flex min-w-0 items-center gap-3">
 
-                <p className="mt-1 text-xs text-slate-500">
-                  {contratos.length}{" "}
-                  {contratos.length === 1
-                    ? "contrato ativo"
-                    : "contratos"}
-                </p>
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-lg">
+                  🏠
+                </div>
+
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-sm font-bold text-slate-900">
+                      Meus contratos
+                    </h2>
+
+                    <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
+                      {contratos.length}
+                    </span>
+                  </div>
+
+                  <p className="mt-0.5 truncate text-xs text-slate-500">
+                    {contratoAtual
+                      ? `Contrato #${contratoAtual.id} • ${
+                          contratoAtual.imovel || "Imóvel vinculado"
+                        }`
+                      : "Selecione um contrato para consultar"}
+                  </p>
+                </div>
               </div>
 
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
-                🏠
-              </div>
-            </div>
+              <span
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-sm text-slate-500 transition-transform ${
+                  mostrarContratos ? "rotate-180" : ""
+                }`}
+              >
+                ↓
+              </span>
+            </button>
 
-            <div className="space-y-2">
-              {contratos.map((contrato) => {
-                const ativo = contratoSelecionado === contrato.id;
+            {mostrarContratos && (
+              <div className="border-t border-slate-100 p-3">
+                <div className="space-y-1.5">
 
-                return (
-                  <button
-                    key={contrato.id}
-                    onClick={() => carregarAlugueis(contrato.id)}
-                    className={`group w-full rounded-xl border p-4 text-left transition-all duration-200 ${
-                      ativo
-                        ? "border-blue-200 bg-blue-50 shadow-sm"
-                        : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-3">
+                  {contratos.map((contrato) => {
+                    const ativo = contrato.id === contratoSelecionado;
 
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span
-                            className={`h-2 w-2 rounded-full ${
-                              ativo
-                                ? "bg-blue-600"
-                                : "bg-slate-300 group-hover:bg-slate-400"
-                            }`}
-                          />
-
-                          <span
-                            className={`text-sm font-bold ${
-                              ativo
-                                ? "text-blue-900"
-                                : "text-slate-900"
-                            }`}
-                          >
-                            Contrato #{contrato.id}
-                          </span>
-                        </div>
-
-                        <p className="mt-2 truncate text-sm text-slate-500">
-                          {contrato.imovel || "Imóvel vinculado"}
-                        </p>
-                      </div>
-
-                      <span
-                        className={`text-lg transition-transform ${
+                    return (
+                      <button
+                        key={contrato.id}
+                        type="button"
+                        onClick={() => carregarAlugueis(contrato.id)}
+                        className={`flex w-full items-center justify-between gap-3 rounded-lg border px-3 py-2.5 text-left transition ${
                           ativo
-                            ? "translate-x-0 text-blue-600"
-                            : "-translate-x-1 text-slate-300 group-hover:translate-x-0 group-hover:text-slate-500"
+                            ? "border-blue-200 bg-blue-50"
+                            : "border-transparent hover:border-slate-200 hover:bg-slate-50"
                         }`}
                       >
-                        →
-                      </span>
+                        <div className="flex min-w-0 items-center gap-3">
 
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </aside>
-
-          {/* Conteúdo do contrato */}
-          <section className="min-w-0">
-
-            {/* Cabeçalho contrato */}
-            {contratoAtual && (
-              <div className="mb-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-
-                  <div>
-                    <p className="text-sm font-medium text-slate-500">
-                      Contrato selecionado
-                    </p>
-
-                    <h2 className="mt-1 text-2xl font-bold text-slate-900">
-                      Contrato #{contratoAtual.id}
-                    </h2>
-
-                    <p className="mt-1 text-sm text-slate-500">
-                      {contratoAtual.imovel || "Imóvel vinculado"}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700">
-                    <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                    Contrato ativo
-                  </div>
-
-                </div>
-              </div>
-            )}
-
-            {/* Cards resumo */}
-            {!carregandoAlugueis && contratoSelecionado && (
-              <div className="mb-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
-
-                <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                  <p className="text-sm font-medium text-slate-500">
-                    Total de aluguéis
-                  </p>
-
-                  <p className="mt-2 text-3xl font-bold text-slate-900">
-                    {totalAlugueis}
-                  </p>
-
-                  <p className="mt-1 text-xs text-slate-400">
-                    Neste contrato
-                  </p>
-                </div>
-
-                <div className="rounded-2xl border border-emerald-100 bg-emerald-50/50 p-5 shadow-sm">
-                  <p className="text-sm font-medium text-emerald-700">
-                    Pagamentos realizados
-                  </p>
-
-                  <p className="mt-2 text-3xl font-bold text-emerald-700">
-                    {alugueisPagos}
-                  </p>
-
-                  <p className="mt-1 text-xs text-emerald-600">
-                    Pagamentos em dia
-                  </p>
-                </div>
-
-                <div
-                  className={`rounded-2xl border p-5 shadow-sm ${
-                    alugueisPendentes > 0
-                      ? "border-amber-100 bg-amber-50/50"
-                      : "border-slate-200 bg-white"
-                  }`}
-                >
-                  <p
-                    className={`text-sm font-medium ${
-                      alugueisPendentes > 0
-                        ? "text-amber-700"
-                        : "text-slate-500"
-                    }`}
-                  >
-                    Em aberto
-                  </p>
-
-                  <p
-                    className={`mt-2 text-2xl font-bold ${
-                      alugueisPendentes > 0
-                        ? "text-amber-700"
-                        : "text-slate-900"
-                    }`}
-                  >
-                    {totalPendente.toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL"
-                    })}
-                  </p>
-
-                  <p
-                    className={`mt-1 text-xs ${
-                      alugueisPendentes > 0
-                        ? "text-amber-600"
-                        : "text-slate-400"
-                    }`}
-                  >
-                    {alugueisPendentes > 0
-                      ? `${alugueisPendentes} pagamento(s) pendente(s)`
-                      : "Tudo em dia"}
-                  </p>
-                </div>
-
-              </div>
-            )}
-
-            {/* Lista de aluguéis */}
-            <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
-
-              <div className="border-b border-slate-100 px-5 py-5 sm:px-6">
-                <div className="flex items-center justify-between gap-4">
-
-                  <div>
-                    <h2 className="text-lg font-bold text-slate-900">
-                      Histórico de pagamentos
-                    </h2>
-
-                    <p className="mt-1 text-sm text-slate-500">
-                      Consulte os vencimentos e a situação de cada aluguel.
-                    </p>
-                  </div>
-
-                  {alugueis.length > 0 && (
-                    <span className="hidden rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 sm:block">
-                      {alugueis.length} registros
-                    </span>
-                  )}
-
-                </div>
-              </div>
-
-              <div className="p-4 sm:p-6">
-
-                {/* Loading */}
-                {carregandoAlugueis && (
-                  <div className="space-y-3">
-
-                    {[1, 2, 3].map((item) => (
-                      <div
-                        key={item}
-                        className="animate-pulse rounded-xl border border-slate-100 p-5"
-                      >
-                        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                          <div className="h-10 rounded bg-slate-100" />
-                          <div className="h-10 rounded bg-slate-100" />
-                          <div className="h-10 rounded bg-slate-100" />
-                          <div className="h-10 rounded bg-slate-100" />
-                        </div>
-                      </div>
-                    ))}
-
-                  </div>
-                )}
-
-                {/* Nenhum aluguel */}
-                {!carregandoAlugueis &&
-                  contratoSelecionado &&
-                  alugueis.length === 0 && (
-                    <div className="py-12 text-center">
-
-                      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-xl">
-                        📄
-                      </div>
-
-                      <h3 className="mt-4 font-semibold text-slate-900">
-                        Nenhum pagamento encontrado
-                      </h3>
-
-                      <p className="mt-1 text-sm text-slate-500">
-                        Não existem registros de aluguel para este contrato.
-                      </p>
-
-                    </div>
-                  )}
-
-                {/* Aluguéis */}
-                {!carregandoAlugueis && alugueis.length > 0 && (
-                  <div className="space-y-3">
-
-                    {alugueis.map((aluguel) => {
-                      const estilo = obterEstiloStatus(aluguel.status);
-
-                      return (
-                        <article
-                          key={aluguel.id}
-                          className="group rounded-xl border border-slate-200 p-4 transition-all hover:border-slate-300 hover:shadow-sm sm:p-5"
-                        >
-
-                          <div className="grid grid-cols-1 gap-5 md:grid-cols-[1fr_1fr_1fr_auto] md:items-center">
-
-                            {/* Mês */}
-                            <div>
-                              <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                                Referência
-                              </span>
-
-                              <strong className="mt-1 block text-base font-bold text-slate-900">
-                                {aluguel.mes}
-                              </strong>
-
-                              <span className="mt-1 block text-xs text-slate-400">
-                                Aluguel #{aluguel.id}
-                              </span>
-                            </div>
-
-                            {/* Vencimento */}
-                            <div>
-                              <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                                Vencimento
-                              </span>
-
-                              <strong className="mt-1 block text-sm font-semibold text-slate-800">
-                                {new Date(
-                                  aluguel.vencimento
-                                ).toLocaleDateString("pt-BR")}
-                              </strong>
-                            </div>
-
-                            {/* Valor */}
-                            <div>
-                              <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                                Valor
-                              </span>
-
-                              <strong className="mt-1 block text-base font-bold text-slate-900">
-                                {Number(
-                                  aluguel.valor
-                                ).toLocaleString("pt-BR", {
-                                  style: "currency",
-                                  currency: "BRL"
-                                })}
-                              </strong>
-                            </div>
-
-                            {/* Status / ação */}
-                            <div className="flex flex-wrap items-center gap-3 md:justify-end">
-
-                              <span
-                                className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold ${estilo.container}`}
-                              >
-                                <span
-                                  className={`h-1.5 w-1.5 rounded-full ${estilo.ponto}`}
-                                />
-
-                                {estilo.texto}
-                              </span>
-
-                              {(aluguel.status === "PENDENTE" ||
-                                aluguel.status === "ATRASADO") && (
-                                <button
-                                  type="button"
-                                  disabled={pagandoAluguel === aluguel.id}
-                                  onClick={() =>
-                                    pagarAluguel(aluguel.id)
-                                  }
-                                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
-                                >
-                                  {pagandoAluguel === aluguel.id ? (
-                                    <span className="flex items-center gap-2">
-                                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                                      Processando...
-                                    </span>
-                                  ) : (
-                                    "Pagar aluguel"
-                                  )}
-                                </button>
-                              )}
-
-                            </div>
-
+                          <div
+                            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm ${
+                              ativo
+                                ? "bg-blue-600 text-white"
+                                : "bg-slate-100 text-slate-500"
+                            }`}
+                          >
+                            🏠
                           </div>
 
-                        </article>
-                      );
-                    })}
+                          <div className="min-w-0">
+                            <p
+                              className={`text-sm font-semibold ${
+                                ativo
+                                  ? "text-blue-900"
+                                  : "text-slate-900"
+                              }`}
+                            >
+                              Contrato #{contrato.id}
+                            </p>
 
-                  </div>
-                )}
+                            <p className="truncate text-xs text-slate-500">
+                              {contrato.imovel || "Imóvel vinculado"}
+                            </p>
+                          </div>
+                        </div>
 
+                        <span className="text-slate-400">
+                          →
+                        </span>
+                      </button>
+                    );
+                  })}
+
+                </div>
               </div>
-            </div>
+            )}
+          </div>
 
-          </section>
+          {/* Sem contrato selecionado */}
+          {!contratoSelecionado && (
+            <div className="rounded-xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center">
+
+              <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100">
+                📋
+              </div>
+
+              <h2 className="mt-3 text-sm font-bold text-slate-900">
+                Selecione um contrato
+              </h2>
+
+              <p className="mt-1 text-xs text-slate-500">
+                Abra "Meus contratos" para escolher uma locação.
+              </p>
+
+              <button
+                type="button"
+                onClick={() => setMostrarContratos(true)}
+                className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-blue-700"
+              >
+                Ver contratos
+              </button>
+            </div>
+          )}
+
+          {/* Contrato selecionado */}
+          {contratoAtual && (
+            <>          
+
+              {/* Resumo compacto */}
+              {!carregandoAlugueis && (
+                <div className="grid grid-cols-3 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+
+                  <div className="px-3 py-3 sm:px-5">
+                    <p className="text-[11px] font-medium text-slate-500">
+                      Aluguéis
+                    </p>
+
+                    <p className="mt-1 text-xl font-bold text-slate-900">
+                      {alugueis.length}
+                    </p>
+                  </div>
+
+                  <div className="border-l border-slate-100 px-3 py-3 sm:px-5">
+                    <p className="text-[11px] font-medium text-slate-500">
+                      Pagos
+                    </p>
+
+                    <p className="mt-1 text-xl font-bold text-emerald-600">
+                      {alugueisPagos}
+                    </p>
+                  </div>
+
+                  <div className="border-l border-slate-100 px-3 py-3 sm:px-5">
+                    <p className="text-[11px] font-medium text-slate-500">
+                      Em aberto
+                    </p>
+
+                    <p className="mt-1 text-lg font-bold text-amber-600">
+                      {totalPendente.toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL"
+                      })}
+                    </p>
+                  </div>
+
+                </div>
+              )}
+
+              {/* Histórico */}
+              <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+
+                <div className="border-b border-slate-100 px-4 py-3 sm:px-5">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-sm font-bold text-slate-900">
+                        Histórico de pagamentos
+                      </h2>
+
+                      <p className="mt-0.5 text-xs text-slate-500">
+                        Vencimentos e situação dos aluguéis.
+                      </p>
+                    </div>
+
+                    {alugueis.length > 0 && (
+                      <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-600">
+                        {alugueis.length}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+
+                  {/* Loading */}
+                  {carregandoAlugueis && (
+                    <div className="space-y-px">
+                      {[1, 2, 3, 4].map((item) => (
+                        <div
+                          key={item}
+                          className="h-14 animate-pulse border-b border-slate-100 bg-slate-50"
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Nenhum aluguel */}
+                  {!carregandoAlugueis &&
+                    contratoSelecionado &&
+                    alugueis.length === 0 && (
+                      <div className="px-5 py-10 text-center">
+
+                        <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100">
+                          📄
+                        </div>
+
+                        <h3 className="mt-3 text-sm font-semibold text-slate-900">
+                          Nenhum pagamento encontrado
+                        </h3>
+
+                        <p className="mt-1 text-xs text-slate-500">
+                          Não existem registros para este contrato.
+                        </p>
+
+                      </div>
+                    )}
+
+                  {/* Desktop */}
+                  {!carregandoAlugueis &&
+                    alugueis.length > 0 && (
+                      <>
+                        <div className="hidden md:block">
+
+                          {/* Cabeçalho da tabela */}
+                          <div className="grid grid-cols-[1.2fr_1fr_1fr_1.2fr] border-b border-slate-100 bg-slate-50 px-5 py-2.5 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                            <span>Referência</span>
+                            <span>Vencimento</span>
+                            <span>Valor</span>
+                            <span className="text-right">Situação</span>
+                          </div>
+
+                          {alugueis.map((aluguel) => {
+                            const estilo = obterEstiloStatus(
+                              aluguel.status
+                            );
+
+                            return (
+                              <div
+                                key={aluguel.id}
+                                className="grid grid-cols-[1.2fr_1fr_1fr_1.2fr] items-center border-b border-slate-100 px-5 py-3 last:border-b-0 hover:bg-slate-50"
+                              >
+                                <div>
+                                  <p className="text-sm font-semibold text-slate-900">
+                                    {aluguel.mes}
+                                  </p>
+
+                                  <p className="text-[10px] text-slate-400">
+                                    #{aluguel.id}
+                                  </p>
+                                </div>
+
+                                <p className="text-sm text-slate-600">
+                                  {new Date(
+                                    aluguel.vencimento
+                                  ).toLocaleDateString("pt-BR")}
+                                </p>
+
+                                <p className="text-sm font-semibold text-slate-900">
+                                  {Number(
+                                    aluguel.valor
+                                  ).toLocaleString("pt-BR", {
+                                    style: "currency",
+                                    currency: "BRL"
+                                  })}
+                                </p>
+
+                                <div className="flex items-center justify-end gap-2">
+                                  <span
+                                    className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-semibold ${estilo.container}`}
+                                  >
+                                    <span
+                                      className={`h-1.5 w-1.5 rounded-full ${estilo.ponto}`}
+                                    />
+
+                                    {estilo.texto}
+                                  </span>
+
+                                  {(aluguel.status === "PENDENTE" ||
+                                    aluguel.status === "ATRASADO") && (
+                                    <button
+                                      type="button"
+                                      disabled={
+                                        pagandoAluguel === aluguel.id
+                                      }
+                                      onClick={() =>
+                                        pagarAluguel(aluguel.id)
+                                      }
+                                      className="rounded-md bg-blue-600 px-2.5 py-1.5 text-[10px] font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+                                    >
+                                      {pagandoAluguel === aluguel.id
+                                        ? "..."
+                                        : "Pagar"}
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {/* Mobile */}
+                        <div className="divide-y divide-slate-100 md:hidden">
+
+                          {alugueis.map((aluguel) => {
+                            const estilo = obterEstiloStatus(
+                              aluguel.status
+                            );
+
+                            return (
+                              <div
+                                key={aluguel.id}
+                                className="px-4 py-3"
+                              >
+                                <div className="flex items-center justify-between gap-3">
+
+                                  <div>
+                                    <p className="text-sm font-semibold text-slate-900">
+                                      {aluguel.mes}
+                                    </p>
+
+                                    <p className="mt-0.5 text-xs text-slate-500">
+                                      Vencimento:{" "}
+                                      {new Date(
+                                        aluguel.vencimento
+                                      ).toLocaleDateString("pt-BR")}
+                                    </p>
+                                  </div>
+
+                                  <span
+                                    className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-1 text-[10px] font-semibold ${estilo.container}`}
+                                  >
+                                    <span
+                                      className={`h-1.5 w-1.5 rounded-full ${estilo.ponto}`}
+                                    />
+
+                                    {estilo.texto}
+                                  </span>
+
+                                </div>
+
+                                <div className="mt-2 flex items-center justify-between">
+
+                                  <strong className="text-sm text-slate-900">
+                                    {Number(
+                                      aluguel.valor
+                                    ).toLocaleString("pt-BR", {
+                                      style: "currency",
+                                      currency: "BRL"
+                                    })}
+                                  </strong>
+
+                                  {(aluguel.status === "PENDENTE" ||
+                                    aluguel.status === "ATRASADO") && (
+                                    <button
+                                      type="button"
+                                      disabled={
+                                        pagandoAluguel === aluguel.id
+                                      }
+                                      onClick={() =>
+                                        pagarAluguel(aluguel.id)
+                                      }
+                                      className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60"
+                                    >
+                                      {pagandoAluguel === aluguel.id
+                                        ? "Processando..."
+                                        : "Pagar"}
+                                    </button>
+                                  )}
+
+                                </div>
+                              </div>
+                            );
+                          })}
+
+                        </div>
+                      </>
+                    )}
+
+                </div>
+              </div>
+            </>
+          )}
         </section>
       )}
     </main>

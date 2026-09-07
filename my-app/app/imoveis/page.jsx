@@ -266,15 +266,6 @@ export default function ImoveisPage() {
 
               <div className="flex items-center gap-3">
 
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100">
-
-                  <SlidersHorizontal
-                    size={18}
-                    className="text-slate-600"
-                  />
-
-                </div>
-
                 <div>
 
                   <h2 className="text-sm font-semibold text-slate-900">

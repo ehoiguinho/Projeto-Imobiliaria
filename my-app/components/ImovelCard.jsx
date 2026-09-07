@@ -33,18 +33,9 @@ export default function ImovelCard({ imovel }) {
         {/* Localização */}
         <div className="mt-4 space-y-2 text-sm text-slate-600">
           <p className="flex items-start gap-2">
-            <span className="mt-0.5">📍</span>
             <span>
-              {imovel.endereco}, {imovel.bairro}
+              {imovel.endereco}. {imovel.bairro}, {imovel.cidade}, {imovel.cep}
             </span>
-          </p>
-
-          <p className="pl-6">
-            {imovel.cidade}
-          </p>
-
-          <p className="pl-6 text-slate-500">
-            CEP: {imovel.cep}
           </p>
         </div>
 
@@ -54,7 +45,7 @@ export default function ImovelCard({ imovel }) {
             Aluguel mensal
           </p>
 
-          <strong className="mt-1 block text-2xl font-bold text-emerald-700">
+          <strong className="mt-1 block text-2xl font-bold text-black">
             {Number(imovel.valor).toLocaleString("pt-BR", {
               style: "currency",
               currency: "BRL"

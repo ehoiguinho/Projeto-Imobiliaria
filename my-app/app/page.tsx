@@ -1,11 +1,6 @@
 "use client";
 
-import {
-    MapPin,
-    Building2,
-    CircleDollarSign,
-    Search
-} from "lucide-react";
+import { MapPin, Building2, CircleDollarSign, Search, ChevronDown} from "lucide-react";
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -18,6 +13,7 @@ export default function Home() {
     const [bairro, setBairro] = useState("");
     const [valorMin, setValorMin] = useState("");
     const [valorMax, setValorMax] = useState("");
+    const [menuAjudaAberto, setMenuAjudaAberto] = useState(false);
 
     const [imoveisDestaque, setImoveisDestaque] = useState([]);
     const [carregandoDestaques, setCarregandoDestaques] = useState(true);

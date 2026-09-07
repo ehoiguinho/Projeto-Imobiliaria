@@ -443,7 +443,7 @@ export default function ImoveisPage() {
                   <option value="">
                     {cidadeSelecionada
                       ? "Todos os bairros"
-                      : "Selecione uma cidade"}
+                      : "Selecione um bairro"}
                   </option>
 
                   {bairros.map((bairro) => (

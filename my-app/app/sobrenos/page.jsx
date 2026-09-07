@@ -7,37 +7,6 @@ export default function SobreNosPage() {
 return (
     <main className="min-h-screen bg-slate-50">
 
-        {/* HEADER */}
-        <header className="border-b border-slate-200 bg-white">
-
-            <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-8">
-
-                <a
-                    href="/"
-                    className="flex items-center gap-2"
-                >
-
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-900 text-white">
-                        <Building2 size={20} />
-                    </div>
-
-                    <span className="font-semibold text-zinc-900">
-                        Sua Imobiliária
-                    </span>
-
-                </a>
-
-                <a
-                    href="/imoveis"
-                    className="text-sm font-semibold text-blue-600 hover:text-blue-700"
-                >
-                    Ver imóveis
-                </a>
-
-            </nav>
-
-        </header>
-
         {/* CONTEÚDO */}
         <section className="mx-auto max-w-5xl px-6 py-20 lg:px-8">
 

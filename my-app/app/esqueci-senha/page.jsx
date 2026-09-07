@@ -39,17 +39,20 @@ export default function EsqueciSenhaPage() {
 
             const dados = await resposta.json();
 
-            if (!resposta.ok) {
-                throw new Error(
-                    dados.msg || "Não foi possível solicitar a recuperação da senha."
-                );
+            if(!resposta.ok) {
+                throw new Error( dados.msg || "Não foi possível solicitar a recuperação da senha." );
             }
 
-            setSucesso(
-                "Se o e-mail estiver cadastrado, você receberá as instruções para redefinir sua senha."
-            );
+            if (!dados.token) {
+                setSucesso( "Se o e-mail estiver cadastrado, você receberá as instruções para redefinir sua senha." );
+                setEmail("");
 
-            setEmail("");
+                return;
+            }
+
+            router.push(
+                `/redefinir-senha?token=${encodeURIComponent(dados.token)}`
+            );
 
         } catch (error) {
 
@@ -74,58 +77,6 @@ export default function EsqueciSenhaPage() {
             <div className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-md items-center justify-center">
 
                 <section className="w-full">
-
-                    {/* LOGO / IDENTIDADE */}
-
-                    <div className="mb-8 text-center">
-
-                        <button
-                            type="button"
-                            onClick={() => router.push("/")}
-                            className="mx-auto mb-6 flex items-center gap-2"
-                        >
-
-                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-900 text-white">
-
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="1.8"
-                                    className="h-6 w-6"
-                                >
-
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="m3 10 9-7 9 7"
-                                    />
-
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M5 9.5V21h14V9.5"
-                                    />
-
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M9 21v-6h6v6"
-                                    />
-
-                                </svg>
-
-                            </div>
-
-                            <span className="text-xl font-semibold tracking-tight text-zinc-900">
-                                Sua Imobiliária
-                            </span>
-
-                        </button>
-
-                    </div>
-
 
                     {/* CARD */}
 

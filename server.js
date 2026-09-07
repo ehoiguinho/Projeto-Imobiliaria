@@ -1,5 +1,6 @@
 import express from "express";
 import cors from 'cors';
+import "dotenv/config";
 import usuarioRouter from './routes/usuarioRoute.js'
 import imovelRouter from './routes/imovelRoute.js'
 import locacaoRouter from './routes/locacaoRoute.js'

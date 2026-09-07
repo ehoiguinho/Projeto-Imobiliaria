@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import bcrypt from "bcrypt";
-
+import { enviarEmailRecuperacao } from "../config/email.js";
 import RecuperarSenhaRepository from "../repositories/recuperarSenhaRepository.js";
 import UsuarioRepository from "../repositories/usuarioRepository.js";
 
@@ -14,44 +14,37 @@ export default class RecuperarSenhaService {
         this.#usuarioRepository = new UsuarioRepository();
     }
 
-    async solicitar(email) {
+   async solicitar(email) {
 
         if (!email) {
             throw new Error("Informe um e-mail.");
         }
 
-        const usuario = await this.#usuarioRepository.buscarEmail(email);
+        const usuario =
+            await this.#usuarioRepository.buscarEmail(email);
 
         /*
-         * Por segurança, não vamos revelar se o e-mail
-         * existe ou não.
-         */
+        * Por segurança, não revelamos se o e-mail
+        * está cadastrado ou não.
+        */
 
         if (!usuario) {
             return;
         }
 
-        const token = crypto.randomBytes(32).toString("hex");
+        const token =
+            crypto.randomBytes(32).toString("hex");
 
-        const expiraEm = new Date(
-            Date.now() + 30 * 60 * 1000
-        );
+        const expiraEm =
+            new Date(Date.now() + 30 * 60 * 1000);
 
-        await this.#recuperarRepository.criar(
-            usuario.id,
-            token,
-            expiraEm
-        );
+        await this.#recuperarRepository.criar(usuario.id, token, expiraEm);
 
-        /*
-         * Por enquanto vamos apenas retornar o token
-         * para podermos testar o fluxo.
-         *
-         * Depois substituiremos isso pelo envio de e-mail.
-         */
+    const link =
+        `${process.env.FRONTEND_URL}/redefinir-senha?token=${encodeURIComponent(token)}`;
 
-        return token;
-    }
+    await enviarEmailRecuperacao(usuario.email, usuario.nome, link);
+}
 
     async redefinirSenha(token, novaSenha) {
 

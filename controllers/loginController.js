@@ -1,4 +1,5 @@
 import AuthMiddleware from "../middlewares/authMiddleware.js";
+import RecuperarSenhaService from "../services/recuperarSenhaService.js";
 import UsuarioRepository from "../repositories/usuarioRepository.js";
 
 
@@ -6,9 +7,11 @@ export default class AutenticaoController{
 
 
     #repositorio;
+    #recuperarService;
 
     constructor(){
         this.#repositorio = new UsuarioRepository();
+        this.#recuperarService = new RecuperarSenhaService();
     }
 
     async usuario(req, res){
@@ -25,6 +28,57 @@ export default class AutenticaoController{
         }
 
     }
+
+    async esqueciSenha(req, res) {
+
+    try {
+
+        const { email } = req.body;
+
+        const token =
+            await this.#recuperarService.solicitar(email);
+
+        return res.status(200).json({
+            msg: "Se o e-mail estiver cadastrado, você receberá as instruções para redefinir sua senha.",
+            token
+        });
+
+    } catch (exception) {
+
+        console.log(exception);
+
+        return res.status(400).json({
+            msg: exception.message
+        });
+
+    }
+}
+
+async redefinirSenha(req, res) {
+
+    try {
+
+        const { token, senha } = req.body;
+
+        await this.#recuperarService.redefinirSenha(
+            token,
+            senha
+        );
+
+        return res.status(200).json({
+            msg: "Senha alterada com sucesso!"
+        });
+
+    } catch (exception) {
+
+        console.log(exception);
+
+        return res.status(400).json({
+            msg: exception.message
+        });
+
+    }
+}
 
     async token(req, res){
         try{

@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import Perfil from "../entities/perfil.js";
 import Usuario from "../entities/usuario.js";
 import Repository from "./repository.js";
@@ -18,18 +19,27 @@ export default class UsuarioRepository extends Repository {
             INNER JOIN tb_perfil p
                 ON u.per_id = p.per_id
             WHERE u.usu_email = $1
-            AND u.usu_senha = $2
+            
         `;
 
-        const valores = [email, senha];
+        const valores = [email];
 
         const rows = await this.banco.ExecutaComando(sql, valores);
 
-        if (rows.length > 0) {
-            return this.toMap(rows[0]);
-        }
+        if (rows.length === 0){
 
-        return null;
+            return null; 
+        }
+        
+        const row = rows[0];
+        
+        const senhaValida = await bcrypt.compare(senha, row["usu_senha"]);
+
+        if(!senhaValida){
+            return null; 
+        }
+        
+        return this.toMap(row);
     }
 
     async cadastrar(usuario) {
@@ -136,6 +146,47 @@ export default class UsuarioRepository extends Repository {
 
         return null;
     }
+
+    async buscarEmail(email) {
+
+        const sql = `
+            SELECT
+                u.*,
+                p.per_descricao
+            FROM tb_usuario u
+            INNER JOIN tb_perfil p
+                ON u.per_id = p.per_id
+            WHERE LOWER(u.usu_email) = LOWER($1)
+        `;
+
+        const valores = [email];
+        
+        const rows = await this.banco.ExecutaComando(sql, valores);
+
+        if(rows.length > 0){
+            return this.toMap(rows[0]);
+        }
+
+        return null; 
+    }
+
+    async alterarSenha(id, senha) {
+
+    const sql = `
+        UPDATE tb_usuario
+        SET usu_senha = $1
+        WHERE usu_id = $2
+    `;
+
+    const valores = [senha, id];
+
+    const resultado = await this.banco.ExecutaComandoNonQuery(
+        sql,
+        valores
+    );
+
+    return resultado;
+}
 
     toMap(row) {
 

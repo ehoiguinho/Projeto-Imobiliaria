@@ -147,7 +147,7 @@ export default function Home() {
                                             onChange={(e) =>
                                                 setCidade(e.target.value)
                                             }
-                                            placeholder="Digite a cidade"
+                                            placeholder="Busque por cidade"
                                             className="w-full rounded-lg border border-zinc-300 px-4 py-3 text-sm
                                                        outline-none transition
                                                        placeholder:text-zinc-400
@@ -182,7 +182,7 @@ export default function Home() {
                                             onChange={(e) =>
                                                 setBairro(e.target.value)
                                             }
-                                            placeholder="Digite o bairro"
+                                            placeholder="Busque por bairro"
                                             className="w-full rounded-lg border border-zinc-300 px-4 py-3 text-sm
                                                        outline-none transition
                                                        placeholder:text-zinc-400

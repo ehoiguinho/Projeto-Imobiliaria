@@ -93,3 +93,20 @@ CREATE TABLE tb_imgimovel (
         REFERENCES tb_imovel(imv_id)
         ON DELETE CASCADE
 );
+
+CREATE TABLE tb_recuperar_senha (
+    rec_id SERIAL PRIMARY KEY,
+    usu_id INTEGER NOT NULL,
+    rec_token VARCHAR(255) NOT NULL UNIQUE,
+    rec_expira_em TIMESTAMP NOT NULL,
+    CONSTRAINT fk_recuperar_senha_usuario
+        FOREIGN KEY (usu_id)
+        REFERENCES tb_usuario(usu_id)
+        ON DELETE CASCADE
+);
+
+
+
+
+
+

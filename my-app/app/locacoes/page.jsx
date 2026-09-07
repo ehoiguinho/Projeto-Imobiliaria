@@ -170,10 +170,6 @@ export default function LocacoesPage() {
 
       {/* Cabeçalho */}
       <header className="mb-6">
-        <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-blue-600">
-          Área do cliente
-        </p>
-
         <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
           Minhas locações
         </h1>

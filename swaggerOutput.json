@@ -11,6 +11,33 @@
     }
   ],
   "paths": {
+    "/usuario/cadastro": {
+      "post": {
+        "tags": [
+          "Usuário"
+        ],
+        "summary": "Cadastra um novo usuário cliente (sem necessidade de autenticação)",
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/usuario"
+              }
+            }
+          }
+        }
+      }
+    },
     "/usuario/": {
       "post": {
         "tags": [
@@ -842,10 +869,94 @@
     },
     "/login/logout": {
       "post": {
+        "tags": [
+          "Login"
+        ],
+        "summary": "Realiza o logout do usuário, removendo o cookie de autenticação",
         "description": "",
         "responses": {
           "200": {
             "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          }
+        ]
+      }
+    },
+    "/login/esqueci-senha": {
+      "post": {
+        "tags": [
+          "Login"
+        ],
+        "summary": "Realiza a solicitação de recuperação de senha do usuário",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login/redefinir-senha": {
+      "post": {
+        "tags": [
+          "Login"
+        ],
+        "summary": "Realiza a redefinição de senha do usuário através do token enviado por e-mail",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "example": "any"
+                  },
+                  "senha": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
           }
         }
       }

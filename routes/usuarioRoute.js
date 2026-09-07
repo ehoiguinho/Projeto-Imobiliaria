@@ -7,6 +7,25 @@ const router = express.Router();
 let ctrl = new UsuarioController();
 let authMiddleware = new AuthMiddleware();
 
+
+router.post("/cadastro", (req, res) => {
+    // #swagger.tags = ['Usuário']
+    // #swagger.summary = 'Cadastra um novo usuário cliente (sem necessidade de autenticação)'
+    /* #swagger.requestBody = {
+        required: true,
+        content: {
+            "application/json": {
+                schema: {
+                    $ref: '#/components/schemas/usuario'
+                }
+            }
+        }
+    }
+    */
+    ctrl.cadastrarPublico(req, res);
+});
+
+
 router.post('/', authMiddleware.validar, (req, res) => {
    /* #swagger.security = [{
         "bearerAuth": []

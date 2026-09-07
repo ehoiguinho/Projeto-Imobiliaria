@@ -83,6 +83,27 @@ export default class UsuarioController {
         }
     }
 
+    async cadastrarPublico(req, res){
+        try{
+            const { nome, email, senha } = req.body;
+
+            const usuario = await this.#service.cadastrarCliente(nome, email, senha);
+
+            return res.status(201).json({
+                msg: "Usuário cadastrado com sucesso!",
+                id: usuario.id
+            });
+
+    }
+    catch(ex){
+        console.log(ex.message);
+
+        return res.status(ex.status || 400).json({
+            msg: ex.message
+        });
+    }
+}
+
     async deletar(req, res) {
 
         try {

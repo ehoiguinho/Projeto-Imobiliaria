@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import Perfil from "../entities/perfil.js";
 import Usuario from "../entities/usuario.js";
 import UsuarioRepository from "../repositories/usuarioRepository.js";
@@ -17,12 +18,22 @@ export default class UsuarioService {
                 "Erro ao cadastrar usuário, verifique os dados informados!"
             );
         }
+        const usuarioExistente = await this.#repositorio.buscarEmail(email);
+         if (usuarioExistente) {
+            const error = new Error( "Já existe um usuário cadastrado com este e-mail.");
+
+            error.status = 409; 
+            throw error; 
+         }
+
+        const senhaCriptografada = await bcrypt.hash(senha, 10);
 
         const entidade = new Usuario(
             0,
             nome,
             email,
             ativo,
+            senhaCriptografada,
             senha,
             new Perfil(perfilId)
         );
@@ -58,12 +69,15 @@ export default class UsuarioService {
             throw erro;
         }
 
+            const senhaCriptografada = await bcrypt.hash(usuario.senha, 10);
+
+
         const entidade = new Usuario(
             id,
             nome,
             email,
             ativo,
-            senha,
+            senhaCriptografada,
             new Perfil(perfilId)
         );
 
@@ -75,6 +89,29 @@ export default class UsuarioService {
             msg: "Usuário alterado com sucesso!"
         };
     }
+
+    // Cadastro público de CLIENTE
+    async cadastrarCliente(nome, email, senha){
+
+        if (!nome || !email || !senha) {
+        throw new Error( "Nome, e-mail e senha são obrigatórios." );
+      }
+         const usuarioExistente = await this.#repositorio.buscarEmail(email);
+          if (usuarioExistente) {
+             const erro = new Error( "Já existe uma conta cadastrada com este e-mail." );
+              erro.status = 409;
+               throw erro;
+             } 
+             const senhaCriptografada = await bcrypt.hash(senha, 10);
+
+              const entidade = new Usuario( 0, nome, email, "S", senhaCriptografada, new Perfil(2) );
+              
+               const idUsuario = await this.#repositorio.cadastrar(entidade);
+                if (!idUsuario) {
+                     throw new Error("Erro ao cadastrar usuário.");
+                     } 
+                     entidade.id = idUsuario; return entidade; 
+}
 
     async listar() {
 

@@ -90,16 +90,6 @@ return ( <main className="min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-8"> <
         ================================================== */}
         <section className="p-5 sm:p-6">
 
-          <div className="mb-5">
-            <h2 className="text-lg font-bold text-slate-900">
-              Informações do imóvel
-            </h2>
-
-            <p className="mt-1 text-sm text-slate-500">
-              Informe os principais dados do imóvel.
-            </p>
-          </div>
-
           <div className="space-y-4">
 
             {/* Descrição */}
@@ -111,15 +101,12 @@ return ( <main className="min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-8"> <
               <textarea
                 value={descricao}
                 onChange={(event) => setDescricao(event.target.value)}
-                placeholder="Descreva o imóvel, suas características e diferenciais..."
+                placeholder="Descreva o imóvel, suas características e diferenciais."
                 required
                 rows={4}
                 className="w-full resize-none rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-50"
               />
 
-              <p className="mt-1.5 text-xs text-slate-400">
-                Uma boa descrição ajuda o cliente a conhecer melhor o imóvel.
-              </p>
             </div>
 
             {/* Valor + disponibilidade */}

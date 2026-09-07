@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Settings } from "lucide-react";
 import Sidebar from "./Sidebar";
 
 export default function AppShell({ children }) {
@@ -36,6 +36,7 @@ export default function AppShell({ children }) {
                 }
 
                 const dados = await resposta.json();
+
 
                 setUsuario(dados);
 
@@ -231,6 +232,26 @@ export default function AppShell({ children }) {
                             )}
 
                         </div>
+
+                        {/* PAINEL ADMINISTRATIVO */}
+
+                            {usuario?.perfil === 1 && (
+
+                                <button
+                                    type="button"
+                                    onClick={() => router.push("/admin")}
+                                    title="Painel administrativo"
+                                    className="flex h-10 w-10 items-center justify-center rounded-full
+                                            text-zinc-600 transition
+                                            hover:bg-zinc-100 hover:text-zinc-900"
+                                >
+                                    <Settings
+                                        size={19}
+                                        strokeWidth={2}
+                                    />
+                                </button>
+
+                            )}
 
 
                         {/* USUÁRIO */}

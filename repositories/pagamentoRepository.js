@@ -32,10 +32,11 @@ export default class PagamentoRepository extends Repository {
             entidade.url
         ];
 
-        const result = await this.banco.ExecutaComandoLastInserted(
-            sql,
-            valores
-        );
+        const result =
+            await this.banco.ExecutaComandoLastInserted(
+                sql,
+                valores
+            );
 
         entidade.id = result;
 
@@ -46,69 +47,78 @@ export default class PagamentoRepository extends Repository {
 
         const sql = `
             SELECT
-                pag_id AS id,
-                alu_id AS aluguelId,
-                pag_gateway AS gateway,
-                pag_external_id AS externalId,
-                pag_product_id AS productId,
-                pag_checkout_id AS checkoutId,
-                pag_status AS status,
-                pag_url AS url,
-                pag_criado_em AS criadoEm,
-                pag_pago_em AS pagoEm
+                pag_id AS "id",
+                alu_id AS "aluguelId",
+                pag_gateway AS "gateway",
+                pag_external_id AS "externalId",
+                pag_product_id AS "productId",
+                pag_checkout_id AS "checkoutId",
+                pag_status AS "status",
+                pag_url AS "url",
+                pag_criado_em AS "criadoEm",
+                pag_pago_em AS "pagoEm"
             FROM tb_pagamento
             WHERE pag_id = $1
         `;
 
         const valores = [id];
 
-        return await this.banco.ExecutaComando(sql, valores);
+        return await this.banco.ExecutaComando(
+            sql,
+            valores
+        );
     }
 
     async obterPorExternalId(externalId) {
 
         const sql = `
             SELECT
-                pag_id AS id,
-                alu_id AS aluguelId,
-                pag_gateway AS gateway,
-                pag_external_id AS externalId,
-                pag_product_id AS productId,
-                pag_checkout_id AS checkoutId,
-                pag_status AS status,
-                pag_url AS url,
-                pag_criado_em AS criadoEm,
-                pag_pago_em AS pagoEm
+                pag_id AS "id",
+                alu_id AS "aluguelId",
+                pag_gateway AS "gateway",
+                pag_external_id AS "externalId",
+                pag_product_id AS "productId",
+                pag_checkout_id AS "checkoutId",
+                pag_status AS "status",
+                pag_url AS "url",
+                pag_criado_em AS "criadoEm",
+                pag_pago_em AS "pagoEm"
             FROM tb_pagamento
             WHERE pag_external_id = $1
         `;
 
         const valores = [externalId];
 
-        return await this.banco.ExecutaComando(sql, valores);
+        return await this.banco.ExecutaComando(
+            sql,
+            valores
+        );
     }
 
     async obterPorCheckoutId(checkoutId) {
 
         const sql = `
             SELECT
-                pag_id AS id,
-                alu_id AS aluguelId,
-                pag_gateway AS gateway,
-                pag_external_id AS externalId,
-                pag_product_id AS productId,
-                pag_checkout_id AS checkoutId,
-                pag_status AS status,
-                pag_url AS url,
-                pag_criado_em AS criadoEm,
-                pag_pago_em AS pagoEm
+                pag_id AS "id",
+                alu_id AS "aluguelId",
+                pag_gateway AS "gateway",
+                pag_external_id AS "externalId",
+                pag_product_id AS "productId",
+                pag_checkout_id AS "checkoutId",
+                pag_status AS "status",
+                pag_url AS "url",
+                pag_criado_em AS "criadoEm",
+                pag_pago_em AS "pagoEm"
             FROM tb_pagamento
             WHERE pag_checkout_id = $1
         `;
 
         const valores = [checkoutId];
 
-        return await this.banco.ExecutaComando(sql, valores);
+        return await this.banco.ExecutaComando(
+            sql,
+            valores
+        );
     }
 
     async atualizarCheckout(id, checkoutId, url) {
@@ -177,16 +187,16 @@ export default class PagamentoRepository extends Repository {
 
         const sql = `
             SELECT
-                pag_id AS id,
-                alu_id AS aluguelId,
-                pag_gateway AS gateway,
-                pag_external_id AS externalId,
-                pag_product_id AS productId,
-                pag_checkout_id AS checkoutId,
-                pag_status AS status,
-                pag_url AS url,
-                pag_criado_em AS criadoEm,
-                pag_pago_em AS pagoEm
+                pag_id AS "id",
+                alu_id AS "aluguelId",
+                pag_gateway AS "gateway",
+                pag_external_id AS "externalId",
+                pag_product_id AS "productId",
+                pag_checkout_id AS "checkoutId",
+                pag_status AS "status",
+                pag_url AS "url",
+                pag_criado_em AS "criadoEm",
+                pag_pago_em AS "pagoEm"
             FROM tb_pagamento
             WHERE alu_id = $1
             ORDER BY pag_criado_em DESC
@@ -204,16 +214,16 @@ export default class PagamentoRepository extends Repository {
 
         const sql = `
             SELECT
-                pag_id AS id,
-                alu_id AS aluguelId,
-                pag_gateway AS gateway,
-                pag_external_id AS externalId,
-                pag_product_id AS productId,
-                pag_checkout_id AS checkoutId,
-                pag_status AS status,
-                pag_url AS url,
-                pag_criado_em AS criadoEm,
-                pag_pago_em AS pagoEm
+                pag_id AS "id",
+                alu_id AS "aluguelId",
+                pag_gateway AS "gateway",
+                pag_external_id AS "externalId",
+                pag_product_id AS "productId",
+                pag_checkout_id AS "checkoutId",
+                pag_status AS "status",
+                pag_url AS "url",
+                pag_criado_em AS "criadoEm",
+                pag_pago_em AS "pagoEm"
             FROM tb_pagamento
             WHERE alu_id = $1
             ORDER BY pag_criado_em DESC

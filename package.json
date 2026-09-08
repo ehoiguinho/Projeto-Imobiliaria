@@ -3,6 +3,7 @@
   "dependencies": {
     "@abacatepay/sdk": "^2.0.3",
     "bcrypt": "^6.0.0",
+    "cloudflared": "^0.7.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",

@@ -173,29 +173,21 @@ export default class PagamentoService {
          * Agora criamos o Checkout utilizando
          * o produto criado acima.
          */
-        const checkout =
-            await this.#abacatePay.checkouts.create({
+            const checkout =
+        await this.#abacatePay.checkouts.create({
+            items: [
+                {
+                    id: produto.data.id,
+                    quantity: 1
+                }
+            ],
+            methods: ["PIX", "CARD"],
+            externalId: externalId,
 
-                items: [
-                    {
-                        id: produto.data.id,
-                        quantity: 1
-                    }
-                ],
+            returnUrl:`${process.env.FRONTEND_URL}/locacoes`,
 
-                methods: [
-                    "PIX",
-                    "CARD"
-                ],
-
-                externalId: externalId,
-
-                returnUrl:
-                    `${process.env.FRONTEND_URL}/pagamento/retorno`,
-
-                completionUrl:
-                    `${process.env.FRONTEND_URL}/pagamento/sucesso`
-            });
+            completionUrl:`${process.env.FRONTEND_URL}/locacoes`
+        });
 
         if (
             !checkout ||

@@ -14,43 +14,80 @@ export default function LocacoesPage() {
   const [pagandoAluguel, setPagandoAluguel] = useState(null);
   const [erro, setErro] = useState("");
 
+  /*
+   * ============================================================
+   * CARREGAR CONTRATOS
+   * ============================================================
+   */
   async function carregarContratos() {
     try {
       setCarregandoContratos(true);
       setErro("");
 
-      const resposta = await fetch("http://localhost:3000/locacao/minhas", {
-        method: "GET",
-        credentials: "include"
-      });
+      const resposta = await fetch(
+        "http://localhost:3000/locacao/minhas",
+        {
+          method: "GET",
+          credentials: "include"
+        }
+      );
 
       const dados = await resposta.json();
 
       if (!resposta.ok) {
-        throw new Error(dados.msg || "Erro ao carregar contratos");
+        throw new Error(
+          dados.msg || "Erro ao carregar contratos"
+        );
       }
 
-      const contratosUnicos = dados.filter((contrato, index, array) => {
-        return (
-          array.findIndex((item) => item.id === contrato.id) === index
-        );
-      });
+      /*
+       * Remove contratos duplicados.
+       */
+      const contratosUnicos = dados.filter(
+        (contrato, index, array) => {
+          return (
+            array.findIndex(
+              (item) => item.id === contrato.id
+            ) === index
+          );
+        }
+      );
 
       setContratos(contratosUnicos);
+
     } catch (error) {
       setErro(error.message);
+
     } finally {
       setCarregandoContratos(false);
     }
   }
 
+  /*
+   * ============================================================
+   * CARREGAR ALUGUÉIS DO CONTRATO
+   * ============================================================
+   */
   async function carregarAlugueis(contratoId) {
     try {
       setCarregandoAlugueis(true);
       setErro("");
+
       setContratoSelecionado(contratoId);
       setAlugueis([]);
       setMostrarContratos(false);
+
+      /*
+       * Guarda o contrato selecionado.
+       *
+       * Isso é importante porque, quando o usuário voltar
+       * da AbacatePay para /locacoes, a página será recriada
+       * e o estado React será perdido.
+       */
+      localStorage.setItem(
+        "contratoSelecionado",
+        String(contratoId)
+      );
 
       const resposta = await fetch(
         `http://localhost:3000/aluguel/contrato/${contratoId}`,
@@ -63,27 +100,36 @@ export default function LocacoesPage() {
       const dados = await resposta.json();
 
       if (!resposta.ok) {
-        throw new Error(dados.msg || "Erro ao carregar aluguéis");
+        throw new Error(
+          dados.msg || "Erro ao carregar aluguéis"
+        );
       }
 
       setAlugueis(dados);
+
     } catch (error) {
       setErro(error.message);
       setAlugueis([]);
+
     } finally {
       setCarregandoAlugueis(false);
     }
   }
 
+  /*
+   * ============================================================
+   * INICIAR PAGAMENTO
+   * ============================================================
+   */
   async function pagarAluguel(aluguelId) {
     try {
       setPagandoAluguel(aluguelId);
       setErro("");
 
       const resposta = await fetch(
-        `http://localhost:3000/aluguel/${aluguelId}`,
+        `http://localhost:3000/pagamento/${aluguelId}`,
         {
-          method: "PUT",
+          method: "POST",
           credentials: "include"
         }
       );
@@ -91,29 +137,108 @@ export default function LocacoesPage() {
       const dados = await resposta.json();
 
       if (!resposta.ok) {
-        throw new Error(dados.msg || "Erro ao pagar aluguel");
+        throw new Error(
+          dados.msg || "Erro ao iniciar pagamento"
+        );
       }
 
-      if (contratoSelecionado) {
-        await carregarAlugueis(contratoSelecionado);
+      if (!dados.url) {
+        throw new Error(
+          "A URL de pagamento não foi retornada."
+        );
       }
+
+      /*
+       * Redireciona para o checkout da AbacatePay.
+       */
+      window.location.href = dados.url;
+
     } catch (error) {
       setErro(error.message);
-    } finally {
       setPagandoAluguel(null);
     }
   }
 
+  /*
+   * ============================================================
+   * CARREGAMENTO INICIAL
+   * ============================================================
+   */
   useEffect(() => {
     carregarContratos();
   }, []);
 
+  /*
+   * ============================================================
+   * RESTAURAR CONTRATO APÓS RETORNO DO PAGAMENTO
+   * ============================================================
+   *
+   * Fluxo:
+   *
+   * /locacoes
+   *      ↓
+   * usuário escolhe contrato
+   *      ↓
+   * localStorage
+   *      ↓
+   * pagamento
+   *      ↓
+   * AbacatePay
+   *      ↓
+   * webhook atualiza banco
+   *      ↓
+   * usuário clica "Continuar"
+   *      ↓
+   * /locacoes
+   *      ↓
+   * recupera contrato
+   *      ↓
+   * busca parcelas novamente
+   *
+   */
+  useEffect(() => {
+    if (contratos.length === 0) {
+      return;
+    }
+
+    const contratoSalvo =
+      localStorage.getItem("contratoSelecionado");
+
+    if (!contratoSalvo) {
+      return;
+    }
+
+    const contratoExiste = contratos.some(
+      (contrato) =>
+        String(contrato.id) === String(contratoSalvo)
+    );
+
+    if (contratoExiste) {
+      carregarAlugueis(
+        Number(contratoSalvo)
+      );
+    }
+  }, [contratos]);
+
+  /*
+   * ============================================================
+   * CONTRATO ATUAL
+   * ============================================================
+   */
   const contratoAtual = contratos.find(
-    (contrato) => contrato.id === contratoSelecionado
+    (contrato) =>
+      String(contrato.id) ===
+      String(contratoSelecionado)
   );
 
+  /*
+   * ============================================================
+   * RESUMO DOS ALUGUÉIS
+   * ============================================================
+   */
   const alugueisPagos = alugueis.filter(
-    (aluguel) => aluguel.status === "PAGO"
+    (aluguel) =>
+      aluguel.status === "PAGO"
   ).length;
 
   const alugueisPendentes = alugueis.filter(
@@ -129,42 +254,65 @@ export default function LocacoesPage() {
         aluguel.status === "ATRASADO"
     )
     .reduce(
-      (total, aluguel) => total + Number(aluguel.valor || 0),
+      (total, aluguel) =>
+        total + Number(aluguel.valor || 0),
       0
     );
 
+  /*
+   * ============================================================
+   * ESTILO DO STATUS
+   * ============================================================
+   */
   function obterEstiloStatus(status) {
     switch (status) {
       case "PAGO":
         return {
-          container: "bg-emerald-50 text-emerald-700 border-emerald-200",
-          ponto: "bg-emerald-500",
-          texto: "Pago"
+          container:
+            "bg-emerald-50 text-emerald-700 border-emerald-200",
+          ponto:
+            "bg-emerald-500",
+          texto:
+            "Pago"
         };
 
       case "ATRASADO":
         return {
-          container: "bg-red-50 text-red-700 border-red-200",
-          ponto: "bg-red-500",
-          texto: "Atrasado"
+          container:
+            "bg-red-50 text-red-700 border-red-200",
+          ponto:
+            "bg-red-500",
+          texto:
+            "Atrasado"
         };
 
       case "CANCELADO":
         return {
-          container: "bg-slate-100 text-slate-500 border-slate-200",
-          ponto: "bg-slate-400",
-          texto: "Cancelado"
+          container:
+            "bg-slate-100 text-slate-500 border-slate-200",
+          ponto:
+            "bg-slate-400",
+          texto:
+            "Cancelado"
         };
 
       default:
         return {
-          container: "bg-amber-50 text-amber-700 border-amber-200",
-          ponto: "bg-amber-500",
-          texto: "Pendente"
+          container:
+            "bg-amber-50 text-amber-700 border-amber-200",
+          ponto:
+            "bg-amber-500",
+          texto:
+            "Pendente"
         };
     }
   }
 
+  /*
+   * ============================================================
+   * RENDER
+   * ============================================================
+   */
   return (
     <main className="min-h-full bg-slate-50 px-4 py-5 sm:px-6 lg:px-10 lg:py-6">
 
@@ -190,11 +338,14 @@ export default function LocacoesPage() {
       {carregandoContratos ? (
         <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="h-5 w-32 animate-pulse rounded bg-slate-200" />
+
           <div className="mt-3 h-12 animate-pulse rounded-lg bg-slate-100" />
         </div>
+
       ) : contratos.length === 0 ? (
 
         <div className="rounded-xl border border-slate-200 bg-white px-6 py-12 text-center shadow-sm">
+
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100">
             🏠
           </div>
@@ -206,20 +357,26 @@ export default function LocacoesPage() {
           <p className="mx-auto mt-1 max-w-md text-sm text-slate-500">
             Você ainda não possui contratos de locação vinculados à sua conta.
           </p>
+
         </div>
 
       ) : (
 
         <section className="space-y-4">
 
-          {/* Seletor de contratos */}
+          {/* =====================================================
+              SELETOR DE CONTRATOS
+              ===================================================== */}
           <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
 
             <button
               type="button"
-              onClick={() => setMostrarContratos(!mostrarContratos)}
+              onClick={() =>
+                setMostrarContratos(!mostrarContratos)
+              }
               className="flex w-full items-center justify-between gap-4 px-4 py-4 text-left transition hover:bg-slate-50 sm:px-5"
             >
+
               <div className="flex min-w-0 items-center gap-3">
 
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-lg">
@@ -227,7 +384,9 @@ export default function LocacoesPage() {
                 </div>
 
                 <div className="min-w-0">
+
                   <div className="flex items-center gap-2">
+
                     <h2 className="text-sm font-bold text-slate-900">
                       Meus contratos
                     </h2>
@@ -235,45 +394,63 @@ export default function LocacoesPage() {
                     <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
                       {contratos.length}
                     </span>
+
                   </div>
 
                   <p className="mt-0.5 truncate text-xs text-slate-500">
+
                     {contratoAtual
                       ? `Contrato #${contratoAtual.id} • ${
-                          contratoAtual.imovel || "Imóvel vinculado"
+                          contratoAtual.imovel ||
+                          "Imóvel vinculado"
                         }`
                       : "Selecione um contrato para consultar"}
+
                   </p>
+
                 </div>
+
               </div>
 
               <span
                 className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-sm text-slate-500 transition-transform ${
-                  mostrarContratos ? "rotate-180" : ""
+                  mostrarContratos
+                    ? "rotate-180"
+                    : ""
                 }`}
               >
                 ↓
               </span>
+
             </button>
 
             {mostrarContratos && (
               <div className="border-t border-slate-100 p-3">
+
                 <div className="space-y-1.5">
 
                   {contratos.map((contrato) => {
-                    const ativo = contrato.id === contratoSelecionado;
+
+                    const ativo =
+                      String(contrato.id) ===
+                      String(contratoSelecionado);
 
                     return (
                       <button
                         key={contrato.id}
                         type="button"
-                        onClick={() => carregarAlugueis(contrato.id)}
+                        onClick={() =>
+                          carregarAlugueis(
+                            contrato.id
+                          )
+                        }
                         className={`flex w-full items-center justify-between gap-3 rounded-lg border px-3 py-2.5 text-left transition ${
                           ativo
                             ? "border-blue-200 bg-blue-50"
                             : "border-transparent hover:border-slate-200 hover:bg-slate-50"
                         }`}
                       >
+
                         <div className="flex min-w-0 items-center gap-3">
 
                           <div
@@ -287,6 +464,7 @@ export default function LocacoesPage() {
                           </div>
 
                           <div className="min-w-0">
+
                             <p
                               className={`text-sm font-semibold ${
                                 ativo
@@ -298,25 +476,34 @@ export default function LocacoesPage() {
                             </p>
 
                             <p className="truncate text-xs text-slate-500">
-                              {contrato.imovel || "Imóvel vinculado"}
+                              {contrato.imovel ||
+                                "Imóvel vinculado"}
                             </p>
+
                           </div>
+
                         </div>
 
                         <span className="text-slate-400">
                           →
                         </span>
+
                       </button>
                     );
                   })}
 
                 </div>
+
               </div>
             )}
+
           </div>
 
-          {/* Sem contrato selecionado */}
+          {/* =====================================================
+              SEM CONTRATO SELECIONADO
+              ===================================================== */}
           {!contratoSelecionado && (
+
             <div className="rounded-xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center">
 
               <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100">
@@ -333,23 +520,30 @@ export default function LocacoesPage() {
 
               <button
                 type="button"
-                onClick={() => setMostrarContratos(true)}
+                onClick={() =>
+                  setMostrarContratos(true)
+                }
                 className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-blue-700"
               >
                 Ver contratos
               </button>
+
             </div>
           )}
 
-          {/* Contrato selecionado */}
+          {/* =====================================================
+              CONTRATO SELECIONADO
+              ===================================================== */}
           {contratoAtual && (
-            <>          
+            <>
 
               {/* Resumo compacto */}
               {!carregandoAlugueis && (
+
                 <div className="grid grid-cols-3 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
 
                   <div className="px-3 py-3 sm:px-5">
+
                     <p className="text-[11px] font-medium text-slate-500">
                       Aluguéis
                     </p>
@@ -357,9 +551,11 @@ export default function LocacoesPage() {
                     <p className="mt-1 text-xl font-bold text-slate-900">
                       {alugueis.length}
                     </p>
+
                   </div>
 
                   <div className="border-l border-slate-100 px-3 py-3 sm:px-5">
+
                     <p className="text-[11px] font-medium text-slate-500">
                       Pagos
                     </p>
@@ -367,19 +563,25 @@ export default function LocacoesPage() {
                     <p className="mt-1 text-xl font-bold text-emerald-600">
                       {alugueisPagos}
                     </p>
+
                   </div>
 
                   <div className="border-l border-slate-100 px-3 py-3 sm:px-5">
+
                     <p className="text-[11px] font-medium text-slate-500">
                       Em aberto
                     </p>
 
                     <p className="mt-1 text-lg font-bold text-amber-600">
-                      {totalPendente.toLocaleString("pt-BR", {
-                        style: "currency",
-                        currency: "BRL"
-                      })}
+                      {totalPendente.toLocaleString(
+                        "pt-BR",
+                        {
+                          style: "currency",
+                          currency: "BRL"
+                        }
+                      )}
                     </p>
+
                   </div>
 
                 </div>
@@ -389,8 +591,11 @@ export default function LocacoesPage() {
               <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
 
                 <div className="border-b border-slate-100 px-4 py-3 sm:px-5">
+
                   <div className="flex items-center justify-between">
+
                     <div>
+
                       <h2 className="text-sm font-bold text-slate-900">
                         Histórico de pagamentos
                       </h2>
@@ -398,34 +603,46 @@ export default function LocacoesPage() {
                       <p className="mt-0.5 text-xs text-slate-500">
                         Vencimentos e situação dos aluguéis.
                       </p>
+
                     </div>
 
                     {alugueis.length > 0 && (
+
                       <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-600">
                         {alugueis.length}
                       </span>
+
                     )}
+
                   </div>
+
                 </div>
 
                 <div>
 
                   {/* Loading */}
                   {carregandoAlugueis && (
+
                     <div className="space-y-px">
+
                       {[1, 2, 3, 4].map((item) => (
+
                         <div
                           key={item}
                           className="h-14 animate-pulse border-b border-slate-100 bg-slate-50"
                         />
+
                       ))}
+
                     </div>
+
                   )}
 
                   {/* Nenhum aluguel */}
                   {!carregandoAlugueis &&
                     contratoSelecionado &&
                     alugueis.length === 0 && (
+
                       <div className="px-5 py-10 text-center">
 
                         <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100">
@@ -441,33 +658,54 @@ export default function LocacoesPage() {
                         </p>
 
                       </div>
+
                     )}
 
                   {/* Desktop */}
                   {!carregandoAlugueis &&
                     alugueis.length > 0 && (
+
                       <>
+
                         <div className="hidden md:block">
 
                           {/* Cabeçalho da tabela */}
                           <div className="grid grid-cols-[1.2fr_1fr_1fr_1.2fr] border-b border-slate-100 bg-slate-50 px-5 py-2.5 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
-                            <span>Referência</span>
-                            <span>Vencimento</span>
-                            <span>Valor</span>
-                            <span className="text-right">Situação</span>
+
+                            <span>
+                              Referência
+                            </span>
+
+                            <span>
+                              Vencimento
+                            </span>
+
+                            <span>
+                              Valor
+                            </span>
+
+                            <span className="text-right">
+                              Situação
+                            </span>
+
                           </div>
 
                           {alugueis.map((aluguel) => {
-                            const estilo = obterEstiloStatus(
-                              aluguel.status
-                            );
+
+                            const estilo =
+                              obterEstiloStatus(
+                                aluguel.status
+                              );
 
                             return (
+
                               <div
                                 key={aluguel.id}
                                 className="grid grid-cols-[1.2fr_1fr_1fr_1.2fr] items-center border-b border-slate-100 px-5 py-3 last:border-b-0 hover:bg-slate-50"
                               >
+
                                 <div>
+
                                   <p className="text-sm font-semibold text-slate-900">
                                     {aluguel.mes}
                                   </p>
@@ -475,73 +713,101 @@ export default function LocacoesPage() {
                                   <p className="text-[10px] text-slate-400">
                                     #{aluguel.id}
                                   </p>
+
                                 </div>
 
                                 <p className="text-sm text-slate-600">
                                   {new Date(
                                     aluguel.vencimento
-                                  ).toLocaleDateString("pt-BR")}
+                                  ).toLocaleDateString(
+                                    "pt-BR"
+                                  )}
                                 </p>
 
                                 <p className="text-sm font-semibold text-slate-900">
                                   {Number(
                                     aluguel.valor
-                                  ).toLocaleString("pt-BR", {
-                                    style: "currency",
-                                    currency: "BRL"
-                                  })}
+                                  ).toLocaleString(
+                                    "pt-BR",
+                                    {
+                                      style:
+                                        "currency",
+                                      currency:
+                                        "BRL"
+                                    }
+                                  )}
                                 </p>
 
                                 <div className="flex items-center justify-end gap-2">
+
                                   <span
                                     className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-semibold ${estilo.container}`}
                                   >
+
                                     <span
                                       className={`h-1.5 w-1.5 rounded-full ${estilo.ponto}`}
                                     />
 
                                     {estilo.texto}
+
                                   </span>
 
-                                  {(aluguel.status === "PENDENTE" ||
-                                    aluguel.status === "ATRASADO") && (
+                                  {(aluguel.status ===
+                                    "PENDENTE" ||
+                                    aluguel.status ===
+                                      "ATRASADO") && (
+
                                     <button
                                       type="button"
                                       disabled={
-                                        pagandoAluguel === aluguel.id
+                                        pagandoAluguel ===
+                                        aluguel.id
                                       }
                                       onClick={() =>
-                                        pagarAluguel(aluguel.id)
+                                        pagarAluguel(
+                                          aluguel.id
+                                        )
                                       }
                                       className="rounded-md bg-blue-600 px-2.5 py-1.5 text-[10px] font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
                                     >
-                                      {pagandoAluguel === aluguel.id
+                                      {pagandoAluguel ===
+                                      aluguel.id
                                         ? "..."
                                         : "Pagar"}
                                     </button>
+
                                   )}
+
                                 </div>
+
                               </div>
+
                             );
                           })}
+
                         </div>
 
                         {/* Mobile */}
                         <div className="divide-y divide-slate-100 md:hidden">
 
                           {alugueis.map((aluguel) => {
-                            const estilo = obterEstiloStatus(
-                              aluguel.status
-                            );
+
+                            const estilo =
+                              obterEstiloStatus(
+                                aluguel.status
+                              );
 
                             return (
+
                               <div
                                 key={aluguel.id}
                                 className="px-4 py-3"
                               >
+
                                 <div className="flex items-center justify-between gap-3">
 
                                   <div>
+
                                     <p className="text-sm font-semibold text-slate-900">
                                       {aluguel.mes}
                                     </p>
@@ -550,18 +816,23 @@ export default function LocacoesPage() {
                                       Vencimento:{" "}
                                       {new Date(
                                         aluguel.vencimento
-                                      ).toLocaleDateString("pt-BR")}
+                                      ).toLocaleDateString(
+                                        "pt-BR"
+                                      )}
                                     </p>
+
                                   </div>
 
                                   <span
                                     className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-1 text-[10px] font-semibold ${estilo.container}`}
                                   >
+
                                     <span
                                       className={`h-1.5 w-1.5 rounded-full ${estilo.ponto}`}
                                     />
 
                                     {estilo.texto}
+
                                   </span>
 
                                 </div>
@@ -569,47 +840,73 @@ export default function LocacoesPage() {
                                 <div className="mt-2 flex items-center justify-between">
 
                                   <strong className="text-sm text-slate-900">
+
                                     {Number(
                                       aluguel.valor
-                                    ).toLocaleString("pt-BR", {
-                                      style: "currency",
-                                      currency: "BRL"
-                                    })}
+                                    ).toLocaleString(
+                                      "pt-BR",
+                                      {
+                                        style:
+                                          "currency",
+                                        currency:
+                                          "BRL"
+                                      }
+                                    )}
+
                                   </strong>
 
-                                  {(aluguel.status === "PENDENTE" ||
-                                    aluguel.status === "ATRASADO") && (
+                                  {(aluguel.status ===
+                                    "PENDENTE" ||
+                                    aluguel.status ===
+                                      "ATRASADO") && (
+
                                     <button
                                       type="button"
                                       disabled={
-                                        pagandoAluguel === aluguel.id
+                                        pagandoAluguel ===
+                                        aluguel.id
                                       }
                                       onClick={() =>
-                                        pagarAluguel(aluguel.id)
+                                        pagarAluguel(
+                                          aluguel.id
+                                        )
                                       }
                                       className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60"
                                     >
-                                      {pagandoAluguel === aluguel.id
+
+                                      {pagandoAluguel ===
+                                      aluguel.id
                                         ? "Processando..."
                                         : "Pagar"}
+
                                     </button>
+
                                   )}
 
                                 </div>
+
                               </div>
+
                             );
                           })}
 
                         </div>
+
                       </>
+
                     )}
 
                 </div>
+
               </div>
+
             </>
           )}
+
         </section>
       )}
+
     </main>
   );
 }
+

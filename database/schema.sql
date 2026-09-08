@@ -136,6 +136,13 @@ CREATE TABLE tb_pagamento (
         ))
 );
 
+CREATE TABLE tb_webhook_evento (
+    wbe_id SERIAL PRIMARY KEY,
+    wbe_evento_id VARCHAR(100) NOT NULL UNIQUE,
+    wbe_evento VARCHAR(100) NOT NULL,
+    wbe_recebido_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 
 
 

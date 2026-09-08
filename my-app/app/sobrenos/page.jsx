@@ -7,7 +7,6 @@ export default function SobreNosPage() {
 return (
     <main className="min-h-screen bg-slate-50">
 
-        {/* CONTEÚDO */}
         <section className="mx-auto max-w-5xl px-6 py-20 lg:px-8">
 
             <div className="text-center">
@@ -94,7 +93,6 @@ return (
 
                     <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
 
-                        {/* EMPRESA */}
                         <div>
 
                             <div className="flex items-center gap-2">
@@ -144,7 +142,6 @@ return (
 
                         </div>
 
-                        {/* NAVEGAÇÃO */}
                         <div>
 
                             <h3 className="text-sm font-semibold text-zinc-900">
@@ -178,7 +175,6 @@ return (
 
                         </div>
 
-                        {/* ATENDIMENTO */}
                         <div>
 
                             <h3 className="text-sm font-semibold text-zinc-900">

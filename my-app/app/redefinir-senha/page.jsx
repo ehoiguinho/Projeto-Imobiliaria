@@ -111,11 +111,8 @@ export default function RedefinirSenhaPage() {
 
                 <section className="w-full max-w-md">
 
-                    {/* CARD */}
 
                     <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-xl">
-
-                        {/* CABEÇALHO */}
 
                         <div className="mb-8">
 
@@ -136,14 +133,11 @@ export default function RedefinirSenhaPage() {
 
                         </div>
 
-                        {/* FORMULÁRIO */}
 
                         <form
                             onSubmit={redefinirSenha}
                             className="space-y-5"
                         >
-
-                            {/* NOVA SENHA */}
 
                             <div>
 
@@ -172,8 +166,6 @@ export default function RedefinirSenhaPage() {
                                 </p>
 
                             </div>
-
-                            {/* CONFIRMAR SENHA */}
 
                             <div>
 
@@ -209,7 +201,6 @@ export default function RedefinirSenhaPage() {
 
                             )}
 
-                            {/* SUCESSO */}
 
                             {mensagem && (
 
@@ -234,7 +225,6 @@ export default function RedefinirSenhaPage() {
 
                             )}
 
-                            {/* BOTÃO */}
 
                             <button
                                 type="submit"
@@ -248,7 +238,6 @@ export default function RedefinirSenhaPage() {
 
                         </form>
 
-                        {/* VOLTAR */}
 
                         {!mensagem && (
 

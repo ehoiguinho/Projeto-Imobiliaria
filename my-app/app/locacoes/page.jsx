@@ -62,19 +62,8 @@ export default function LocacoesPage() {
     }
   }
 
-  /*
-   * ============================================================
-   * CARREGAR ALUGUÉIS DO CONTRATO
-   * ============================================================
-   *
-   * mostrarToast:
-   *
-   * false -> carregamento normal
-   * true  -> retorno do pagamento
-   *
-   */
   async function carregarAlugueis(contratoId, mostrarToast = false) {
-    
+
     let toastId = null;
 
     if (mostrarToast) {
@@ -143,12 +132,6 @@ export default function LocacoesPage() {
     }
 }
 
-
-  /*
-   * ============================================================
-   * INICIAR PAGAMENTO
-   * ============================================================
-   */
   async function pagarAluguel(aluguelId) {
     const toastId = toast.loading(
       "Preparando pagamento..."
@@ -221,45 +204,11 @@ export default function LocacoesPage() {
     }
   }
 
-  /*
-   * ============================================================
-   * CARREGAMENTO INICIAL
-   * ============================================================
-   */
   useEffect(() => {
     carregarContratos();
   }, []);
 
-  /*
-   * ============================================================
-   * RESTAURAR CONTRATO APÓS RETORNO DO PAGAMENTO
-   * ============================================================
-   *
-   * Fluxo:
-   *
-   * /locacoes
-   *      ↓
-   * usuário escolhe contrato
-   *      ↓
-   * localStorage
-   *      ↓
-   * pagamento
-   *      ↓
-   * AbacatePay
-   *      ↓
-   * webhook atualiza banco
-   *      ↓
-   * usuário clica "Continuar"
-   *      ↓
-   * /locacoes
-   *      ↓
-   * recupera contrato
-   *      ↓
-   * verifica pagamento em andamento
-   *      ↓
-   * busca parcelas novamente
-   *
-   */
+  
   useEffect(() => {
     if (contratos.length === 0) {
       return;
@@ -291,10 +240,7 @@ export default function LocacoesPage() {
       );
 
     if (pagamentoEmAndamento === "true") {
-      /*
-       * Remove imediatamente para evitar que
-       * o toast seja exibido novamente.
-       */
+      
       localStorage.removeItem(
         "pagamentoEmAndamento"
       );
@@ -320,23 +266,13 @@ export default function LocacoesPage() {
     );
 
   }, [contratos]);
-
-  /*
-   * ============================================================
-   * CONTRATO ATUAL
-   * ============================================================
-   */
+ 
   const contratoAtual = contratos.find(
     (contrato) =>
       String(contrato.id) ===
       String(contratoSelecionado)
   );
 
-  /*
-   * ============================================================
-   * RESUMO DOS ALUGUÉIS
-   * ============================================================
-   */
   const alugueisPagos = alugueis.filter(
     (aluguel) =>
       aluguel.status === "PAGO"
@@ -360,11 +296,6 @@ export default function LocacoesPage() {
       0
     );
 
-  /*
-   * ============================================================
-   * ESTILO DO STATUS
-   * ============================================================
-   */
   function obterEstiloStatus(status) {
     switch (status) {
       case "PAGO":
@@ -465,9 +396,6 @@ export default function LocacoesPage() {
 
         <section className="space-y-4">
 
-          {/* =====================================================
-              SELETOR DE CONTRATOS
-              ===================================================== */}
           <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
 
             <button
@@ -600,9 +528,6 @@ export default function LocacoesPage() {
 
           </div>
 
-          {/* =====================================================
-              SEM CONTRATO SELECIONADO
-              ===================================================== */}
           {!contratoSelecionado && (
 
             <div className="rounded-xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center">
@@ -632,9 +557,6 @@ export default function LocacoesPage() {
             </div>
           )}
 
-          {/* =====================================================
-              CONTRATO SELECIONADO
-              ===================================================== */}
           {contratoAtual && (
             <>
 

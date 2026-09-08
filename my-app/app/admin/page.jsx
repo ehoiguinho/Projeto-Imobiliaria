@@ -169,7 +169,6 @@ export default function AdminPage() {
         <main className="min-h-screen p-8">
             <div className="mx-auto max-w-7xl">
 
-                {/* Cabeçalho */}
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-slate-900">
                         Painel Administrativo
@@ -180,7 +179,6 @@ export default function AdminPage() {
                     </p>
                 </div>
 
-                {/* Cards */}
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
 
                     <div className="rounded-xl bg-white p-6 shadow-sm">
@@ -235,10 +233,8 @@ export default function AdminPage() {
 
                 </div>
 
-                {/* Lista de imóveis */}
                 <section className="mt-8 rounded-xl bg-white shadow-sm">
 
-                    {/* Cabeçalho da seção */}
                     <div className="border-b border-slate-200 p-6">
 
                         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -259,7 +255,6 @@ export default function AdminPage() {
 
                         </div>
 
-                        {/* Filtros */}
                         <div className="mt-5 flex flex-col gap-3 md:flex-row">
 
                             <input
@@ -292,7 +287,6 @@ export default function AdminPage() {
 
                     </div>
 
-                    {/* Tabela */}
                     <div className="overflow-x-auto">
 
                         <table className="w-full text-left">
@@ -418,7 +412,6 @@ export default function AdminPage() {
 
                         </table>
 
-                        {/* Nenhum resultado */}
                         {imoveisFiltrados.length === 0 && (
 
                             <div className="p-10 text-center">

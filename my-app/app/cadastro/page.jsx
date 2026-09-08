@@ -100,7 +100,6 @@ export default function CadastroPage() {
     return (
         <main className="min-h-screen bg-zinc-50">
 
-            {/* Navbar */}
 
                 <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
 
@@ -114,8 +113,6 @@ export default function CadastroPage() {
 
                 </div>
           
-
-            {/* Cadastro */}
 
             <section className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-6 py-12">
 
@@ -139,8 +136,6 @@ export default function CadastroPage() {
                             onSubmit={cadastrar}
                             className="space-y-5"
                         >
-
-                            {/* Nome */}
 
                             <div>
 
@@ -167,8 +162,6 @@ export default function CadastroPage() {
 
                             </div>
 
-                            {/* E-mail */}
-
                             <div>
 
                                 <label className="mb-2 block text-sm font-medium text-zinc-700">
@@ -193,8 +186,6 @@ export default function CadastroPage() {
                                 </div>
 
                             </div>
-
-                            {/* Senha */}
 
                             <div>
 
@@ -221,8 +212,6 @@ export default function CadastroPage() {
 
                             </div>
 
-                            {/* Confirmar senha */}
-
                             <div>
 
                                 <label className="mb-2 block text-sm font-medium text-zinc-700">
@@ -248,23 +237,17 @@ export default function CadastroPage() {
 
                             </div>
 
-                            {/* Erro */}
-
                             {erro && (
                                 <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                                     {erro}
                                 </div>
                             )}
 
-                            {/* Sucesso */}
-
                             {sucesso && (
                                 <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
                                     {sucesso}
                                 </div>
                             )}
-
-                            {/* Botão */}
 
                             <button
                                 type="submit"
@@ -310,7 +293,6 @@ export default function CadastroPage() {
 
                     <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
 
-                        {/* EMPRESA */}
                         <div>
 
                             <div className="flex items-center gap-2">
@@ -360,7 +342,6 @@ export default function CadastroPage() {
 
                         </div>
 
-                        {/* NAVEGAÇÃO */}
                         <div>
 
                             <h3 className="text-sm font-semibold text-zinc-900">
@@ -394,7 +375,6 @@ export default function CadastroPage() {
 
                         </div>
 
-                        {/* ATENDIMENTO */}
                         <div>
 
                             <h3 className="text-sm font-semibold text-zinc-900">

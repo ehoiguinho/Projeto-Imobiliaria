@@ -80,9 +80,6 @@ export default function LocarImovelPage() {
     carregarImovel();
   }, [params.id]);
 
-  /* =========================
-     CARREGANDO
-  ========================= */
 
   if (carregando) {
     return (
@@ -114,9 +111,6 @@ export default function LocarImovelPage() {
     );
   }
 
-  /* =========================
-     ERRO AO CARREGAR
-  ========================= */
 
   if (erro && !imovel) {
     return (
@@ -179,13 +173,9 @@ export default function LocarImovelPage() {
   return (
     <main className="min-h-screen bg-zinc-50">
 
-      {/* =========================
-          CONTEÚDO
-      ========================= */}
 
       <div className="mx-auto max-w-5xl px-6 py-10 lg:px-8">
 
-        {/* VOLTAR */}
 
         <button
           onClick={() => router.back()}
@@ -210,10 +200,6 @@ export default function LocarImovelPage() {
           Voltar para o imóvel
 
         </button>
-
-        {/* =========================
-            CARD
-        ========================= */}
 
         <section className="overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm">
 
@@ -274,10 +260,6 @@ export default function LocarImovelPage() {
 
           </div>
 
-          {/* =========================
-              RESUMO DO IMÓVEL
-          ========================= */}
-
           <div className="p-6 sm:p-8">
 
             <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-6 sm:p-7">
@@ -293,8 +275,6 @@ export default function LocarImovelPage() {
                   <h2 className="mt-2 text-2xl font-bold tracking-tight text-zinc-900">
                     {imovel.descricao}
                   </h2>
-
-                  {/* LOCALIZAÇÃO */}
 
                   <div className="mt-4 flex items-start gap-2 text-sm text-zinc-500">
 
@@ -332,8 +312,6 @@ export default function LocarImovelPage() {
 
                 </div>
 
-                {/* VALOR */}
-
                 <div className="shrink-0 sm:text-right">
 
                   <p className="text-sm font-medium text-zinc-500">
@@ -357,10 +335,6 @@ export default function LocarImovelPage() {
 
             </div>
 
-            {/* =========================
-                O QUE ACONTECE
-            ========================= */}
-
             <div className="mt-8">
 
               <h2 className="text-lg font-semibold text-zinc-900">
@@ -369,7 +343,6 @@ export default function LocarImovelPage() {
 
               <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
 
-                {/* CONTRATO */}
 
                 <div className="rounded-2xl border border-zinc-200 bg-white p-5">
 
@@ -452,8 +425,6 @@ export default function LocarImovelPage() {
 
                 </div>
 
-                {/* CONFIRMAÇÃO */}
-
                 <div className="rounded-2xl border border-zinc-200 bg-white p-5">
 
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-100">
@@ -488,10 +459,6 @@ export default function LocarImovelPage() {
               </div>
 
             </div>
-
-            {/* =========================
-                AVISO
-            ========================= */}
 
             <div className="mt-8 flex gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-5">
 
@@ -535,10 +502,6 @@ export default function LocarImovelPage() {
               </div>
 
             </div>
-
-            {/* =========================
-                MENSAGENS
-            ========================= */}
 
             {erro && (
               <div className="mt-6 flex gap-3 rounded-2xl border border-red-200 bg-red-50 p-4">
@@ -607,10 +570,6 @@ export default function LocarImovelPage() {
 
               </div>
             )}
-
-            {/* =========================
-                AÇÕES
-            ========================= */}
 
             <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
 
@@ -698,17 +657,12 @@ export default function LocarImovelPage() {
 
       </div>
 
-      {/* =========================
-          FOOTER
-      ========================= */}
 
       <footer className="border-t border-zinc-200 bg-zinc-100">
 
         <div className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
 
           <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
-
-            {/* EMPRESA */}
 
             <div>
 
@@ -759,8 +713,6 @@ export default function LocarImovelPage() {
 
             </div>
 
-            {/* NAVEGAÇÃO */}
-
             <div>
 
               <h3 className="text-sm font-semibold text-zinc-900">
@@ -793,8 +745,6 @@ export default function LocarImovelPage() {
               </div>
 
             </div>
-
-            {/* ATENDIMENTO */}
 
             <div>
 

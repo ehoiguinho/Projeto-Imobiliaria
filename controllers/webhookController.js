@@ -16,17 +16,6 @@ export default class WebhookController {
 
         const body = req.body;
 
-        console.log("========== WEBHOOK RECEBIDO ==========");
-        console.log("URL:", req.originalUrl);
-        console.log("QUERY:", req.query);
-
-        console.log("webhook-id:", !!webhookId);
-        console.log("webhook-timestamp:", !!webhookTimestamp);
-        console.log("webhook-signature:", !!assinatura);
-        console.log("body recebido:", body ? "sim" : "não");
-
-        console.log("======================================");
-
         const resultado =
             await this.#webhookService.processarAbacatePay(
                 body,

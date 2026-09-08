@@ -169,10 +169,7 @@ export default class PagamentoService {
             );
         }
 
-        /*
-         * Agora criamos o Checkout utilizando
-         * o produto criado acima.
-         */
+
             const checkout =
         await this.#abacatePay.checkouts.create({
             items: [
@@ -203,11 +200,6 @@ export default class PagamentoService {
             );
         }
 
-        /*
-         * Registramos a tentativa de pagamento
-         * somente depois que o Gateway confirmou
-         * a criação do Checkout.
-         */
         const pagamento = {
 
             aluguelId: aluguelId,

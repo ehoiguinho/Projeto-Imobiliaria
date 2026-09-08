@@ -208,7 +208,6 @@ return (
     <main className="min-h-screen p-8">
         <div className="mx-auto max-w-5xl">
 
-            {/* CABEÇALHO */}
 
             <div className="mb-8">
 
@@ -258,7 +257,6 @@ return (
 
             </div>
 
-            {/* IMÓVEL */}
 
             <section className="mb-6 rounded-xl bg-white p-6 shadow-sm">
 

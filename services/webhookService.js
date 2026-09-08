@@ -22,20 +22,7 @@ export default class WebhookService {
         webhookSignature
     ) {
 
-        console.log("\n");
-        console.log("==================================================");
-        console.log("          INÍCIO DO PROCESSAMENTO WEBHOOK");
-        console.log("==================================================");
-
-        // ==================================================
-        // 1. VALIDAR HEADERS
-        // ==================================================
-
-        console.log("\n========== VALIDANDO HEADERS ==========");
-
         if (!webhookId) {
-            console.log("❌ webhook-id não enviado.");
-
             const erro = new Error(
                 "Header webhook-id não enviado."
             );
@@ -45,8 +32,6 @@ export default class WebhookService {
         }
 
         if (!webhookTimestamp) {
-            console.log("❌ webhook-timestamp não enviado.");
-
             const erro = new Error(
                 "Header webhook-timestamp não enviado."
             );
@@ -56,8 +41,6 @@ export default class WebhookService {
         }
 
         if (!webhookSignature) {
-            console.log("❌ webhook-signature não enviado.");
-
             const erro = new Error(
                 "Header webhook-signature não enviado."
             );
@@ -66,25 +49,10 @@ export default class WebhookService {
             throw erro;
         }
 
-        console.log("webhook-id:", webhookId);
-        console.log("webhook-timestamp:", webhookTimestamp);
-        console.log("webhook-signature: recebida");
-        console.log("======================================");
-
-        // ==================================================
-        // 2. VALIDAR SECRET
-        // ==================================================
-
-        console.log("\n========== VALIDANDO SECRET ==========");
-
         const webhookSecret =
             process.env.ABACATEPAY_WEBHOOK_SECRET;
 
         if (!webhookSecret) {
-
-            console.log(
-                "❌ ABACATEPAY_WEBHOOK_SECRET não configurada."
-            );
 
             const erro = new Error(
                 "ABACATEPAY_WEBHOOK_SECRET não configurada."
@@ -94,20 +62,10 @@ export default class WebhookService {
             throw erro;
         }
 
-        console.log("Webhook secret configurada: SIM");
-        console.log("=====================================");
-
-        // ==================================================
-        // 3. VALIDAR TIMESTAMP
-        // ==================================================
-
-        console.log("\n========== VALIDANDO TIMESTAMP ==========");
 
         const timestamp = Number(webhookTimestamp);
 
         if (!Number.isInteger(timestamp)) {
-
-            console.log("❌ Timestamp inválido.");
 
             const erro = new Error(
                 "webhook-timestamp inválido."
@@ -123,13 +81,8 @@ export default class WebhookService {
         const diferenca =
             Math.abs(agora - timestamp);
 
-        console.log("Timestamp recebido:", timestamp);
-        console.log("Timestamp atual:", agora);
-        console.log("Diferença:", diferenca, "segundos");
 
         if (diferenca > 300) {
-
-            console.log("❌ Webhook expirado.");
 
             const erro = new Error(
                 "Webhook expirado."
@@ -139,14 +92,6 @@ export default class WebhookService {
             throw erro;
         }
 
-        console.log("✅ Timestamp válido.");
-        console.log("========================================");
-
-        // ==================================================
-        // 4. VALIDAR ASSINATURA
-        // ==================================================
-
-        console.log("\n========== VALIDANDO ASSINATURA ==========");
 
         const assinaturaValida =
             this.#validarAssinatura(
@@ -159,8 +104,6 @@ export default class WebhookService {
 
         if (!assinaturaValida) {
 
-            console.log("❌ Assinatura inválida.");
-
             const erro = new Error(
                 "Assinatura do webhook inválida."
             );
@@ -168,15 +111,6 @@ export default class WebhookService {
             erro.status = 401;
             throw erro;
         }
-
-        console.log("✅ Assinatura válida.");
-        console.log("==========================================");
-
-        // ==================================================
-        // 5. CONVERTER BODY
-        // ==================================================
-
-        console.log("\n========== CONVERTENDO PAYLOAD ==========");
 
         let payload;
 
@@ -211,12 +145,10 @@ export default class WebhookService {
                 payload?.devMode
             );
 
-            console.log("=========================================");
-
         } catch (ex) {
 
             console.log(
-                "❌ Erro ao converter payload:",
+                "Erro ao converter payload:",
                 ex.message
             );
 
@@ -228,21 +160,11 @@ export default class WebhookService {
             throw erro;
         }
 
-        // ==================================================
-        // 6. VALIDAR PAYLOAD
-        // ==================================================
-
-        console.log("\n========== VALIDANDO PAYLOAD ==========");
-
         if (
             !payload ||
             typeof payload !== "object" ||
             !payload.type
         ) {
-
-            console.log(
-                "❌ Payload sem propriedade 'type'."
-            );
 
             console.log(
                 "Payload recebido:",
@@ -262,23 +184,10 @@ export default class WebhookService {
             payload.type
         );
 
-        console.log("✅ Payload válido.");
-        console.log("========================================");
-
-        // ==================================================
-        // 7. VALIDAR API VERSION
-        // ==================================================
-
-        console.log("\n========== VALIDANDO API VERSION ==========");
-
         if (
             payload.apiVersion &&
             payload.apiVersion !== 2
         ) {
-
-            console.log(
-                "⚠️ Evento ignorado."
-            );
 
             console.log(
                 "API Version recebida:",
@@ -291,15 +200,6 @@ export default class WebhookService {
             };
         }
 
-        console.log("API Version:", payload.apiVersion);
-        console.log("✅ API Version aceita.");
-        console.log("===========================================");
-
-        // ==================================================
-        // 8. CONECTAR AO BANCO
-        // ==================================================
-
-        console.log("\n========== CONECTANDO AO BANCO ==========");
 
         const banco =
             new Database();
@@ -309,15 +209,6 @@ export default class WebhookService {
 
         this.#aluguelRepository.banco =
             banco;
-
-        console.log("✅ Repositories configurados.");
-        console.log("=========================================");
-
-        // ==================================================
-        // 9. IDEMPOTÊNCIA
-        // ==================================================
-
-        console.log("\n========== VERIFICANDO IDEMPOTÊNCIA ==========");
 
         const eventoId =
             webhookId;
@@ -335,33 +226,11 @@ export default class WebhookService {
 
         if (eventoExistente) {
 
-            console.log(
-                "⚠️ Evento já processado."
-            );
-
-            console.log(
-                "=================================================="
-            );
-
             return {
                 ok: true,
                 msg: "Evento já processado."
             };
         }
-
-        console.log(
-            "✅ Evento ainda não foi processado."
-        );
-
-        console.log(
-            "==============================================="
-        );
-
-        // ==================================================
-        // 10. PROCESSAR EVENTO
-        // ==================================================
-
-        console.log("\n========== ANALISANDO EVENTO ==========");
 
         if (
             payload.type === "checkout.completed"
@@ -400,20 +269,9 @@ export default class WebhookService {
                 payload?.data?.payerInformation?.method
             );
 
-            console.log(
-                "========================================"
-            );
-
-            console.log(
-                "========== PROCESSANDO PAGAMENTO =========="
-            );
 
             await this.#processarCheckoutConcluido(
                 payload
-            );
-
-            console.log(
-                "========== PAGAMENTO PROCESSADO =========="
             );
 
         } else {
@@ -429,21 +287,11 @@ export default class WebhookService {
                 payload.type
             );
 
-            console.log(
-                "✅ Evento ignorado registrado."
-            );
-
             return {
                 ok: true,
                 msg: "Evento recebido e ignorado."
             };
         }
-
-        // ==================================================
-        // 11. REGISTRAR EVENTO
-        // ==================================================
-
-        console.log("\n========== REGISTRANDO WEBHOOK ==========");
 
         await this.#registrarEvento(
             banco,
@@ -451,29 +299,11 @@ export default class WebhookService {
             payload.type
         );
 
-        console.log(
-            "✅ Webhook registrado na tb_webhook_evento."
-        );
-
-        console.log(
-            "=================================================="
-        );
-        console.log(
-            "       WEBHOOK PROCESSADO COM SUCESSO"
-        );
-        console.log(
-            "=================================================="
-        );
-
         return {
             ok: true,
             msg: "Webhook processado com sucesso."
         };
     }
-
-    // ==================================================
-    // VALIDAR ASSINATURA
-    // ==================================================
 
     #validarAssinatura(
         rawBody,
@@ -583,26 +413,15 @@ export default class WebhookService {
         return false;
     }
 
-    // ==================================================
-    // PROCESSAR CHECKOUT CONCLUÍDO
-    // ==================================================
 
     async #processarCheckoutConcluido(
         payload
     ) {
 
-        console.log(
-            "\n========== PROCESSANDO CHECKOUT =========="
-        );
-
         const checkout =
             payload?.data?.checkout;
 
         if (!checkout) {
-
-            console.log(
-                "❌ Checkout não encontrado."
-            );
 
             throw new Error(
                 "Checkout não encontrado no payload."
@@ -624,26 +443,15 @@ export default class WebhookService {
             checkout.status
         );
 
-        // ==================================================
-        // VALIDAR STATUS
-        // ==================================================
-
         if (
             checkout.status !== "PAID"
         ) {
-
-            console.log(
-                "❌ Checkout não está como PAID."
-            );
 
             throw new Error(
                 "Checkout recebido sem status PAID."
             );
         }
 
-        console.log(
-            "✅ Checkout confirmado como PAID."
-        );
 
         const externalId =
             checkout.externalId;
@@ -656,22 +464,10 @@ export default class WebhookService {
             !checkoutId
         ) {
 
-            console.log(
-                "❌ Nenhum identificador encontrado."
-            );
-
             throw new Error(
                 "Não foi possível identificar o pagamento."
             );
         }
-
-        // ==================================================
-        // BUSCAR PAGAMENTO
-        // ==================================================
-
-        console.log(
-            "\n========== BUSCANDO PAGAMENTO =========="
-        );
 
         let pagamento = null;
 
@@ -726,10 +522,6 @@ export default class WebhookService {
             pagamento.length === 0
         ) {
 
-            console.log(
-                "❌ PAGAMENTO NÃO ENCONTRADO NO BANCO."
-            );
-
             throw new Error(
                 "Pagamento não encontrado no sistema."
             );
@@ -737,10 +529,6 @@ export default class WebhookService {
 
         pagamento =
             pagamento[0];
-
-        console.log(
-            "\n========== PAGAMENTO ENCONTRADO =========="
-        );
 
         console.log(
             "Pagamento ID:",
@@ -772,32 +560,14 @@ export default class WebhookService {
             pagamento.status
         );
 
-        console.log(
-            "=========================================="
-        );
-
-        // ==================================================
-        // SE JÁ ESTIVER PAGO
-        // ==================================================
 
         if (
             pagamento.status === "PAGO"
         ) {
 
-            console.log(
-                "⚠️ Pagamento já está marcado como PAGO."
-            );
-
             return;
         }
 
-        // ==================================================
-        // MARCAR PAGAMENTO COMO PAGO
-        // ==================================================
-
-        console.log(
-            "\n========== ATUALIZANDO TB_PAGAMENTO =========="
-        );
 
         const pagamentoAtualizado =
             await this.#pagamentoRepository
@@ -805,32 +575,14 @@ export default class WebhookService {
                     pagamento.id
                 );
 
-        console.log(
-            "Resultado UPDATE tb_pagamento:",
-            pagamentoAtualizado
-        );
-
         if (!pagamentoAtualizado) {
-
-            console.log(
-                "⚠️ UPDATE tb_pagamento não afetou nenhuma linha."
-            );
 
         } else {
 
             console.log(
-                "✅ Pagamento marcado como PAGO."
+                "Pagamento marcado como PAGO."
             );
         }
-
-        // ==================================================
-        // MARCAR ALUGUEL COMO PAGO
-        // ==================================================
-
-        console.log(
-            "\n========== ATUALIZANDO TB_ALUGUEL =========="
-        );
-
         console.log(
             "Aluguel ID:",
             pagamento.aluguelId
@@ -850,19 +602,17 @@ export default class WebhookService {
         if (!aluguelAtualizado) {
 
             console.log(
-                "⚠️ UPDATE tb_aluguel não afetou nenhuma linha."
+                "UPDATE tb_aluguel não afetou nenhuma linha."
             );
 
         } else {
 
             console.log(
-                "✅ Aluguel marcado como PAGO."
+                "Aluguel marcado como PAGO."
             );
         }
 
-        console.log(
-            "\n========== CHECKOUT CONCLUÍDO =========="
-        );
+       
 
         console.log(
             "Pagamento ID:",
@@ -889,10 +639,6 @@ export default class WebhookService {
         );
     }
 
-    // ==================================================
-    // VERIFICAR EVENTO PROCESSADO
-    // ==================================================
-
     async #verificarEventoProcessado(
         banco,
         eventoId
@@ -916,10 +662,6 @@ export default class WebhookService {
             resultado.length > 0
         );
     }
-
-    // ==================================================
-    // REGISTRAR EVENTO
-    // ==================================================
 
     async #registrarEvento(
         banco,
@@ -956,7 +698,7 @@ export default class WebhookService {
         );
 
         console.log(
-            "✅ Evento registrado."
+            "Evento registrado."
         );
     }
 }

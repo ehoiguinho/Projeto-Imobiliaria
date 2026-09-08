@@ -213,7 +213,6 @@ export default function EditarImovelPage() {
 
             <div className="mx-auto max-w-4xl">
 
-                {/* Cabeçalho */}
                 <div className="mb-8">
 
                     <button
@@ -235,7 +234,6 @@ export default function EditarImovelPage() {
                 </div>
 
 
-                {/* Formulário */}
                 <form
                     onSubmit={salvar}
                     className="rounded-xl bg-white p-8 shadow-sm"
@@ -243,7 +241,6 @@ export default function EditarImovelPage() {
 
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
 
-                        {/* Descrição */}
                         <div className="md:col-span-2">
 
                             <label className="mb-2 block text-sm font-medium text-slate-700">
@@ -262,7 +259,6 @@ export default function EditarImovelPage() {
                         </div>
 
 
-                        {/* CEP */}
                         <div>
 
                             <label className="mb-2 block text-sm font-medium text-slate-700">
@@ -281,7 +277,6 @@ export default function EditarImovelPage() {
                         </div>
 
 
-                        {/* Endereço */}
                         <div>
 
                             <label className="mb-2 block text-sm font-medium text-slate-700">
@@ -300,7 +295,6 @@ export default function EditarImovelPage() {
                         </div>
 
 
-                        {/* Bairro */}
                         <div>
 
                             <label className="mb-2 block text-sm font-medium text-slate-700">
@@ -319,7 +313,6 @@ export default function EditarImovelPage() {
                         </div>
 
 
-                        {/* Cidade */}
                         <div>
 
                             <label className="mb-2 block text-sm font-medium text-slate-700">
@@ -338,7 +331,6 @@ export default function EditarImovelPage() {
                         </div>
 
 
-                        {/* Valor */}
                         <div>
 
                             <label className="mb-2 block text-sm font-medium text-slate-700">
@@ -359,7 +351,6 @@ export default function EditarImovelPage() {
                         </div>
 
 
-                        {/* Disponibilidade */}
                         <div>
 
                             <label className="mb-2 block text-sm font-medium text-slate-700">
@@ -388,7 +379,6 @@ export default function EditarImovelPage() {
                     </div>
 
 
-                    {/* Erro */}
                     {erro && (
                         <div className="mt-6 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">
                             {erro}
@@ -396,7 +386,6 @@ export default function EditarImovelPage() {
                     )}
 
 
-                    {/* Botões */}
                     <div className="mt-8 flex justify-end gap-3 border-t border-slate-200 pt-6">
 
                         <button

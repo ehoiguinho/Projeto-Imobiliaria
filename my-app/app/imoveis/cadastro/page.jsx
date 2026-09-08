@@ -96,9 +96,6 @@ return ( <main className="min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-8"> <
 
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
 
-        {/* ==================================================
-            INFORMAÇÕES DO IMÓVEL
-        ================================================== */}
         <section className="p-5 sm:p-6">
 
           <div className="space-y-4">
@@ -167,9 +164,6 @@ return ( <main className="min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-8"> <
 
         <div className="border-t border-slate-100" />
 
-        {/* ==================================================
-            LOCALIZAÇÃO
-        ================================================== */}
         <section className="p-5 sm:p-6">
 
           <div className="mb-5">
@@ -184,7 +178,6 @@ return ( <main className="min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-8"> <
 
           <div className="space-y-4">
 
-            {/* CEP + Endereço */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-[160px_1fr]">
 
               <div>
@@ -220,7 +213,6 @@ return ( <main className="min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-8"> <
 
             </div>
 
-            {/* Bairro + Cidade */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 
               <div>
@@ -258,9 +250,6 @@ return ( <main className="min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-8"> <
 
         <div className="border-t border-slate-100" />
 
-        {/* ==================================================
-            IMAGENS
-        ================================================== */}
         <section className="p-5 sm:p-6">
 
           <div className="mb-5">
@@ -323,7 +312,6 @@ return ( <main className="min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-8"> <
 
         </section>
 
-        {/* Erro */}
         {erro && (
           <div className="mx-5 mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 sm:mx-6">
             <p className="text-sm font-medium text-red-700">
@@ -332,7 +320,6 @@ return ( <main className="min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-8"> <
           </div>
         )}
 
-        {/* Ações */}
         <footer className="flex flex-col-reverse gap-3 border-t border-slate-100 bg-slate-50 px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
 
           <button

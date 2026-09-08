@@ -105,7 +105,6 @@ return (
     <main className="min-h-screen p-8">
         <div className="mx-auto max-w-7xl">
 
-            {/* CABEÇALHO */}
 
             <div className="mb-8">
 
@@ -127,7 +126,6 @@ return (
 
             </div>
 
-            {/* INDICADORES */}
 
             <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
 
@@ -181,11 +179,9 @@ return (
 
             </div>
 
-            {/* TABELA */}
 
             <section className="rounded-xl bg-white shadow-sm">
 
-                {/* FILTROS */}
 
                 <div className="border-b border-slate-200 p-6">
 
@@ -245,7 +241,6 @@ return (
 
                 </div>
 
-                {/* CONTEÚDO */}
 
                 {carregando ? (
 

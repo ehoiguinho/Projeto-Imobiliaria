@@ -78,11 +78,7 @@ export default function EsqueciSenhaPage() {
 
                 <section className="w-full">
 
-                    {/* CARD */}
-
                     <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-xl">
-
-                        {/* CABEÇALHO */}
 
                         <div className="mb-7">
 
@@ -107,8 +103,6 @@ export default function EsqueciSenhaPage() {
                         </div>
 
 
-                        {/* SUCESSO */}
-
                         {sucesso && (
 
                             <div className="mb-5 flex gap-3 rounded-lg border border-green-200 bg-green-50 px-4 py-3">
@@ -126,8 +120,6 @@ export default function EsqueciSenhaPage() {
 
                         )}
 
-
-                        {/* ERRO */}
 
                         {erro && (
 
@@ -199,7 +191,6 @@ export default function EsqueciSenhaPage() {
                         </form>
 
 
-                        {/* VOLTAR */}
 
                         <div className="mt-6 border-t border-slate-100 pt-6">
 

@@ -66,7 +66,6 @@ export default function LoginPage() {
       <div className="mx-auto flex min-h-[calc(100vh-176px)] max-w-md items-center justify-center">
         <section className="w-full rounded-2xl border border-slate-200 bg-white p-8 shadow-sm sm:p-10">
 
-          {/* Cabeçalho */}
           <div className="mb-8 text-center">
             <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
               <Building2 size={27} strokeWidth={1.8} />
@@ -78,10 +77,8 @@ export default function LoginPage() {
 
           </div>
 
-          {/* Formulário */}
           <form onSubmit={fazerLogin} className="space-y-5">
 
-            {/* E-mail */}
             <div>
               <label
                 htmlFor="email"
@@ -110,7 +107,6 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Senha */}
             <div>
               <div className="mb-2 flex items-center justify-between">
                 <label
@@ -149,7 +145,6 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Erro */}
             {erro && (
               <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3">
                 <p className="text-sm leading-5 text-red-700">
@@ -158,7 +153,6 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* Botão */}
             <button
               type="submit"
               disabled={carregando}
@@ -168,7 +162,6 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Cadastro */}
           <div className="mt-7 border-t border-slate-100 pt-6 text-center">
             <p className="text-sm text-slate-500">
               Ainda não possui uma conta?
@@ -183,7 +176,6 @@ export default function LoginPage() {
             </button>
           </div>
 
-          {/* Voltar */}
           <button
             type="button"
             onClick={() => router.push("/")}

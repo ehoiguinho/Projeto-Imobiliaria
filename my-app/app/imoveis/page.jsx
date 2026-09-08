@@ -71,16 +71,11 @@ export default function ImoveisPage() {
     }
   }
 
-  /*
-   * Carrega os imóveis somente uma vez.
-   */
   useEffect(() => {
     carregarImoveis();
   }, []);
 
-  /*
-   * Lê os filtros enviados pela Home através da URL.
-   */
+  
   useEffect(() => {
 
     const cidade = searchParams.get("cidade") || "";
@@ -200,7 +195,6 @@ export default function ImoveisPage() {
 
     <main className="min-h-screen bg-slate-50">
 
-      {/* CABEÇALHO DA PÁGINA */}
 
       <section className="border-b border-slate-200 bg-white">
 
@@ -221,8 +215,6 @@ export default function ImoveisPage() {
 
             </div>
 
-
-            {/* CONTADOR */}
 
             {!carregando && !erro && (
 
@@ -333,9 +325,6 @@ export default function ImoveisPage() {
 
               </div>
 
-
-              {/* VALOR MÁXIMO */}
-
               <div>
 
                 <label
@@ -366,8 +355,6 @@ export default function ImoveisPage() {
 
               </div>
 
-
-              {/* CIDADE */}
 
               <div>
 
@@ -467,13 +454,8 @@ export default function ImoveisPage() {
 
         </section>
 
-
-        {/* RESULTADOS */}
-
         <section>
 
-
-          {/* CABEÇALHO DOS RESULTADOS */}
 
           {!carregando && !erro && imoveisFiltrados.length > 0 && (
 
@@ -495,9 +477,6 @@ export default function ImoveisPage() {
 
           )}
 
-
-          {/* CARREGANDO */}
-
           {carregando && (
 
             <div className="flex min-h-60 items-center justify-center">
@@ -516,8 +495,6 @@ export default function ImoveisPage() {
 
           )}
 
-
-          {/* ERRO */}
 
           {!carregando && erro && (
 
@@ -543,8 +520,6 @@ export default function ImoveisPage() {
 
           )}
 
-
-          {/* NENHUM IMÓVEL */}
 
           {!carregando &&
             !erro &&
@@ -595,10 +570,6 @@ export default function ImoveisPage() {
 
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 
-                {/*
-                 * IMPORTANTE:
-                 * Os cards permanecem exatamente como estavam.
-                 */}
 
                 {imoveisFiltrados.map((imovel) => (
 
@@ -622,7 +593,6 @@ export default function ImoveisPage() {
 
                     <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
 
-                        {/* EMPRESA */}
                         <div>
 
                             <div className="flex items-center gap-2">
@@ -672,7 +642,6 @@ export default function ImoveisPage() {
 
                         </div>
 
-                        {/* NAVEGAÇÃO */}
                         <div>
 
                             <h3 className="text-sm font-semibold text-zinc-900">
@@ -706,7 +675,6 @@ export default function ImoveisPage() {
 
                         </div>
 
-                        {/* ATENDIMENTO */}
                         <div>
 
                             <h3 className="text-sm font-semibold text-zinc-900">

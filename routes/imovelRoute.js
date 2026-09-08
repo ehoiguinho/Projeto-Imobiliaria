@@ -81,7 +81,7 @@ router.get("/destaques", (req, res) => {
     ctrl.listarDestaques(req, res);
 });
 
-router.get("/:id", authMiddleware.validar, (req, res) =>{
+router.get("/:id", (req, res) =>{
     /* #swagger.security = [{
             "jwt": []
     }] */
@@ -110,7 +110,7 @@ router.delete("/:id", authMiddleware.validar, authMiddleware.validarAdmin, (req,
     ctrl.deletar(req, res);
 })
 
-router.get("/:id/imagem", authMiddleware.validar, (req, res) => {
+router.get("/:id/imagem", (req, res) => {
     ctrl.imagem(req, res);
 });
 

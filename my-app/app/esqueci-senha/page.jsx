@@ -191,7 +191,7 @@ export default function EsqueciSenhaPage() {
 
                                 {carregando
                                     ? "Enviando..."
-                                    : "Enviar instruções"
+                                    : "Enviar"
                                 }
 
                             </button>

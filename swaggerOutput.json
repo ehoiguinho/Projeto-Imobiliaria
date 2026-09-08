@@ -11,6 +11,46 @@
     }
   ],
   "paths": {
+    "/webhook/abacatepay": {
+      "post": {
+        "tags": [
+          "Webhook"
+        ],
+        "summary": "Recebe eventos de pagamento da AbacatePay",
+        "description": "",
+        "parameters": [
+          {
+            "name": "webhook-signature",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "webhook-id",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "webhook-timestamp",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/usuario/cadastro": {
       "post": {
         "tags": [

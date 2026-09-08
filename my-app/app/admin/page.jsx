@@ -1,5 +1,6 @@
 "use client";
 
+import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -16,49 +17,74 @@ export default function AdminPage() {
 
     useEffect(() => {
 
-        async function carregarDados() {
-            try {
+    async function carregarDados() {
 
-                const [
-                    respostaImoveis,
-                    respostaContratos,
-                    respostaAlugueis
-                ] = await Promise.all([
-                    fetch("http://localhost:3000/admin/imoveis", {
-                        method: "GET",
-                        credentials: "include"
-                    }),
+        try {
 
-                    fetch("http://localhost:3000/admin/contratos", {
-                        method: "GET",
-                        credentials: "include"
-                    }),
+            const [
+                respostaImoveis,
+                respostaContratos,
+                respostaAlugueis
+            ] = await Promise.all([
+                fetch("http://localhost:3000/admin/imoveis", {
+                    method: "GET",
+                    credentials: "include"
+                }),
 
-                    fetch("http://localhost:3000/admin/alugueis", {
-                        method: "GET",
-                        credentials: "include"
-                    })
-                ]);
+                fetch("http://localhost:3000/admin/contratos", {
+                    method: "GET",
+                    credentials: "include"
+                }),
 
-                const dadosImoveis = await respostaImoveis.json();
-                const dadosContratos = await respostaContratos.json();
-                const dadosAlugueis = await respostaAlugueis.json();
+                fetch("http://localhost:3000/admin/alugueis", {
+                    method: "GET",
+                    credentials: "include"
+                })
+            ]);
 
-                setImoveis(dadosImoveis);
-                setContratos(dadosContratos);
-                setAlugueis(dadosAlugueis);
+            const dadosImoveis = await respostaImoveis.json();
+            const dadosContratos = await respostaContratos.json();
+            const dadosAlugueis = await respostaAlugueis.json();
 
-            } catch (error) {
-                console.log(
-                    "Erro ao carregar dados administrativos:",
-                    error
+            if (!respostaImoveis.ok) {
+                throw new Error(
+                    dadosImoveis.msg || "Erro ao carregar imóveis."
                 );
             }
+
+            if (!respostaContratos.ok) {
+                throw new Error(
+                    dadosContratos.msg || "Erro ao carregar contratos."
+                );
+            }
+
+            if (!respostaAlugueis.ok) {
+                throw new Error(
+                    dadosAlugueis.msg || "Erro ao carregar aluguéis."
+                );
+            }
+
+            setImoveis(dadosImoveis);
+            setContratos(dadosContratos);
+            setAlugueis(dadosAlugueis);
+
+        } catch (error) {
+
+            console.log(
+                "Erro ao carregar dados administrativos:",
+                error
+            );
+
+            toast.error(
+                error.message ||
+                "Erro ao carregar dados administrativos."
+            );
         }
+    }
 
-        carregarDados();
+    carregarDados();
 
-    }, []);
+}, []);
 
     async function excluirImovel(id) {
 
@@ -69,6 +95,8 @@ export default function AdminPage() {
     if (!confirmar) {
         return;
     }
+
+    const toastId = toast.loading("Excluindo imóvel...");
 
     try {
 
@@ -83,8 +111,11 @@ export default function AdminPage() {
         const dados = await resposta.json();
 
         if (!resposta.ok) {
-            alert(
-                dados.msg || "Não foi possível excluir o imóvel."
+            toast.error(
+                dados.msg || "Não foi possível excluir o imóvel.",
+                {
+                    id: toastId
+                }
             );
             return;
         }
@@ -95,13 +126,17 @@ export default function AdminPage() {
             )
         );
 
-        alert("Imóvel excluído com sucesso!");
+        toast.success("Imóvel excluído com sucesso!", {
+            id: toastId
+        });
 
     } catch (error) {
 
         console.log("Erro ao excluir imóvel:", error);
 
-        alert("Erro ao excluir o imóvel.");
+        toast.error("Erro ao excluir o imóvel.", {
+            id: toastId
+        });
     }
 }
 
@@ -408,3 +443,4 @@ export default function AdminPage() {
         </main>
     );
 }
+

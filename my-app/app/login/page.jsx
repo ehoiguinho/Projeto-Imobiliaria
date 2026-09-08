@@ -1,5 +1,6 @@
 "use client";
 
+import toast from "react-hot-toast";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -23,6 +24,8 @@ export default function LoginPage() {
     setCarregando(true);
     setErro("");
 
+    const toastId = toast.loading("Entrando...");
+
     try {
       const resposta = await fetch("http://localhost:3000/login", {
         method: "POST",
@@ -42,9 +45,17 @@ export default function LoginPage() {
         throw new Error(dados.msg || "Erro ao fazer login");
       }
 
+      toast.success("Login realizado com sucesso!", {
+        id: toastId,
+      });
+
       router.push("/imoveis");
     } catch (error) {
       setErro(error.message);
+
+      toast.error(error.message, {
+        id: toastId,
+      });
     } finally {
       setCarregando(false);
     }

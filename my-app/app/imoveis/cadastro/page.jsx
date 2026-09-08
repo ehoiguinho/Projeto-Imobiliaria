@@ -1,5 +1,6 @@
 "use client";
 
+import toast from "react-hot-toast";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -23,6 +24,8 @@ event.preventDefault();
 
 setErro("");
 setCarregando(true);
+
+const toastId = toast.loading("Cadastrando imóvel...");
 
 try {
   const formData = new FormData();
@@ -51,9 +54,17 @@ try {
     throw new Error(dados.msg || "Erro ao cadastrar imóvel");
   }
 
+  toast.success("Imóvel cadastrado com sucesso!", {
+    id: toastId
+  });
+
   router.push("/imoveis");
 } catch (error) {
   setErro(error.message);
+
+  toast.error(error.message, {
+    id: toastId
+  });
 } finally {
   setCarregando(false);
 }
@@ -237,7 +248,7 @@ return ( <main className="min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-8"> <
                   placeholder="Ex.: Santo André"
                   autoComplete="address-level2"
                   required
-                  className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-50"
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-50"
                 />
               </div>
 

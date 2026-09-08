@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import AppShell from "../components/AppShell.jsx";
 
@@ -15,6 +16,8 @@ export default function RootLayout({
     return (
         <html lang="pt-BR">
             <body>
+                <Toaster position="top-center" />
+
                 <AppShell>
                     {children}
                 </AppShell>

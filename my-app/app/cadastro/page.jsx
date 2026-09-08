@@ -1,5 +1,6 @@
 "use client";
 
+import toast from "react-hot-toast";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -26,18 +27,23 @@ export default function CadastroPage() {
 
         if (!nome.trim() || !email.trim() || !senha || !confirmarSenha) {
             setErro("Preencha todos os campos.");
+            toast.error("Preencha todos os campos.");
             return;
         }
 
         if (senha !== confirmarSenha) {
             setErro("As senhas não coincidem.");
+            toast.error("As senhas não coincidem.");
             return;
         }
 
         if (senha.length < 6) {
             setErro("A senha deve possuir pelo menos 6 caracteres.");
+            toast.error("A senha deve possuir pelo menos 6 caracteres.");
             return;
         }
+
+        const toastId = toast.loading("Criando sua conta...");
 
         try {
 
@@ -68,6 +74,10 @@ export default function CadastroPage() {
 
             setSucesso("Conta criada com sucesso! Redirecionando...");
 
+            toast.success("Conta criada com sucesso!", {
+                id: toastId,
+            });
+
             setTimeout(() => {
                 router.push("/login");
             }, 1500);
@@ -75,6 +85,10 @@ export default function CadastroPage() {
         } catch (ex) {
 
             setErro(ex.message);
+
+            toast.error(ex.message, {
+                id: toastId,
+            });
 
         } finally {
 
@@ -422,3 +436,4 @@ export default function CadastroPage() {
         </main>
     );
 }
+

@@ -1,5 +1,6 @@
 "use client";
 
+import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 
 export default function LocacoesPage() {
@@ -40,9 +41,6 @@ export default function LocacoesPage() {
         );
       }
 
-      /*
-       * Remove contratos duplicados.
-       */
       const contratosUnicos = dados.filter(
         (contrato, index, array) => {
           return (
@@ -57,6 +55,7 @@ export default function LocacoesPage() {
 
     } catch (error) {
       setErro(error.message);
+      toast.error(error.message);
 
     } finally {
       setCarregandoContratos(false);
@@ -67,54 +66,83 @@ export default function LocacoesPage() {
    * ============================================================
    * CARREGAR ALUGUÉIS DO CONTRATO
    * ============================================================
+   *
+   * mostrarToast:
+   *
+   * false -> carregamento normal
+   * true  -> retorno do pagamento
+   *
    */
-  async function carregarAlugueis(contratoId) {
-    try {
-      setCarregandoAlugueis(true);
-      setErro("");
+  async function carregarAlugueis(contratoId, mostrarToast = false) {
+    
+    let toastId = null;
 
-      setContratoSelecionado(contratoId);
-      setAlugueis([]);
-      setMostrarContratos(false);
-
-      /*
-       * Guarda o contrato selecionado.
-       *
-       * Isso é importante porque, quando o usuário voltar
-       * da AbacatePay para /locacoes, a página será recriada
-       * e o estado React será perdido.
-       */
-      localStorage.setItem(
-        "contratoSelecionado",
-        String(contratoId)
-      );
-
-      const resposta = await fetch(
-        `http://localhost:3000/aluguel/contrato/${contratoId}`,
-        {
-          method: "GET",
-          credentials: "include"
-        }
-      );
-
-      const dados = await resposta.json();
-
-      if (!resposta.ok) {
-        throw new Error(
-          dados.msg || "Erro ao carregar aluguéis"
+    if (mostrarToast) {
+        toastId = toast.loading(
+            "Atualizando seus pagamentos..."
         );
-      }
+    }
 
-      setAlugueis(dados);
+    try {
+        setCarregandoAlugueis(true);
+        setErro("");
+
+        setContratoSelecionado(contratoId);
+        setAlugueis([]);
+        setMostrarContratos(false);
+
+        localStorage.setItem(
+            "contratoSelecionado",
+            String(contratoId)
+        );
+
+        const resposta = await fetch(
+            `http://localhost:3000/aluguel/contrato/${contratoId}`,
+            {
+                method: "GET",
+                credentials: "include"
+            }
+        );
+
+        const dados = await resposta.json();
+
+        if (!resposta.ok) {
+            throw new Error(
+                dados.msg || "Erro ao carregar aluguéis"
+            );
+        }
+
+        setAlugueis(dados);
+
+        if (mostrarToast) {
+            toast.success(
+                "Pagamentos atualizados!",
+                {
+                    id: toastId
+                }
+            );
+        }
 
     } catch (error) {
-      setErro(error.message);
-      setAlugueis([]);
+        setErro(error.message);
+        setAlugueis([]);
+
+        if (mostrarToast && toastId) {
+            toast.error(
+                error.message,
+                {
+                    id: toastId
+                }
+            );
+        } else {
+            toast.error(error.message);
+        }
 
     } finally {
-      setCarregandoAlugueis(false);
+        setCarregandoAlugueis(false);
     }
-  }
+}
+
 
   /*
    * ============================================================
@@ -122,9 +150,24 @@ export default function LocacoesPage() {
    * ============================================================
    */
   async function pagarAluguel(aluguelId) {
+    const toastId = toast.loading(
+      "Preparando pagamento..."
+    );
+
     try {
       setPagandoAluguel(aluguelId);
       setErro("");
+
+      /*
+       * Indica que o usuário iniciou um pagamento.
+       *
+       * Essa informação será utilizada quando ele
+       * retornar do checkout do AbacatePay.
+       */
+      localStorage.setItem(
+        "pagamentoEmAndamento",
+        "true"
+      );
 
       const resposta = await fetch(
         `http://localhost:3000/pagamento/${aluguelId}`,
@@ -148,14 +191,33 @@ export default function LocacoesPage() {
         );
       }
 
-      /*
-       * Redireciona para o checkout da AbacatePay.
-       */
+      toast.success(
+        "Redirecionando para o pagamento...",
+        {
+          id: toastId
+        }
+      );
+
       window.location.href = dados.url;
 
     } catch (error) {
+      /*
+       * Se não conseguiu criar o checkout,
+       * não devemos deixar a flag salva.
+       */
+      localStorage.removeItem(
+        "pagamentoEmAndamento"
+      );
+
       setErro(error.message);
       setPagandoAluguel(null);
+
+      toast.error(
+        error.message,
+        {
+          id: toastId
+        }
+      );
     }
   }
 
@@ -193,6 +255,8 @@ export default function LocacoesPage() {
    *      ↓
    * recupera contrato
    *      ↓
+   * verifica pagamento em andamento
+   *      ↓
    * busca parcelas novamente
    *
    */
@@ -213,11 +277,48 @@ export default function LocacoesPage() {
         String(contrato.id) === String(contratoSalvo)
     );
 
-    if (contratoExiste) {
-      carregarAlugueis(
-        Number(contratoSalvo)
-      );
+    if (!contratoExiste) {
+      return;
     }
+
+    /*
+     * Verifica se o usuário acabou de retornar
+     * de um pagamento.
+     */
+    const pagamentoEmAndamento =
+      localStorage.getItem(
+        "pagamentoEmAndamento"
+      );
+
+    if (pagamentoEmAndamento === "true") {
+      /*
+       * Remove imediatamente para evitar que
+       * o toast seja exibido novamente.
+       */
+      localStorage.removeItem(
+        "pagamentoEmAndamento"
+      );
+
+      /*
+       * Recarrega os aluguéis diretamente do backend.
+       *
+       * O webhook é quem atualizou o banco.
+       */
+      carregarAlugueis(
+        Number(contratoSalvo),
+        true
+      );
+
+      return;
+    }
+
+    /*
+     * Carregamento normal da página.
+     */
+    carregarAlugueis(
+      Number(contratoSalvo)
+    );
+
   }, [contratos]);
 
   /*
@@ -909,4 +1010,3 @@ export default function LocacoesPage() {
     </main>
   );
 }
-

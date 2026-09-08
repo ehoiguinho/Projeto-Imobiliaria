@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function ContratoDetalhesPage() {
 
@@ -26,20 +27,32 @@ useEffect(() => {
             const dados = await resposta.json();
 
             if (!resposta.ok) {
+                toast.error(
+                    dados.msg ||
+                    "Erro ao carregar contrato."
+                );
+
                 console.log(
                     "Erro ao carregar contrato:",
                     dados
                 );
+
                 return;
             }
 
             setContrato(dados);
 
         } catch (error) {
+
             console.log(
                 "Erro ao carregar contrato:",
                 error
             );
+
+            toast.error(
+                "Erro ao carregar contrato."
+            );
+
         } finally {
             setCarregando(false);
         }
@@ -96,6 +109,10 @@ async function cancelarContrato() {
         return;
     }
 
+    const toastId = toast.loading(
+        "Encerrando contrato..."
+    );
+
     try {
 
         setCancelando(true);
@@ -111,16 +128,20 @@ async function cancelarContrato() {
         const dados = await resposta.json();
 
         if (!resposta.ok) {
-            alert(
+
+            toast.error(
                 dados.msg ||
-                "Erro ao cancelar contrato."
+                "Erro ao cancelar contrato.",
+                { id: toastId }
             );
+
             return;
         }
 
-        alert(
+        toast.success(
             dados.msg ||
-            "Contrato cancelado com sucesso."
+            "Contrato cancelado com sucesso.",
+            { id: toastId }
         );
 
         setContrato({
@@ -135,7 +156,10 @@ async function cancelarContrato() {
             error
         );
 
-        alert("Erro ao cancelar contrato.");
+        toast.error(
+            "Erro ao cancelar contrato.",
+            { id: toastId }
+        );
 
     } finally {
 

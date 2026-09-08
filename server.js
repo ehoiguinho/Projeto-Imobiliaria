@@ -7,6 +7,8 @@ import locacaoRouter from './routes/locacaoRoute.js'
 import loginRouter from './routes/loginRoute.js'
 import adminRouter from './routes/adminRoute.js'
 import aluguelRouter from './routes/aluguelRoute.js'
+import pagamentoRouter from './routes/pagamentoRoute.js'
+import webhookRouter from './routes/webhookRoute.js';
 import swaggerUi from 'swagger-ui-express'
 import cookieParser from 'cookie-parser';
 import { createRequire } from "module";
@@ -16,10 +18,15 @@ const outputJson = require("./swaggerOutput.json");
 const server = express();
 
 server.use('/uploads', express.static('uploads'));
+
+//O webhook será tratado separadamente para preservar o corpo original da requisição. 
+//Por isso, a rota do webhook deve ser registrada antes do express.json(). 
+server.use( "/webhook", express.raw({ type: "application/json" }), webhookRouter );
+
 server.use(express.json());
 server.use(cookieParser());
 server.use(cors({
-  origin: [ 'http://localhost:5001'], // endereço do frontend da nossa documentação (temporariamente ele está sendo o nosso cliente)
+  origin:'http://localhost:5001', // endereço do frontend da nossa documentação (temporariamente ele está sendo o nosso cliente)
   credentials: true                // cookies com http only serão enviadados automaticamente apenas se essa flag estiver true
 }));
 server.use("/docs", swaggerUi.serve, swaggerUi.setup(outputJson, {
@@ -34,7 +41,7 @@ server.use("/locacao", locacaoRouter);
 server.use("/login", loginRouter);
 server.use("/admin", adminRouter);
 server.use("/aluguel", aluguelRouter);
-
+server.use("/pagamento", pagamentoRouter);
 server.listen(3000, function(){
     console.log("backend rodando!");
 })

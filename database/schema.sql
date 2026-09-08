@@ -105,6 +105,38 @@ CREATE TABLE tb_recuperar_senha (
         ON DELETE CASCADE
 );
 
+CREATE TABLE tb_pagamento (
+    pag_id SERIAL PRIMARY KEY,
+
+    alu_id INTEGER NOT NULL,
+
+    pag_gateway VARCHAR(30) NOT NULL DEFAULT 'ABACATEPAY',
+    pag_external_id VARCHAR(100) NOT NULL,
+    pag_checkout_id VARCHAR(100),
+    pag_status VARCHAR(30) NOT NULL DEFAULT 'PENDENTE',
+
+    pag_url TEXT,
+
+    pag_criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    pag_pago_em TIMESTAMP NULL,
+
+    CONSTRAINT fk_pagamento_aluguel
+        FOREIGN KEY (alu_id)
+        REFERENCES tb_aluguel(alu_id),
+
+    CONSTRAINT chk_pagamento_gateway
+        CHECK (pag_gateway IN ('ABACATEPAY')),
+
+    CONSTRAINT chk_pagamento_status
+        CHECK (pag_status IN (
+            'PENDENTE',
+            'PAGO',
+            'EXPIRADO',
+            'CANCELADO'
+        ))
+);
+
+
 
 
 

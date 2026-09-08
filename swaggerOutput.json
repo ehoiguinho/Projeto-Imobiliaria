@@ -1212,6 +1212,44 @@
           }
         ]
       }
+    },
+    "/pagamento/{id}": {
+      "post": {
+        "tags": [
+          "Pagamento"
+        ],
+        "summary": "Cria um checkout para pagamento de um aluguel",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          }
+        ]
+      }
     }
   },
   "components": {

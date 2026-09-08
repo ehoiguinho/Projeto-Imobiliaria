@@ -375,12 +375,6 @@
           "200": {
             "description": "OK"
           },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Not Found"
-          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -472,6 +466,10 @@
     },
     "/imovel/{id}/imagem": {
       "get": {
+        "tags": [
+          "Imóvel"
+        ],
+        "summary": "Lista as imagens de um imovel pelo ID inserido",
         "description": "",
         "parameters": [
           {
@@ -486,9 +484,6 @@
         "responses": {
           "200": {
             "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
           },
           "404": {
             "description": "Not Found"

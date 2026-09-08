@@ -111,6 +111,8 @@ router.delete("/:id", authMiddleware.validar, authMiddleware.validarAdmin, (req,
 })
 
 router.get("/:id/imagem", (req, res) => {
+    // #swagger.tags = ['Imóvel']
+    // #swagger.summary = "Lista as imagens de um imovel pelo ID inserido"
     ctrl.imagem(req, res);
 });
 

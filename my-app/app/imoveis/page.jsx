@@ -210,14 +210,14 @@ export default function ImoveisPage() {
 
   return (
 
-    <main className="min-h-screen bg-[#F7F5F0] text-[#292825]">
+    <main className="min-h-screen bg-white text-[#292825]">
 
 
       {/* =====================================================
           CABEÇALHO
       ====================================================== */}
 
-      <section className="border-b border-[#E7E5E0] bg-white">
+      <section className="border-b border-[#E7E5E0] bg-[#F7F5F0]">
 
         <div className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
 
@@ -284,7 +284,7 @@ export default function ImoveisPage() {
 
               <div className="flex items-center gap-3">
 
-                <div className="flex h-9 w-9 items-center justify-center bg-[#F7F5F0]">
+                <div className="flex h-9 w-9 items-center justify-center">
 
                   <SlidersHorizontal
                     size={17}
@@ -299,10 +299,6 @@ export default function ImoveisPage() {
                   <h2 className="text-sm font-semibold text-[#292825]">
                     Filtrar imóveis
                   </h2>
-
-                  <p className="mt-0.5 text-xs text-[#8A8883]">
-                    Refine sua busca
-                  </p>
 
                 </div>
 
@@ -755,7 +751,7 @@ export default function ImoveisPage() {
           FOOTER
       ====================================================== */}
 
-      <footer className="border-t border-[#E3E0D9] bg-white">
+      <footer className="border-t border-[#E3E0D9] bg-[#F7F5F0]">
 
         <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
 

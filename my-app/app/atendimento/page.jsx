@@ -4,7 +4,7 @@ import { Clock, Mail, MessageCircle, ArrowRight } from "lucide-react";
 
 export default function AtendimentoPage() {
     return (
-        <main className="min-h-screen bg-[#F7F5F0] text-[#292825]">
+        <main  className="min-h-screen text-[#292825] bg-[#F7F5F0]">
 
             {/* Hero */}
 
@@ -16,14 +16,14 @@ export default function AtendimentoPage() {
                         Atendimento
                     </p>
 
-                    <h1 className="mt-5 text-5xl font-medium leading-[1.05] tracking-[-0.04em] text-[#171614] sm:text-6xl lg:text-7xl">
+                    <h1 className="mt-5 text-5xl font-medium leading-[1.05] tracking-[-0.04em] text-black sm:text-6xl lg:text-7xl">
                         Estamos aqui para
-                        <span className="block">
+                        <span className="block text-[#8A8883]">
                             ajudar você.
                         </span>
                     </h1>
 
-                    <p className="mt-6 max-w-2xl text-base leading-7 text-[#6F6D68] sm:text-lg">
+                    <p className="mt-6 max-w-2xl text-base leading-7 text-[#8A8883] sm:text-lg">
                         Precisa de ajuda para encontrar um imóvel, tirar uma
                         dúvida ou entender melhor nossos serviços? Entre em
                         contato com a Vitta.

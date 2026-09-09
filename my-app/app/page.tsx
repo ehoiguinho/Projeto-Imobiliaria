@@ -800,7 +800,7 @@ export default function Home() {
                                                     `/imoveis/${imovel.id}`
                                                 )
                                             }
-                                            className="group block bg-white text-left transition hover:-translate-y-1"
+                                            className="group block bg-white text-left transition hover:-translate-y-1 cursor-pointer"
                                         >
 
                                             <div className="relative h-[330px] overflow-hidden bg-[#E7E5E0]">
@@ -1086,9 +1086,9 @@ export default function Home() {
                         onClick={() =>
                             router.push("/imoveis")
                         }
-                        className="shrink-0 bg-white px-7 py-3.5 text-sm font-semibold text-[#292825] transition hover:bg-[#F0EEE9]"
+                        className="shrink-0 bg-white px-7 py-3.5 text-sm font-semibold text-[#292825] hover:bg-[#F5F4F1] cursor-pointer"
                     >
-                        Explorar imóveis
+                        Explorar imóveis →
                     </button>
 
                 </div>
@@ -1196,7 +1196,7 @@ export default function Home() {
                                     Segunda a sexta 08:00 às 18:00
 
                                 </span>
-                                
+
                                 <button
                                     type="button"
                                     onClick={() =>

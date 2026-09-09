@@ -1,66 +1,92 @@
 import Link from "next/link";
+import { Building2, MapPin } from "lucide-react";
 
 export default function ImovelCard({ imovel }) {
   const imagem = imovel.imagem
     ? `http://localhost:3000${imovel.imagem}`
-    : "https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=1200&auto=format&fit=crop";
+    : null;
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
-      
+    <Link
+      href={`/imoveis/${imovel.id}`}
+      className="group block bg-white text-left transition hover:-translate-y-1 cursor-pointer"
+    >
       {/* Imagem */}
-      <div className="relative overflow-hidden">
-        <img
-          src={imagem}
-          alt={`Imagem do imóvel: ${imovel.descricao}`}
-          className="h-56 w-full object-cover transition duration-500 group-hover:scale-105"
-        />
+      <div className="relative h-[330px] overflow-hidden bg-[#E7E5E0]">
+        {imagem ? (
+          <img
+            src={imagem}
+            alt={imovel.descricao}
+            className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <div className="text-center">
+              <Building2
+                size={42}
+                strokeWidth={1.2}
+                className="mx-auto text-[#B9B6AF]"
+              />
+
+              <p className="mt-3 text-xs uppercase tracking-wide text-[#9D9A93]">
+                Imagem não disponível
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Status */}
-        <span className="absolute right-4 top-4 rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-emerald-700 shadow-sm backdrop-blur-sm">
-          Disponível
-        </span>
+        <div className="absolute left-4 top-4 bg-[#F7F5F0]/95 px-3 py-1.5">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#55534E]">
+            Disponível
+          </span>
+        </div>
       </div>
 
       {/* Conteúdo */}
-      <div className="flex flex-1 flex-col p-6">
+      <div className="p-6">
+        {/* Preço */}
+        <p className="text-xl font-semibold tracking-tight text-[#292825]">
+          R${" "}
+          {Number(imovel.valor).toLocaleString("pt-BR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </p>
 
         {/* Descrição */}
-        <h2 className="line-clamp-2 text-xl font-bold leading-tight text-slate-900">
+        <h3 className="mt-2 line-clamp-1 text-base font-semibold text-[#292825]">
           {imovel.descricao}
-        </h2>
+        </h3>
 
         {/* Localização */}
-        <div className="mt-4 space-y-2 text-sm text-slate-600">
-          <p className="flex items-start gap-2">
-            <span>
-              {imovel.endereco}. {imovel.bairro}, {imovel.cidade}, {imovel.cep}
-            </span>
-          </p>
+        <div className="mt-4 flex items-center gap-2 text-sm text-[#77746E]">
+          <MapPin
+            size={15}
+            strokeWidth={1.7}
+          />
+
+          <span>
+            {imovel.bairro}, {imovel.cidade}
+          </span>
         </div>
 
-        {/* Preço */}
-        <div className="mt-auto pt-6">
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
-            Aluguel mensal
-          </p>
+        {/* Endereço */}
+        <p className="mt-2 line-clamp-1 text-xs text-[#A09D96]">
+          {imovel.endereco}
+        </p>
 
-          <strong className="mt-1 block text-2xl font-bold text-black">
-            {Number(imovel.valor).toLocaleString("pt-BR", {
-              style: "currency",
-              currency: "BRL"
-            })}
-          </strong>
+        {/* Ação */}
+        <div className="mt-5 flex items-center justify-between border-t border-[#ECEAE5] pt-4">
+          <span className="text-xs font-semibold uppercase tracking-wide text-[#77746E]">
+            Ver imóvel
+          </span>
+
+          <span className="text-lg text-[#55534E] transition-transform group-hover:translate-x-1">
+            →
+          </span>
         </div>
-
-        {/* Botão */}
-        <Link
-          href={`/imoveis/${imovel.id}`}
-          className="mt-5 block rounded-xl bg-blue-600 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100"
-        >
-          Ver detalhes
-        </Link>
       </div>
-    </article>
+    </Link>
   );
 }

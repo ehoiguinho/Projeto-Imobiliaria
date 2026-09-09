@@ -1,740 +1,428 @@
+
 "use client";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import {
+    ArrowLeft,
+    ArrowRight,
+    Building2,
+    Image as ImageIcon,
+    MapPin,
+} from "lucide-react";
 
-export default function DetalheImovelPage() {
-  const params = useParams();
-  const router = useRouter();
+export default function ImovelDetalhes() {
+    const params = useParams();
+    const router = useRouter();
 
-  const [imovel, setImovel] = useState(null);
-  const [imagens, setImagens] = useState([]);
-  const [carregando, setCarregando] = useState(true);
-  const [erro, setErro] = useState("");
+    const [imovel, setImovel] = useState(null);
+    const [imagens, setImagens] = useState([]);
+    const [carregando, setCarregando] = useState(true);
+    const [erro, setErro] = useState("");
 
-  async function carregarDetalhes() {
-    try {
-      setCarregando(true);
-      setErro("");
+    useEffect(() => {
+        if (!params?.id) return;
 
-      const respostaImovel = await fetch(
-        `http://localhost:3000/imovel/${params.id}`,
-        {
-          method: "GET",
-          credentials: "include"
+        async function carregarDados() {
+            try {
+                setCarregando(true);
+                setErro("");
+
+                const respostaImovel = await fetch(
+                    `http://localhost:3000/imovel/${params.id}`,
+                    {
+                        credentials: "include",
+                    }
+                );
+
+                if (!respostaImovel.ok) {
+                    throw new Error("Não foi possível carregar o imóvel.");
+                }
+
+                const dadosImovel = await respostaImovel.json();
+
+                setImovel(dadosImovel[0] || dadosImovel);
+
+                const respostaImagens = await fetch(
+                    `http://localhost:3000/imovel/${params.id}/imagem`,
+                    {
+                        credentials: "include",
+                    }
+                );
+
+                if (respostaImagens.ok) {
+                    const dadosImagens = await respostaImagens.json();
+                    setImagens(dadosImagens);
+                }
+            } catch (error) {
+                setErro(
+                    error?.message ||
+                        "Ocorreu um erro ao carregar os dados do imóvel."
+                );
+            } finally {
+                setCarregando(false);
+            }
         }
-      );
 
-      const dadosImovel = await respostaImovel.json();
-
-      if (!respostaImovel.ok) {
-        throw new Error(dadosImovel.msg || "Erro ao carregar imóvel");
-      }
-
-      setImovel(dadosImovel[0] || dadosImovel);
-
-      const respostaImagens = await fetch(
-        `http://localhost:3000/imovel/${params.id}/imagem`,
-        {
-          method: "GET",
-          credentials: "include"
-        }
-      );
-
-      if (respostaImagens.ok) {
-        const dadosImagens = await respostaImagens.json();
-        setImagens(dadosImagens);
-      }
-    } catch (error) {
-      setErro(error.message);
-    } finally {
-      setCarregando(false);
-    }
-  }
-
-  useEffect(() => {
-    carregarDetalhes();
-  }, [params.id]);
-
-  /* =========================
-     CARREGANDO
-  ========================= */
-
-  if (carregando) {
-    return (
-      <main className="min-h-screen bg-zinc-50 px-6 py-12">
-        <div className="mx-auto max-w-6xl animate-pulse">
-
-          <div className="mb-6 h-5 w-24 rounded bg-zinc-200" />
-
-          <div className="overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm">
-            <div className="h-[420px] bg-zinc-200" />
-
-            <div className="space-y-6 p-8">
-              <div className="h-8 w-2/3 rounded bg-zinc-200" />
-              <div className="h-5 w-1/2 rounded bg-zinc-200" />
-
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                <div className="h-24 rounded-2xl bg-zinc-100" />
-                <div className="h-24 rounded-2xl bg-zinc-100" />
-                <div className="h-24 rounded-2xl bg-zinc-100" />
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </main>
-    );
-  }
-
-  /* =========================
-     ERRO
-  ========================= */
-
-  if (erro) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-zinc-50 px-6">
-        <div className="w-full max-w-lg rounded-3xl border border-red-200 bg-white p-8 text-center shadow-sm">
-
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-50">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              className="h-7 w-7 text-red-600"
-            >
-              <circle cx="12" cy="12" r="9" />
-              <path
-                strokeLinecap="round"
-                d="M12 8v4"
-              />
-              <path
-                strokeLinecap="round"
-                d="M12 16h.01"
-              />
-            </svg>
-          </div>
-
-          <h1 className="mt-5 text-xl font-semibold text-zinc-900">
-            Não foi possível carregar o imóvel
-          </h1>
-
-          <p className="mt-2 text-sm leading-relaxed text-zinc-500">
-            {erro}
-          </p>
-
-          <button
-            onClick={() => router.back()}
-            className="mt-6 rounded-xl bg-zinc-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-zinc-800"
-          >
-            Voltar
-          </button>
-
-        </div>
-      </main>
-    );
-  }
-
-  /* =========================
-     NÃO ENCONTRADO
-  ========================= */
-
-  if (!imovel) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-zinc-50 px-6">
-        <div className="w-full max-w-lg rounded-3xl border border-zinc-200 bg-white p-8 text-center shadow-sm">
-
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-zinc-100">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              className="h-7 w-7 text-zinc-500"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3 10.5 12 3l9 7.5"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M5 9.5V21h14V9.5"
-              />
-            </svg>
-          </div>
-
-          <h1 className="mt-5 text-xl font-semibold text-zinc-900">
-            Imóvel não encontrado
-          </h1>
-
-          <p className="mt-2 text-sm text-zinc-500">
-            O imóvel que você está procurando não está disponível.
-          </p>
-
-          <Link
-            href="/imoveis"
-            className="mt-6 inline-flex rounded-xl bg-zinc-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-zinc-800"
-          >
-            Ver imóveis
-          </Link>
-
-        </div>
-      </main>
-    );
-  }
-
-  const imagemPrincipal =
-    imagens.length > 0
-      ? `http://localhost:3000${imagens[0].caminho}`
-      : null;
-
-  const disponivel = imovel.disponivel === "S";
-
-  return (
-    <main className="min-h-screen bg-zinc-50">
-
-      {/* =========================
-          CONTEÚDO PRINCIPAL
-      ========================= */}
-
-      <div className="mx-auto max-w-6xl px-6 py-10 lg:px-8">
-
-        {/* VOLTAR */}
-
-        <button
-          onClick={() => router.back()}
-          className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition hover:text-zinc-900"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            className="h-4 w-4"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M15 18l-6-6 6-6"
-            />
-          </svg>
-
-          Voltar para imóveis
-        </button>
-
-        {/* =========================
-            CARD PRINCIPAL
-        ========================= */}
-
-        <section className="overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm">
-
-          {/* IMAGEM PRINCIPAL */}
-
-          <div className="relative h-[300px] overflow-hidden sm:h-[400px] lg:h-[480px]">
-
-            {imagemPrincipal ? (
-              <img
-                src={imagemPrincipal}
-                alt={imovel.descricao}
-                className="h-full w-full object-cover transition duration-500 hover:scale-[1.01]"
-              />
-            ) : (
-              <div className="flex h-full items-center justify-center bg-zinc-100">
-
-                <div className="text-center">
-
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    className="mx-auto h-12 w-12 text-zinc-400"
-                  >
-                    <rect
-                      width="18"
-                      height="18"
-                      x="3"
-                      y="3"
-                      rx="2"
-                    />
-                    <circle cx="8.5" cy="8.5" r="1.5" />
-                    <path d="m21 15-5-5L5 21" />
-                  </svg>
-
-                  <p className="mt-3 text-sm text-zinc-500">
-                    Sem imagem cadastrada
-                  </p>
-
-                </div>
-
-              </div>
-            )}
-
-
-          </div>
-
-          {/* =========================
-              INFORMAÇÕES
-          ========================= */}
-
-          <div className="p-6 sm:p-8 lg:p-10">
-
-            <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
-
-              {/* DESCRIÇÃO */}
-
-              <div className="max-w-2xl">
-
-                <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
-                  Imóvel para locação
-                </p>
-
-                <h1 className="mt-2 text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">
-                  {imovel.descricao}
-                </h1>
-
-                <div className="mt-4 flex items-start gap-2 text-zinc-500">
-
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    className="mt-0.5 h-5 w-5 shrink-0 text-zinc-400"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"
-                    />
-                    <circle
-                      cx="12"
-                      cy="10"
-                      r="2.5"
-                    />
-                  </svg>
-
-                  <p className="text-sm leading-relaxed sm:text-base">
-                    {imovel.endereco}, {imovel.bairro} - {imovel.cidade}
-                  </p>
-
-                </div>
-
-              </div>
-
-              {/* PREÇO */}
-
-              <div className="shrink-0 lg:text-right">
-
-                <p className="text-sm font-medium text-zinc-500">
-                  Valor mensal
-                </p>
-
-                <strong className="mt-1 block text-3xl font-bold tracking-tight text-black sm:text-4xl">
-                  {Number(imovel.valor).toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL"
-                  })}
-                </strong>
-
-                <span className="text-sm text-zinc-400">
-                  por mês
-                </span>
-
-              </div>
-
-            </div>
-
-            {/* DIVISOR */}
-
-            <div className="my-8 h-px bg-zinc-200" />
-
-            {/* CARACTERÍSTICAS */}
-
-            <div>
-
-              <h2 className="text-lg font-semibold text-zinc-900">
-                Informações do imóvel
-              </h2>
-
-              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-
-                {/* CEP */}
-
-                <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5">
-
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm">
-
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      className="h-5 w-5 text-zinc-600"
-                    >
-                      <rect
-                        width="18"
-                        height="14"
-                        x="3"
-                        y="5"
-                        rx="2"
-                      />
-                      <path d="M3 10h18" />
-                    </svg>
-
-                  </div>
-
-                  <p className="mt-4 text-xs font-medium uppercase tracking-wide text-zinc-400">
-                    CEP
-                  </p>
-
-                  <p className="mt-1 font-semibold text-zinc-900">
-                    {imovel.cep}
-                  </p>
-
-                </div>
-
-                {/* CIDADE */}
-
-                <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5">
-
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm">
-
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      className="h-5 w-5 text-zinc-600"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M3 21h18"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M5 21V5l7-3v19"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M12 21V8l7-3v16"
-                      />
-                    </svg>
-
-                  </div>
-
-                  <p className="mt-4 text-xs font-medium uppercase tracking-wide text-zinc-400">
-                    Cidade
-                  </p>
-
-                  <p className="mt-1 font-semibold text-zinc-900">
-                    {imovel.cidade}
-                  </p>
-
-                </div>
-
-                {/* DISPONIBILIDADE */}
-
-                <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5">
-
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm">
-
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      className="h-5 w-5 text-emerald-600"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M20 6 9 17l-5-5"
-                      />
-                    </svg>
-
-                  </div>
-
-                  <p className="mt-4 text-xs font-medium uppercase tracking-wide text-zinc-400">
-                    Status
-                  </p>
-
-                  <p
-                    className={`mt-1 font-semibold ${
-                      disponivel
-                        ? "text-emerald-700"
-                        : "text-zinc-600"
-                    }`}
-                  >
-                    {disponivel
-                      ? "Disponível"
-                      : "Indisponível"}
-                  </p>
-
-                </div>
-
-              </div>
-
-            </div>
-
-            {/* =========================
-                GALERIA
-            ========================= */}
-
-            {imagens.length > 1 && (
-              <div className="mt-10">
-
-                <div className="flex items-center justify-between">
-
-                  <div>
-                    <h2 className="text-lg font-semibold text-zinc-900">
-                      Galeria de imagens
-                    </h2>
-
-                    <p className="mt-1 text-sm text-zinc-500">
-                      Confira outros detalhes do imóvel.
-                    </p>
-                  </div>
-
-                </div>
-
-                <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-
-                  {imagens.slice(1).map((imagem) => (
-                    <div
-                      key={imagem.id}
-                      className="group relative overflow-hidden rounded-2xl bg-zinc-100"
-                    >
-
-                      <img
-                        src={`http://localhost:3000${imagem.caminho}`}
-                        alt="Imagem do imóvel"
-                        className="h-36 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-40"
-                      />
-
+        carregarDados();
+    }, [params?.id]);
+
+    if (carregando) {
+        return (
+            <main className="min-h-screen bg-[#F7F5F0]">
+                <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
+                    <div className="mb-10 h-5 w-32 animate-pulse rounded bg-[#E7E5E0]" />
+
+                    <div className="grid gap-10 lg:grid-cols-[1.4fr_0.8fr]">
+                        <div className="h-[520px] animate-pulse rounded bg-[#E7E5E0]" />
+
+                        <div className="space-y-6">
+                            <div className="h-6 w-32 animate-pulse rounded bg-[#E7E5E0]" />
+                            <div className="h-12 w-4/5 animate-pulse rounded bg-[#E7E5E0]" />
+                            <div className="h-8 w-40 animate-pulse rounded bg-[#E7E5E0]" />
+
+                            <div className="space-y-3 pt-6">
+                                <div className="h-20 animate-pulse rounded bg-[#E7E5E0]" />
+                                <div className="h-20 animate-pulse rounded bg-[#E7E5E0]" />
+                                <div className="h-20 animate-pulse rounded bg-[#E7E5E0]" />
+                            </div>
+                        </div>
                     </div>
-                  ))}
-
                 </div>
+            </main>
+        );
+    }
 
-              </div>
-            )}
+    if (erro) {
+        return (
+            <main className="min-h-screen bg-[#F7F5F0]">
+                <div className="mx-auto flex min-h-[70vh] max-w-3xl items-center justify-center px-6">
+                    <div className="w-full border border-[#DDDAD3] bg-white p-10 text-center">
+                        <Building2
+                            size={38}
+                            strokeWidth={1.4}
+                            className="mx-auto mb-5 text-[#8A8883]"
+                        />
 
-            {/* =========================
-                CTA
-            ========================= */}
+                        <h1 className="text-2xl font-medium tracking-[-0.02em] text-[#292825]">
+                            Não foi possível carregar o imóvel
+                        </h1>
 
-            <div className="mt-10 rounded-2xl border border-blue-100 bg-blue-50/60 p-5 sm:p-6">
+                        <p className="mt-3 text-sm leading-6 text-[#77746E]">
+                            {erro}
+                        </p>
 
-              <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-
-                <div>
-
-                  <h2 className="font-semibold text-zinc-900">
-                    Gostou deste imóvel?
-                  </h2>
-
-                  <p className="mt-1 text-sm leading-relaxed text-zinc-500">
-                    Faça sua solicitação de locação e dê o próximo passo para encontrar seu novo lar.
-                  </p>
-
+                        <button
+                            type="button"
+                            onClick={() => router.back()}
+                            className="mt-8 inline-flex cursor-pointer items-center gap-2 bg-[#292825] px-6 py-3 text-sm font-medium text-white transition-opacity hover:opacity-80"
+                        >
+                            <ArrowLeft size={16} />
+                            Voltar
+                        </button>
+                    </div>
                 </div>
+            </main>
+        );
+    }
 
-                {disponivel ? (
-                  <Link
-                    href={`/imoveis/${imovel.id}/locar`}
-                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 hover:shadow-md"
-                  >
-                    Locar este imóvel
+    if (!imovel) {
+        return (
+            <main className="min-h-screen bg-[#F7F5F0]">
+                <div className="mx-auto flex min-h-[70vh] max-w-3xl items-center justify-center px-6">
+                    <div className="w-full border border-[#DDDAD3] bg-white p-10 text-center">
+                        <Building2
+                            size={38}
+                            strokeWidth={1.4}
+                            className="mx-auto mb-5 text-[#8A8883]"
+                        />
 
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      className="h-4 w-4"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M5 12h14"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="m13 6 6 6-6 6"
-                      />
-                    </svg>
+                        <h1 className="text-2xl font-medium tracking-[-0.02em] text-[#292825]">
+                            Imóvel não encontrado
+                        </h1>
 
-                  </Link>
-                ) : (
-                  <span className="inline-flex shrink-0 items-center justify-center rounded-xl bg-zinc-200 px-6 py-3.5 text-sm font-semibold text-zinc-500">
-                    Imóvel indisponível
-                  </span>
-                )}
+                        <p className="mt-3 text-sm text-[#77746E]">
+                            O imóvel solicitado não está disponível.
+                        </p>
 
-              </div>
-
-            </div>
-
-          </div>
-
-        </section>
-
-      </div>
-
-      {/* =========================
-          FOOTER
-      ========================= */}
-
-      <footer className="border-t border-zinc-200 bg-zinc-100">
-
-        <div className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
-
-          <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
-
-            {/* EMPRESA */}
-
-            <div>
-
-              <div className="flex items-center gap-2">
-
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-900 text-white">
-
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    className="h-5 w-5"
-                  >
-
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="m3 10 9-7 9 7"
-                    />
-
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M5 9.5V21h14V9.5"
-                    />
-
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M9 21v-6h6v6"
-                    />
-
-                  </svg>
-
+                        <Link
+                            href="/imoveis"
+                            className="mt-8 inline-flex items-center gap-2 bg-[#292825] px-6 py-3 text-sm font-medium text-white transition-opacity hover:opacity-80"
+                        >
+                            <ArrowLeft size={16} />
+                            Ver imóveis
+                        </Link>
+                    </div>
                 </div>
+            </main>
+        );
+    }
 
-                <span className="font-semibold text-zinc-900">
-                  Sua Imobiliária
-                </span>
+    const disponivel = imovel.disponivel === "S";
 
-              </div>
+    const imagemPrincipal =
+        imagens.length > 0
+            ? `http://localhost:3000${imagens[0].caminho}`
+            : null;
 
-              <p className="mt-4 max-w-sm text-sm leading-relaxed text-zinc-500">
-                Encontre imóveis que combinam com você e encontre o lugar ideal para chamar de lar.
-              </p>
-
-            </div>
-
-            {/* NAVEGAÇÃO */}
-
-            <div>
-
-              <h3 className="text-sm font-semibold text-zinc-900">
-                Navegação
-              </h3>
-
-              <div className="mt-4 flex flex-col gap-3 text-sm">
-
-                <a
-                  href="/"
-                  className="text-zinc-500 transition hover:text-zinc-900"
+    return (
+        <main className="min-h-screen bg-[#F7F5F0]">
+            {/* Conteúdo principal */}
+            <section className="mx-auto max-w-7xl px-6 py-10 lg:px-8 lg:py-14">
+                {/* Voltar */}
+                <button
+                    type="button"
+                    onClick={() => router.back()}
+                    className="mb-8 inline-flex cursor-pointer items-center gap-2 text-sm text-[#77746E] transition-colors hover:text-[#292825]"
                 >
-                  Início
-                </a>
+                    <ArrowLeft size={16} strokeWidth={1.8} />
+                    Voltar para imóveis
+                </button>
 
-                <a
-                  href="/imoveis"
-                  className="text-zinc-500 transition hover:text-zinc-900"
-                >
-                  Imóveis
-                </a>
+                <div className="grid gap-10 lg:grid-cols-[1.35fr_0.85fr] lg:gap-14">
+                    {/* Galeria principal */}
+                    <div>
+                        <div className="overflow-hidden bg-[#E7E5E0]">
+                            {imagemPrincipal ? (
+                                <img
+                                    src={imagemPrincipal}
+                                    alt={imovel.descricao || "Imagem do imóvel"}
+                                    className="h-[420px] w-full object-cover sm:h-[520px]"
+                                />
+                            ) : (
+                                <div className="flex h-[420px] items-center justify-center sm:h-[520px]">
+                                    <div className="text-center">
+                                        <ImageIcon
+                                            size={42}
+                                            strokeWidth={1.2}
+                                            className="mx-auto text-[#8A8883]"
+                                        />
+                                        <p className="mt-3 text-sm text-[#8A8883]">
+                                            Imagem não disponível
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
 
-                <a
-                  href="/login"
-                  className="text-zinc-500 transition hover:text-zinc-900"
-                >
-                  Entrar
-                </a>
+                        {/* Galeria secundária */}
+                        {imagens.length > 1 && (
+                            <div className="mt-4 grid grid-cols-4 gap-3 sm:grid-cols-5">
+                                {imagens.slice(1).map((imagem) => (
+                                    <div
+                                        key={imagem.id}
+                                        className="overflow-hidden bg-[#E7E5E0]"
+                                    >
+                                        <img
+                                            src={`http://localhost:3000${imagem.caminho}`}
+                                            alt="Imagem adicional do imóvel"
+                                            className="h-20 w-full object-cover sm:h-24"
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
 
-              </div>
+                    {/* Informações */}
+                    <div className="flex flex-col">
+                        {/* Status */}
+                        <div className="mb-5 flex items-center gap-2">
+                            <span
+                                className={`h-2 w-2 rounded-full ${
+                                    disponivel
+                                        ? "bg-[#55534E]"
+                                        : "bg-[#A19E98]"
+                                }`}
+                            />
 
-            </div>
+                            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#77746E]">
+                                {disponivel ? "Disponível" : "Indisponível"}
+                            </span>
+                        </div>
 
-            {/* ATENDIMENTO */}
+                        {/* Título */}
+                        <h1 className="text-3xl font-medium leading-tight tracking-[-0.03em] text-[#292825] sm:text-4xl">
+                            {imovel.descricao || "Imóvel"}
+                        </h1>
 
-            <div>
+                        {/* Localização */}
+                        <div className="mt-5 flex items-start gap-3 text-[#77746E]">
+                            <MapPin
+                                size={19}
+                                strokeWidth={1.5}
+                                className="mt-0.5 shrink-0"
+                            />
 
-              <h3 className="text-sm font-semibold text-zinc-900">
-                Atendimento
-              </h3>
+                            <div className="text-sm leading-6">
+                                <p>{imovel.endereco}</p>
 
-              <div className="mt-4 flex flex-col gap-3 text-sm text-zinc-500">
+                                {imovel.bairro && (
+                                    <p>
+                                        {imovel.bairro}
+                                        {imovel.cidade
+                                            ? `, ${imovel.cidade}`
+                                            : ""}
+                                    </p>
+                                )}
+                            </div>
+                        </div>
 
-                <span>
-                  Segunda a sexta
-                </span>
+                        {/* Preço */}
+                        <div className="mt-8 border-y border-[#E3E0D9] py-6">
+                            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#8A8883]">
+                                Aluguel mensal
+                            </p>
 
-                <span>
-                  08:00 às 18:00
-                </span>
+                            <p className="mt-2 text-3xl font-medium tracking-[-0.03em] text-[#292825]">
+                                {Number(imovel.valor).toLocaleString(
+                                    "pt-BR",
+                                    {
+                                        style: "currency",
+                                        currency: "BRL",
+                                    }
+                                )}
+                            </p>
+                        </div>
 
-                <span>
-                  contato@suaimobiliaria.com
-                </span>
+                        {/* Informações */}
+                        <div className="mt-7 space-y-3">
+                            <div className="flex items-center justify-between border border-[#E3E0D9] bg-[#FCFBF8] px-5 py-4">
+                                <span className="text-sm text-[#77746E]">
+                                    CEP
+                                </span>
 
-              </div>
+                                <span className="text-sm font-medium text-[#292825]">
+                                    {imovel.cep || "Não informado"}
+                                </span>
+                            </div>
 
-            </div>
+                            <div className="flex items-center justify-between border border-[#E3E0D9] bg-[#FCFBF8] px-5 py-4">
+                                <span className="text-sm text-[#77746E]">
+                                    Cidade
+                                </span>
 
-          </div>
+                                <span className="text-sm font-medium text-[#292825]">
+                                    {imovel.cidade || "Não informado"}
+                                </span>
+                            </div>
+                        </div>
 
-          <div className="mt-12 border-t border-zinc-200 pt-6">
+                        {/* CTA */}
+                        <div className="mt-8">
+                            {disponivel ? (
+                                <Link
+                                    href={`/imoveis/${imovel.id}/locar`}
+                                    className="group flex w-full cursor-pointer items-center justify-center gap-3 bg-[#292825] px-6 py-4 text-sm font-medium text-white transition-opacity hover:opacity-85"
+                                >
+                                    Quero alugar este imóvel
+                                    <ArrowRight
+                                        size={17}
+                                        strokeWidth={1.7}
+                                        className="transition-transform duration-200 group-hover:translate-x-1"
+                                    />
+                                </Link>
+                            ) : (
+                                <span className="flex w-full items-center justify-center border border-[#D8D5CE] bg-[#EDEBE6] px-6 py-4 text-sm font-medium text-[#8A8883]">
+                                    Imóvel indisponível
+                                </span>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-            <p className="text-center text-sm text-zinc-400">
-              © {new Date().getFullYear()} Sua Imobiliária. Todos os direitos reservados.
-            </p>
+            {/* Rodapé */}
+            <footer className="bg-[#292825] text-white">
+                <div className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
+                    <div className="grid gap-10 md:grid-cols-3">
+                        {/* Logo */}
+                        <div>
+                            <Link
+                                href="/"
+                                className="inline-flex items-center gap-3"
+                            >
+                                <span className="flex h-10 w-10 items-center justify-center bg-white text-lg font-semibold text-[#292825]">
+                                    V
+                                </span>
 
-          </div>
+                                <span>
+                                    <span className="block text-lg font-semibold tracking-[0.08em]">
+                                        VITTA
+                                    </span>
 
-        </div>
+                                    <span className="block text-[9px] tracking-[0.28em] text-[#A19E98]">
+                                        IMOBILIÁRIA
+                                    </span>
+                                </span>
+                            </Link>
 
-      </footer>
+                            <p className="mt-5 max-w-xs text-sm leading-6 text-[#A19E98]">
+                                Encontrar um imóvel é encontrar seu lugar.
+                            </p>
+                        </div>
 
-    </main>
-  );
+                        {/* Navegação */}
+                        <div>
+                            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#A19E98]">
+                                Navegação
+                            </p>
+
+                            <div className="mt-5 flex flex-col gap-3 text-sm">
+                                <Link
+                                    href="/"
+                                    className="text-[#D8D5CE] transition-opacity hover:opacity-70"
+                                >
+                                    Início
+                                </Link>
+
+                                <Link
+                                    href="/imoveis"
+                                    className="text-[#D8D5CE] transition-opacity hover:opacity-70"
+                                >
+                                    Imóveis
+                                </Link>
+
+                                <Link
+                                    href="/sobrenos"
+                                    className="text-[#D8D5CE] transition-opacity hover:opacity-70"
+                                >
+                                    Sobre nós
+                                </Link>
+
+                                <Link
+                                    href="/atendimento"
+                                    className="text-[#D8D5CE] transition-opacity hover:opacity-70"
+                                >
+                                    Atendimento
+                                </Link>
+                            </div>
+                        </div>
+
+                        {/* Atendimento */}
+                        <div>
+                            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#A19E98]">
+                                Atendimento
+                            </p>
+
+                            <div className="mt-5 space-y-2 text-sm text-[#D8D5CE]">
+                                <p>Segunda a sexta 8:00 às 18:00</p>
+                                <p className="pt-2 text-[#A19E98]">
+                                    contato@vittaimobiliaria.com
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mt-12 border-t border-[#46443F] pt-6">
+                        <p className="text-xs text-[#8A8883]">
+                            © {new Date().getFullYear()} Vitta Imobiliária.
+                            Todos os direitos reservados.
+                        </p>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    );
 }

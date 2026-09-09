@@ -1143,7 +1143,7 @@ export default function Home() {
                                 Navegação
                             </h3>
 
-                            <div className="mt-5 flex flex-col gap-3">
+                            <div className="mt-5 flex flex-col gap-3 cursor-pointer">
 
                                 <button
                                     type="button"
@@ -1163,6 +1163,16 @@ export default function Home() {
                                     className="text-left text-sm text-[#77746E] transition hover:text-[#292825]"
                                 >
                                     Imóveis
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        router.push("/sobrenos")
+                                    }
+                                    className="text-left text-sm text-[#77746E] transition hover:text-[#292825]"
+                                >
+                                    Sobre nós
                                 </button>
 
                                 {!usuario && (

@@ -119,13 +119,14 @@ export default function SobreNosPage() {
 
                 <div className="-mt-10 mb-2">
 
-                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#8A8883]">
+                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#292825]">
                         O que nos guia
                     </p>
 
                     <h2 className="mt-3 text-4xl font-medium tracking-[-0.03em] text-[#292825]">
                         Nossos valores
                     </h2>
+                    <br></br>
 
                 </div>
 

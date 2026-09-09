@@ -167,7 +167,7 @@ export default function ImovelDetalhes() {
             : null;
 
     return (
-        <main className="min-h-screen bg-[#F7F5F0]">
+        <main className="min-h-screen bg-white">
             {/* Conteúdo principal */}
             <section className="mx-auto max-w-7xl px-6 py-10 lg:px-8 lg:py-14">
                 {/* Voltar */}
@@ -334,7 +334,7 @@ export default function ImovelDetalhes() {
             </section>
 
             {/* Rodapé */}
-            <footer className="bg-[#292825] text-white">
+            <footer className="bg-[#F7F5F0] text-black">
                 <div className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
                     <div className="grid gap-10 md:grid-cols-3">
                         {/* Logo */}
@@ -363,59 +363,77 @@ export default function ImovelDetalhes() {
                             </p>
                         </div>
 
-                        {/* Navegação */}
                         <div>
-                            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#A19E98]">
-                                Navegação
-                            </p>
 
-                            <div className="mt-5 flex flex-col gap-3 text-sm">
-                                <Link
-                                    href="/"
-                                    className="text-[#D8D5CE] transition-opacity hover:opacity-70"
+                            <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-[#292825]">
+                                Navegação
+                            </h3>
+
+                            <div className="mt-5 flex flex-col gap-3">
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        router.push("/")
+                                    }
+                                    className="text-left text-sm text-[#77746E] transition hover:text-[#292825]"
                                 >
                                     Início
-                                </Link>
+                                </button>
 
-                                <Link
-                                    href="/imoveis"
-                                    className="text-[#D8D5CE] transition-opacity hover:opacity-70"
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        router.push("/imoveis")
+                                    }
+                                    className="text-left text-sm text-[#77746E] transition hover:text-[#292825]"
                                 >
                                     Imóveis
-                                </Link>
+                                </button>
 
-                                <Link
-                                    href="/sobrenos"
-                                    className="text-[#D8D5CE] transition-opacity hover:opacity-70"
-                                >
-                                    Sobre nós
-                                </Link>
-
-                                <Link
-                                    href="/atendimento"
-                                    className="text-[#D8D5CE] transition-opacity hover:opacity-70"
-                                >
-                                    Atendimento
-                                </Link>
+                                
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            router.push("/login")
+                                        }
+                                        className="text-left text-sm text-[#77746E] transition hover:text-[#292825]"
+                                    >
+                                        Entrar
+                                    </button>
                             </div>
                         </div>
 
-                        {/* Atendimento */}
                         <div>
-                            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#A19E98]">
-                                Atendimento
-                            </p>
 
-                            <div className="mt-5 space-y-2 text-sm text-[#D8D5CE]">
-                                <p>Segunda a sexta 8:00 às 18:00</p>
-                                <p className="pt-2 text-[#A19E98]">
-                                    contato@vittaimobiliaria.com
-                                </p>
+                            <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-[#292825]">
+                                Atendimento
+                            </h3>
+
+                            <div className="mt-5 flex flex-col gap-3 text-sm text-[#77746E]">
+
+                                <span>
+                                    Segunda a sexta 08:00 às 18:00
+
+                                </span>
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        router.push("/atendimento")
+                                    }
+                                    className="text-left transition hover:text-[#292825]"
+                                >
+                                    Fale conosco →
+                                </button>
+
                             </div>
+
                         </div>
+
                     </div>
 
-                    <div className="mt-12 border-t border-[#46443F] pt-6">
+                    <div className="mt-12 border-t border-[#E7E5E0] pt-6">
                         <p className="text-xs text-[#8A8883]">
                             © {new Date().getFullYear()} Vitta Imobiliária.
                             Todos os direitos reservados.

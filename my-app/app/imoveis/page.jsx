@@ -1,7 +1,13 @@
-
 "use client";
 
-import {Search, MapPin, Building2, CircleDollarSign, SlidersHorizontal, X} from "lucide-react";
+import {
+  Search,
+  MapPin,
+  Building2,
+  CircleDollarSign,
+  SlidersHorizontal,
+  X
+} from "lucide-react";
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -71,11 +77,15 @@ export default function ImoveisPage() {
     }
   }
 
+
   useEffect(() => {
     carregarImoveis();
   }, []);
 
-  
+
+  /*
+   * Recupera os filtros enviados pela Home.
+   */
   useEffect(() => {
 
     const cidade = searchParams.get("cidade") || "";
@@ -90,6 +100,7 @@ export default function ImoveisPage() {
 
   }, [searchParams]);
 
+
   /*
    * Monta a lista de cidades disponíveis.
    */
@@ -102,6 +113,7 @@ export default function ImoveisPage() {
   ].sort((a, b) =>
     a.localeCompare(b, "pt-BR")
   );
+
 
   /*
    * Monta a lista de bairros de acordo
@@ -123,6 +135,7 @@ export default function ImoveisPage() {
         a.localeCompare(b, "pt-BR")
       )
     : [];
+
 
   /*
    * Aplica todos os filtros.
@@ -157,6 +170,7 @@ export default function ImoveisPage() {
     );
   });
 
+
   /*
    * Quando a cidade muda manualmente,
    * o bairro precisa ser resetado.
@@ -170,6 +184,7 @@ export default function ImoveisPage() {
 
   }
 
+
   /*
    * Limpa todos os filtros.
    */
@@ -182,6 +197,7 @@ export default function ImoveisPage() {
 
   }
 
+
   /*
    * Verifica se existe algum filtro ativo.
    */
@@ -191,26 +207,32 @@ export default function ImoveisPage() {
     cidadeSelecionada !== "" ||
     bairroSelecionado !== "";
 
+
   return (
 
-    <main className="min-h-screen bg-slate-50">
+    <main className="min-h-screen bg-[#F7F5F0] text-[#292825]">
 
 
-      <section className="border-b border-slate-200 bg-white">
+      {/* =====================================================
+          CABEÇALHO
+      ====================================================== */}
 
-        <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
+      <section className="border-b border-[#E7E5E0] bg-white">
 
-          <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+        <div className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
 
-            <div>
+          <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
 
-              <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+            <div className="max-w-2xl">
+
+              <h1 className="mt-4 text-4xl font-medium tracking-[-0.04em] text-[#292825] sm:text-5xl">
                 Encontre seu próximo imóvel
               </h1>
 
-              <p className="mt-2 max-w-2xl text-slate-500">
-                Explore nossa seleção de imóveis disponíveis e
-                encontre uma opção que combine com você.
+              <p className="mt-4 max-w-xl text-base leading-7 text-[#77746E]">
+                Explore nossa seleção de imóveis disponíveis
+                e encontre um espaço que combine com seu
+                momento e seu estilo de vida.
               </p>
 
             </div>
@@ -218,13 +240,13 @@ export default function ImoveisPage() {
 
             {!carregando && !erro && (
 
-              <div className="flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2.5">
+              <div className="flex items-baseline gap-2 border-b border-[#292825] pb-2">
 
-                <span className="text-lg font-bold text-slate-900">
+                <span className="text-3xl font-medium tracking-tight text-[#292825]">
                   {imoveisFiltrados.length}
                 </span>
 
-                <span className="text-sm text-slate-500">
+                <span className="text-sm text-[#77746E]">
                   {imoveisFiltrados.length === 1
                     ? "imóvel encontrado"
                     : "imóveis encontrados"}
@@ -241,28 +263,46 @@ export default function ImoveisPage() {
       </section>
 
 
-      {/* CONTEÚDO */}
+      {/* =====================================================
+          CONTEÚDO
+      ====================================================== */}
 
-      <div className="mx-auto max-w-7xl px-6 py-8 lg:px-8">
+      <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
 
 
-        {/* FILTROS */}
+        {/* =====================================================
+            FILTROS
+        ====================================================== */}
 
-        <section className="mb-10">
+        <section className="mb-12">
 
-          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="border border-[#E3E0D9] bg-white">
 
-            {/* CABEÇALHO DOS FILTROS */}
+            {/* CABEÇALHO */}
 
-            <div className="flex flex-col gap-3 border-b border-slate-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-4 border-b border-[#E7E5E0] px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
 
               <div className="flex items-center gap-3">
 
+                <div className="flex h-9 w-9 items-center justify-center bg-[#F7F5F0]">
+
+                  <SlidersHorizontal
+                    size={17}
+                    strokeWidth={1.6}
+                    className="text-[#55534E]"
+                  />
+
+                </div>
+
                 <div>
 
-                  <h2 className="text-sm font-semibold text-slate-900">
+                  <h2 className="text-sm font-semibold text-[#292825]">
                     Filtrar imóveis
                   </h2>
+
+                  <p className="mt-0.5 text-xs text-[#8A8883]">
+                    Refine sua busca
+                  </p>
 
                 </div>
 
@@ -274,10 +314,19 @@ export default function ImoveisPage() {
                 <button
                   type="button"
                   onClick={limparFiltros}
-                  className="flex items-center gap-1.5 self-start text-sm font-medium text-blue-600 transition hover:text-blue-800 sm:self-auto"
+                  className="
+                    flex items-center gap-1.5
+                    self-start
+                    text-xs font-semibold uppercase
+                    tracking-wide
+                    text-[#77746E]
+                    transition
+                    hover:text-[#292825]
+                    sm:self-auto
+                  "
                 >
 
-                  <X size={15} />
+                  <X size={14} strokeWidth={1.8} />
 
                   Limpar filtros
 
@@ -290,7 +339,7 @@ export default function ImoveisPage() {
 
             {/* CAMPOS */}
 
-            <div className="grid grid-cols-1 gap-4 p-5 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-5 p-6 md:grid-cols-2 lg:grid-cols-4">
 
 
               {/* VALOR MÍNIMO */}
@@ -299,12 +348,17 @@ export default function ImoveisPage() {
 
                 <label
                   htmlFor="valorMinimo"
-                  className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-600"
+                  className="
+                    mb-2 flex items-center gap-1.5
+                    text-[11px] font-semibold
+                    uppercase tracking-wide
+                    text-[#77746E]
+                  "
                 >
 
                   <CircleDollarSign
-                    size={15}
-                    className="text-blue-600"
+                    size={14}
+                    strokeWidth={1.6}
                   />
 
                   Valor mínimo
@@ -320,21 +374,39 @@ export default function ImoveisPage() {
                   onChange={(event) =>
                     setValorMinimo(event.target.value)
                   }
-                  className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  className="
+                    h-11 w-full
+                    border border-[#D8D5CF]
+                    bg-white
+                    px-3.5
+                    text-sm text-[#292825]
+                    outline-none
+                    transition
+                    placeholder:text-[#B0ADA6]
+                    focus:border-[#292825]
+                  "
                 />
 
               </div>
+
+
+              {/* VALOR MÁXIMO */}
 
               <div>
 
                 <label
                   htmlFor="valorMaximo"
-                  className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-600"
+                  className="
+                    mb-2 flex items-center gap-1.5
+                    text-[11px] font-semibold
+                    uppercase tracking-wide
+                    text-[#77746E]
+                  "
                 >
 
                   <CircleDollarSign
-                    size={15}
-                    className="text-blue-600"
+                    size={14}
+                    strokeWidth={1.6}
                   />
 
                   Valor máximo
@@ -350,22 +422,39 @@ export default function ImoveisPage() {
                   onChange={(event) =>
                     setValorMaximo(event.target.value)
                   }
-                  className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  className="
+                    h-11 w-full
+                    border border-[#D8D5CF]
+                    bg-white
+                    px-3.5
+                    text-sm text-[#292825]
+                    outline-none
+                    transition
+                    placeholder:text-[#B0ADA6]
+                    focus:border-[#292825]
+                  "
                 />
 
               </div>
 
 
+              {/* CIDADE */}
+
               <div>
 
                 <label
                   htmlFor="cidade"
-                  className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-600"
+                  className="
+                    mb-2 flex items-center gap-1.5
+                    text-[11px] font-semibold
+                    uppercase tracking-wide
+                    text-[#77746E]
+                  "
                 >
 
                   <MapPin
-                    size={15}
-                    className="text-blue-600"
+                    size={14}
+                    strokeWidth={1.6}
                   />
 
                   Cidade
@@ -376,7 +465,16 @@ export default function ImoveisPage() {
                   id="cidade"
                   value={cidadeSelecionada}
                   onChange={alterarCidade}
-                  className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  className="
+                    h-11 w-full
+                    border border-[#D8D5CF]
+                    bg-white
+                    px-3.5
+                    text-sm text-[#292825]
+                    outline-none
+                    transition
+                    focus:border-[#292825]
+                  "
                 >
 
                   <option value="">
@@ -405,12 +503,17 @@ export default function ImoveisPage() {
 
                 <label
                   htmlFor="bairro"
-                  className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-600"
+                  className="
+                    mb-2 flex items-center gap-1.5
+                    text-[11px] font-semibold
+                    uppercase tracking-wide
+                    text-[#77746E]
+                  "
                 >
 
                   <Building2
-                    size={15}
-                    className="text-blue-600"
+                    size={14}
+                    strokeWidth={1.6}
                   />
 
                   Bairro
@@ -424,7 +527,19 @@ export default function ImoveisPage() {
                     setBairroSelecionado(event.target.value)
                   }
                   disabled={!cidadeSelecionada}
-                  className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3.5 text-sm text-slate-900 outline-none transition disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  className="
+                    h-11 w-full
+                    border border-[#D8D5CF]
+                    bg-white
+                    px-3.5
+                    text-sm text-[#292825]
+                    outline-none
+                    transition
+                    disabled:cursor-not-allowed
+                    disabled:bg-[#F7F5F0]
+                    disabled:text-[#B0ADA6]
+                    focus:border-[#292825]
+                  "
                 >
 
                   <option value="">
@@ -454,28 +569,42 @@ export default function ImoveisPage() {
 
         </section>
 
+
+        {/* =====================================================
+            LISTAGEM
+        ====================================================== */}
+
         <section>
 
 
-          {!carregando && !erro && imoveisFiltrados.length > 0 && (
+          {!carregando &&
+            !erro &&
+            imoveisFiltrados.length > 0 && (
 
-            <div className="mb-6 flex items-center justify-between">
+              <div className="mb-7 flex items-end justify-between">
 
-              <div>
+                <div>
 
-                <h2 className="text-xl font-bold text-slate-900">
-                  Imóveis disponíveis
-                </h2>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-[#8A8883]">
+                    Nossa seleção
+                  </p>
 
-                <p className="mt-1 text-sm text-slate-500">
-                  Confira as opções encontradas para você.
-                </p>
+                  <h2 className="mt-2 text-2xl font-medium tracking-[-0.03em] text-[#292825]">
+                    Imóveis disponíveis
+                  </h2>
+
+                </div>
+
+                <span className="hidden text-xs text-[#A09D96] sm:block">
+                  VITTA
+                </span>
 
               </div>
 
-            </div>
+            )}
 
-          )}
+
+          {/* LOADING */}
 
           {carregando && (
 
@@ -483,9 +612,9 @@ export default function ImoveisPage() {
 
               <div className="text-center">
 
-                <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600" />
+                <div className="mx-auto mb-5 h-8 w-8 animate-spin rounded-full border-2 border-[#DDDAD3] border-t-[#292825]" />
 
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-[#77746E]">
                   Carregando imóveis...
                 </p>
 
@@ -496,22 +625,42 @@ export default function ImoveisPage() {
           )}
 
 
+          {/* ERRO */}
+
           {!carregando && erro && (
 
-            <div className="rounded-2xl border border-red-200 bg-red-50 p-8 text-center">
+            <div className="border border-[#DDD0CC] bg-white p-10 text-center">
 
-              <p className="font-medium text-red-700">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center bg-[#F5EFEC]">
+
+                <X
+                  size={20}
+                  strokeWidth={1.6}
+                  className="text-[#8A625A]"
+                />
+
+              </div>
+
+              <p className="mt-5 font-medium text-[#292825]">
                 Não foi possível carregar os imóveis.
               </p>
 
-              <p className="mt-1 text-sm text-red-600">
+              <p className="mt-2 text-sm text-[#77746E]">
                 {erro}
               </p>
 
               <button
                 type="button"
                 onClick={carregarImoveis}
-                className="mt-4 rounded-lg bg-red-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-red-700"
+                className="
+                  mt-6
+                  bg-[#292825]
+                  px-6 py-3
+                  text-sm font-medium
+                  text-white
+                  transition
+                  hover:bg-[#45433F]
+                "
               >
                 Tentar novamente
               </button>
@@ -521,26 +670,29 @@ export default function ImoveisPage() {
           )}
 
 
+          {/* NENHUM RESULTADO */}
+
           {!carregando &&
             !erro &&
             imoveisFiltrados.length === 0 && (
 
-              <div className="rounded-2xl border border-slate-200 bg-white px-6 py-16 text-center shadow-sm">
+              <div className="border border-[#E3E0D9] bg-white px-6 py-20 text-center">
 
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center bg-[#F7F5F0]">
 
                   <Search
-                    size={30}
-                    className="text-slate-400"
+                    size={27}
+                    strokeWidth={1.4}
+                    className="text-[#8A8883]"
                   />
 
                 </div>
 
-                <h2 className="text-xl font-semibold text-slate-900">
+                <h2 className="mt-6 text-xl font-medium text-[#292825]">
                   Nenhum imóvel encontrado
                 </h2>
 
-                <p className="mx-auto mt-2 max-w-md text-sm text-slate-500">
+                <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#77746E]">
                   Não encontramos imóveis disponíveis com os
                   filtros selecionados.
                 </p>
@@ -550,7 +702,16 @@ export default function ImoveisPage() {
                   <button
                     type="button"
                     onClick={limparFiltros}
-                    className="mt-5 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700"
+                    className="
+                      mt-6
+                      border border-[#292825]
+                      px-6 py-3
+                      text-sm font-medium
+                      text-[#292825]
+                      transition
+                      hover:bg-[#292825]
+                      hover:text-white
+                    "
                   >
                     Limpar filtros
                   </button>
@@ -562,14 +723,15 @@ export default function ImoveisPage() {
             )}
 
 
-          {/* LISTA DE IMÓVEIS */}
+          {/* =====================================================
+              CARDS
+          ====================================================== */}
 
           {!carregando &&
             !erro &&
             imoveisFiltrados.length > 0 && (
 
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-
+              <div className="grid grid-cols-1 gap-7 md:grid-cols-2 lg:grid-cols-3">
 
                 {imoveisFiltrados.map((imovel) => (
 
@@ -587,132 +749,137 @@ export default function ImoveisPage() {
         </section>
 
       </div>
-      <footer className="border-t border-zinc-200 bg-zinc-100">
 
-                <div className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
 
-                    <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
+      {/* =====================================================
+          FOOTER
+      ====================================================== */}
 
-                        <div>
+      <footer className="border-t border-[#E3E0D9] bg-white">
 
-                            <div className="flex items-center gap-2">
+        <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
 
-                                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-900 text-white">
+          <div className="grid grid-cols-1 gap-12 md:grid-cols-4">
 
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="1.8"
-                                        className="h-5 w-5"
-                                    >
 
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="m3 10 9-7 9 7"
-                                        />
+            {/* MARCA */}
 
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M5 9.5V21h14V9.5"
-                                        />
+            <div className="md:col-span-2">
 
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M9 21v-6h6v6"
-                                        />
+              <button
+                type="button"
+                onClick={() => {
+                  window.location.href = "/";
+                }}
+                className="text-left"
+              >
 
-                                    </svg>
+                <span className="block text-2xl font-semibold tracking-[0.16em] text-[#292825]">
+                  VITTA
+                </span>
 
-                                </div>
+                <span className="mt-1 block text-[9px] font-medium tracking-[0.3em] text-[#8A8883]">
+                  IMOBILIÁRIA
+                </span>
 
-                                <span className="font-semibold text-zinc-900">
-                                    Sua Imobiliária
-                                </span>
+              </button>
 
-                            </div>
+              <p className="mt-6 max-w-sm text-sm leading-7 text-[#77746E]">
+                Encontre imóveis que combinam com você e descubra
+                um lugar para chamar de lar.
+              </p>
 
-                            <p className="mt-4 max-w-sm text-sm leading-relaxed text-zinc-500">
-                                Encontre imóveis que combinam com você e encontre o lugar ideal para chamar de lar.
-                            </p>
+            </div>
 
-                        </div>
 
-                        <div>
+            {/* NAVEGAÇÃO */}
 
-                            <h3 className="text-sm font-semibold text-zinc-900">
-                                Navegação
-                            </h3>
+            <div>
 
-                            <div className="mt-4 flex flex-col gap-3 text-sm">
+              <h3 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#292825]">
+                Navegação
+              </h3>
 
-                                <a
-                                    href="/"
-                                    className="text-zinc-500 transition hover:text-zinc-900"
-                                >
-                                    Início
-                                </a>
+              <div className="mt-5 flex flex-col gap-3">
 
-                                <a
-                                    href="/imoveis"
-                                    className="text-zinc-500 transition hover:text-zinc-900"
-                                >
-                                    Imóveis
-                                </a>
+                <a
+                  href="/"
+                  className="text-sm text-[#77746E] transition hover:text-[#292825]"
+                >
+                  Início
+                </a>
 
-                                <a
-                                    href="/login"
-                                    className="text-zinc-500 transition hover:text-zinc-900"
-                                >
-                                    Entrar
-                                </a>
+                <a
+                  href="/imoveis"
+                  className="text-sm text-[#77746E] transition hover:text-[#292825]"
+                >
+                  Imóveis
+                </a>
 
-                            </div>
+                <a
+                  href="/login"
+                  className="text-sm text-[#77746E] transition hover:text-[#292825]"
+                >
+                  Entrar
+                </a>
 
-                        </div>
+              </div>
 
-                        <div>
+            </div>
 
-                            <h3 className="text-sm font-semibold text-zinc-900">
-                                Atendimento
-                            </h3>
 
-                            <div className="mt-4 flex flex-col gap-3 text-sm text-zinc-500">
+            {/* ATENDIMENTO */}
 
-                                <span>
-                                    Segunda a sexta
-                                </span>
+            <div>
 
-                                <span>
-                                    08:00 às 18:00
-                                </span>
+              <h3 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#292825]">
+                Atendimento
+              </h3>
 
-                                <span>
-                                    contato@suaimobiliaria.com
-                                </span>
+              <div className="mt-5 flex flex-col gap-3 text-sm text-[#77746E]">
 
-                            </div>
+                <span>
+                  Segunda a sexta
+                </span>
 
-                        </div>
+                <span>
+                  08:00 às 18:00
+                </span>
 
-                    </div>
+                <a
+                  href="/atendimento"
+                  className="transition hover:text-[#292825]"
+                >
+                  Fale conosco →
+                </a>
 
-                    <div className="mt-12 border-t border-zinc-200 pt-6">
+              </div>
 
-                        <p className="text-center text-sm text-zinc-400">
-                            © {new Date().getFullYear()} Sua Imobiliária. Todos os direitos reservados.
-                        </p>
+            </div>
 
-                    </div>
+          </div>
 
-                </div>
 
-            </footer>
+          {/* COPYRIGHT */}
+
+          <div className="mt-14 flex flex-col justify-between gap-3 border-t border-[#E3E0D9] pt-6 sm:flex-row">
+
+            <p className="text-xs text-[#A09D96]">
+              © {new Date().getFullYear()} Vitta Imobiliária.
+              Todos os direitos reservados.
+            </p>
+
+            <p className="text-xs text-[#A09D96]">
+              Um lugar para viver.
+            </p>
+
+          </div>
+
+        </div>
+
+      </footer>
 
     </main>
+
   );
 }

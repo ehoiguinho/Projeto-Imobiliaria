@@ -371,16 +371,11 @@ export default function CadastroPage() {
 
                 {/* Rodapé */}
                 <footer className="flex items-center justify-between border-t border-white/10 px-8 py-5 sm:px-12">
-                    <div>
-                        <p className="text-[9px] font-semibold tracking-[0.25em] text-white/75">
-                            VITTA IMOBILIÁRIA
-                        </p>
-                        
-                    </div>
 
                     <p className="text-[9px] text-white/40">
                         © 2026 Vitta Imobiliária
                     </p>
+                    
                 </footer>
             </div>
         </main>

@@ -2,16 +2,9 @@
 
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
-import {
-    ArrowRight,
-    Building2,
-    ChevronDown,
-    ClipboardList,
-    CreditCard,
-    FileText,
-    Loader2,
-    MapPin,
-} from "lucide-react";
+
+import { ArrowRight, Building2, ChevronDown, ClipboardList, CreditCard, FileText, ArrowLeft, Loader2, MapPin } from "lucide-react";
+
 
 export default function LocacoesPage() {
 
@@ -435,9 +428,8 @@ export default function LocacoesPage() {
 
     return (
 
-        <main className="min-h-full bg-[#F7F5F0] px-6 py-10 text-[#292825] lg:px-10">
-
-
+        <main className="min-h-full bg-white px-6 py-10 text-[#292825] lg:px-10">
+                    
             <div className="mx-auto max-w-6xl">
 
 

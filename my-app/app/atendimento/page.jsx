@@ -1,12 +1,38 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { Clock, Mail, MessageCircle, ArrowRight } from "lucide-react";
 
 export default function AtendimentoPage() {
-    return (
-        <main  className="min-h-screen text-[#292825] bg-[#F7F5F0]">
+    const [cardsVisiveis, setCardsVisiveis] = useState(false);
+    const cardsRef = useRef(null);
 
-            {/* Hero */}
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setCardsVisiveis(true);
+                    observer.disconnect();
+                }
+            },
+            {
+                threshold: 0.2,
+            }
+        );
+
+        if (cardsRef.current) {
+            observer.observe(cardsRef.current);
+        }
+
+        return () => observer.disconnect();
+    }, []);
+
+    return (
+        <main className="min-h-screen bg-[#F7F5F0] text-[#292825]">
+
+            {/* =========================================================
+                HERO
+            ========================================================= */}
 
             <section className="mx-auto max-w-7xl px-6 py-24 lg:px-8 lg:py-32">
 
@@ -34,21 +60,37 @@ export default function AtendimentoPage() {
             </section>
 
 
-            {/* Canais de atendimento */}
+            {/* =========================================================
+                CANAIS DE ATENDIMENTO
+            ========================================================= */}
 
             <section className="border-y border-[#E7E5E0] bg-white">
 
                 <div className="mx-auto max-w-5xl px-6 py-16 lg:px-8 lg:py-20">
 
-                    <div className="grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-[#E7E5E0] bg-[#E7E5E0] md:grid-cols-3">
+                    <div
+                        ref={cardsRef}
+                        className="grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-[#E7E5E0] bg-[#E7E5E0] md:grid-cols-3"
+                    >
 
-                        {/* E-mail */}
+                        {/* =================================================
+                            E-MAIL
+                        ================================================= */}
 
-                        <div className="bg-white p-8 transition">
+                        <div
+                            className={`group bg-white p-8 transition-all duration-700 hover:-translate-y-1 ${
+                                cardsVisiveis
+                                    ? "translate-y-0 opacity-100"
+                                    : "-translate-y-8 opacity-0"
+                            }`}
+                        >
 
-                            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E7E5E0] text-[#292825]">
+                            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E7E5E0] text-[#292825] transition-all duration-300 group-hover:-translate-y-1 group-hover:border-[#CFCBC3]">
 
-                                <Mail size={20} strokeWidth={1.7} />
+                                <Mail
+                                    size={20}
+                                    strokeWidth={1.7}
+                                />
 
                             </div>
 
@@ -68,13 +110,24 @@ export default function AtendimentoPage() {
                         </div>
 
 
-                        {/* Horário */}
+                        {/* =================================================
+                            HORÁRIO
+                        ================================================= */}
 
-                        <div className="bg-white p-8 transition">
+                        <div
+                            className={`group bg-white p-8 transition-all delay-100 duration-700 hover:-translate-y-1 ${
+                                cardsVisiveis
+                                    ? "translate-y-0 opacity-100"
+                                    : "translate-y-8 opacity-0"
+                            }`}
+                        >
 
-                            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E7E5E0] text-[#292825]">
+                            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E7E5E0] text-[#292825] transition-all duration-300 group-hover:-translate-y-1 group-hover:border-[#CFCBC3]">
 
-                                <Clock size={20} strokeWidth={1.7} />
+                                <Clock
+                                    size={20}
+                                    strokeWidth={1.7}
+                                />
 
                             </div>
 
@@ -94,13 +147,24 @@ export default function AtendimentoPage() {
                         </div>
 
 
-                        {/* Suporte */}
+                        {/* =================================================
+                            SUPORTE
+                        ================================================= */}
 
-                        <div className="bg-white p-8 transition">
+                        <div
+                            className={`group bg-white p-8 transition-all delay-200 duration-700 hover:-translate-y-1 ${
+                                cardsVisiveis
+                                    ? "translate-y-0 opacity-100"
+                                    : "translate-y-8 opacity-0"
+                            }`}
+                        >
 
-                            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E7E5E0] text-[#292825]">
+                            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E7E5E0] text-[#292825] transition-all duration-300 group-hover:-translate-y-1 group-hover:border-[#CFCBC3]">
 
-                                <MessageCircle size={20} strokeWidth={1.7} />
+                                <MessageCircle
+                                    size={20}
+                                    strokeWidth={1.7}
+                                />
 
                             </div>
 
@@ -112,17 +176,20 @@ export default function AtendimentoPage() {
                                 Estamos disponíveis para esclarecer
                                 suas dúvidas e orientar você.
                             </p>
-                            <a
-                            href="mailto:contato@vittaimobiliaria.com"
-                            className="inline-flex w-fit shrink-0 items-center gap-3 px-6 py-6 text-sm font-semibold text-[#292825] cursor-pointer"
-                        >
-                            Entrar em contato
-                            <ArrowRight
-                                size={17}
-                                strokeWidth={1.8}
-                            />
 
-                        </a>
+                            <a
+                                href="mailto:contato@vittaimobiliaria.com"
+                                className="group/contact mt-5 inline-flex w-fit shrink-0 cursor-pointer items-center gap-3 text-sm font-semibold text-[#292825]"
+                            >
+                                Entrar em contato
+
+                                <ArrowRight
+                                    size={17}
+                                    strokeWidth={1.8}
+                                    className="transition-transform duration-300 group-hover/contact:translate-x-1"
+                                />
+
+                            </a>
 
                         </div>
 
@@ -133,81 +200,79 @@ export default function AtendimentoPage() {
             </section>
 
 
-            {/* Footer */}
+            {/* =========================================================
+                FOOTER
+            ========================================================= */}
 
             <footer className="bg-[#F7F5F0]">
 
-                <div className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
+                <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
 
-                    <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-12 md:grid-cols-4">
 
-                        {/* Marca */}
+                        {/* MARCA */}
 
-                        <div>
+                        <div className="md:col-span-2">
 
-                            <div className="flex items-center gap-3">
+                            <a
+                                href="/"
+                                className="inline-block"
+                            >
 
-                                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#292825] text-white">
+                                <span className="block text-2xl font-semibold tracking-[0.16em] text-[#292825]">
+                                    VITTA
+                                </span>
 
-                                    <span className="text-sm font-semibold tracking-tight">
-                                        V
-                                    </span>
+                                <span className="mt-1 block text-[9px] font-medium tracking-[0.3em] text-[#8A8883]">
+                                    IMOBILIÁRIA
+                                </span>
 
-                                </div>
+                            </a>
 
-                                <div>
-
-                                    <p className="text-sm font-semibold tracking-[0.12em] text-[#171614]">
-                                        VITTA
-                                    </p>
-
-                                    <p className="text-[9px] font-medium tracking-[0.2em] text-[#8A8883]">
-                                        IMOBILIÁRIA
-                                    </p>
-
-                                </div>
-
-                            </div>
+                            <p className="mt-6 max-w-sm text-sm leading-7 text-[#77746E]">
+                                Encontre imóveis que combinam com você
+                                e descubra um lugar para chamar de lar.
+                            </p>
 
                         </div>
 
 
-                        {/* Navegação */}
+                        {/* NAVEGAÇÃO */}
 
                         <div>
 
-                            <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-[#292825]">
+                            <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-[#292825]">
                                 Navegação
                             </h3>
 
-                            <div className="mt-5 flex flex-col gap-3 text-sm">
+                            <div className="mt-5 flex flex-col gap-3">
 
                                 <a
                                     href="/"
-                                    className="text-[#77746F] transition hover:text-[#171614]"
+                                    className="text-sm text-[#77746E] transition hover:text-[#292825]"
                                 >
                                     Início
                                 </a>
 
                                 <a
                                     href="/imoveis"
-                                    className="text-[#77746F] transition hover:text-[#171614]"
+                                    className="text-sm text-[#77746E] transition hover:text-[#292825]"
                                 >
                                     Imóveis
                                 </a>
 
                                 <a
                                     href="/sobrenos"
-                                    className="text-[#77746F] transition hover:text-[#171614]"
+                                    className="text-sm text-[#77746E] transition hover:text-[#292825]"
                                 >
                                     Sobre nós
                                 </a>
 
                                 <a
-                                    href="/atendimento"
-                                    className="text-[#171614] font-medium"
+                                    href="/login"
+                                    className="text-sm text-[#77746E] transition hover:text-[#292825]"
                                 >
-                                    Atendimento
+                                    Entrar
                                 </a>
 
                             </div>
@@ -215,23 +280,26 @@ export default function AtendimentoPage() {
                         </div>
 
 
-                        {/* Atendimento */}
+                        {/* ATENDIMENTO */}
 
                         <div>
 
-                            <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-[#292825]">
+                            <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-[#292825]">
                                 Atendimento
                             </h3>
 
-                            <div className="mt-5 flex flex-col gap-3 text-sm text-[#77746F]">
+                            <div className="mt-5 flex flex-col gap-3 text-sm text-[#77746E]">
 
                                 <span>
-                                    Segunda a sexta 8:00 às 18:00
+                                    Segunda a sexta 08:00 às 18:00
                                 </span>
 
-                                <span>
-                                    contato@vittaimobiliaria.com
-                                </span>
+                                <a
+                                    href="/atendimento"
+                                    className="transition hover:text-[#292825]"
+                                >
+                                    Fale conosco →
+                                </a>
 
                             </div>
 
@@ -239,6 +307,8 @@ export default function AtendimentoPage() {
 
                     </div>
 
+
+                    {/* COPYRIGHT */}
 
                     <div className="mt-12 border-t border-[#E7E5E0] pt-6">
 

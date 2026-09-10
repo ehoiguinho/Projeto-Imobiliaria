@@ -3,15 +3,7 @@
 import toast from "react-hot-toast";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-    ArrowLeft,
-    Building2,
-    Camera,
-    Check,
-    ChevronDown,
-    MapPin,
-    Upload,
-} from "lucide-react";
+import { ArrowLeft, Building2, Camera, Check, ChevronDown, MapPin, Upload } from "lucide-react";
 
 export default function CadastroImovelPage() {
 
@@ -127,7 +119,7 @@ export default function CadastroImovelPage() {
 
     return (
 
-        <main className="min-h-screen bg-[#F7F5F0] text-[#292825]">
+        <main className="min-h-screen bg-white text-[#292825]">
 
             <div className="mx-auto max-w-5xl px-6 py-10 lg:px-8">
 
@@ -156,16 +148,6 @@ export default function CadastroImovelPage() {
 
 
                     <div className="flex items-start gap-4">
-
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center text-black">
-
-                            <Building2
-                                size={20}
-                                strokeWidth={1.5}
-                            />
-
-                        </div>
-
 
                         <div>
 
@@ -599,7 +581,7 @@ export default function CadastroImovelPage() {
                             AÇÕES
                         ================================================== */}
 
-                        <footer className="flex flex-col-reverse gap-3 border-t border-[#E3E0D9] bg-[#FCFBF8] px-6 py-5 sm:flex-row sm:justify-end sm:px-8">
+                        <footer className="flex flex-col-reverse gap-3 border-t border-[#E3E0D9] bg-white px-6 py-5 sm:flex-row sm:justify-end sm:px-8">
 
                             <button
                                 type="button"

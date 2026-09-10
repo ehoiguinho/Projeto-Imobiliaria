@@ -122,7 +122,7 @@ export default function LoginPage() {
             {/* Rodapé */}
             <div className="flex translate-y-5 items-center justify-between border-t border-white/10 pt-6">
               <p className="text-[11px] text-[#A19E98]">
-                © 2026 Vitta
+                © 2026 Vitta Imobiliária
               </p>
             </div>
           </div>

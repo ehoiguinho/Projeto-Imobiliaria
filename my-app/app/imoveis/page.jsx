@@ -859,16 +859,13 @@ export default function ImoveisPage() {
 
           {/* COPYRIGHT */}
 
-          <div className="mt-14 flex flex-col justify-between gap-3 border-t border-[#E3E0D9] pt-6 sm:flex-row">
+          <div className="mt-14 flex flex-col justify-center gap-3 border-t border-[#E3E0D9] pt-6 sm:flex-row">
 
             <p className="text-xs text-[#A09D96]">
               © {new Date().getFullYear()} Vitta Imobiliária.
               Todos os direitos reservados.
             </p>
 
-            <p className="text-xs text-[#A09D96]">
-              Um lugar para viver.
-            </p>
 
           </div>
 

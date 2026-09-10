@@ -374,32 +374,6 @@ docker ps
 
 ---
 
-# 🎨 Interface Web
-
-A aplicação possui uma interface desenvolvida com **Next.js + React + Tailwind CSS**.
-
-A identidade visual foi construída especificamente para a marca **Vitta Imobiliária**, utilizando uma estética minimalista e moderna.
-
-### Principais áreas
-
-```text
-/
-├── Home
-├── Imóveis
-├── Detalhes do imóvel
-├── Locação
-├── Minhas locações
-├── Sobre nós
-├── Atendimento
-├── Login
-├── Cadastro
-├── Recuperação de senha
-├── Redefinição de senha
-└── Área administrativa
-```
-
----
-
 # 🏢 Área Administrativa
 
 O sistema possui uma área administrativa protegida.
@@ -419,25 +393,6 @@ O acesso é restrito a usuários com perfil:
 ```text
 ADMIN
 ```
-
----
-
-# 🖼️ Experiência do Usuário
-
-A interface possui diversos recursos de interação:
-
-* Cards de imóveis
-* Galeria de imagens
-* Estados de carregamento
-* Toast notifications
-* Animações de entrada
-* Hover interactions
-* Menus dropdown
-* Navegação responsiva
-* Formulários de autenticação
-* Feedback visual de ações
-* Interface administrativa
-
 
 ---
 
@@ -473,33 +428,6 @@ O projeto implementa diferentes camadas de proteção:
 
 As regras de negócio são aplicadas no backend, evitando depender exclusivamente das validações do frontend.
 
----
-
-# 🔁 Transações
-
-Operações críticas utilizam transações no PostgreSQL.
-
-Exemplo de fluxo de locação:
-
-```text
-BEGIN
- ↓
-Criar contrato
- ↓
-Criar 12 aluguéis
- ↓
-Atualizar disponibilidade do imóvel
- ↓
-COMMIT
-```
-
-Em caso de erro:
-
-```text
-ROLLBACK
-```
-
-Isso evita que uma operação seja parcialmente persistida no banco.
 
 ---
 
@@ -616,65 +544,6 @@ Frontend:
 http://localhost:5001
 ```
 
----
-
-# 🧪 Fluxo Principal da Aplicação
-
-O fluxo completo de utilização pode ser resumido em:
-
-```text
-Usuário
-   ↓
-Cadastro / Login
-   ↓
-Busca de imóveis
-   ↓
-Visualização do imóvel
-   ↓
-Solicitação de locação
-   ↓
-Criação do contrato
-   ↓
-Geração de 12 parcelas
-   ↓
-Pagamento PIX
-   ↓
-AbacatePay
-   ↓
-Webhook
-   ↓
-Confirmação do pagamento
-   ↓
-Atualização do aluguel
-```
-
----
-
-# 🎯 Objetivo do Projeto
-
-O projeto foi desenvolvido como uma aplicação prática para consolidar conhecimentos em:
-
-* Desenvolvimento de APIs RESTful
-* Node.js
-* Express
-* PostgreSQL
-* Docker
-* Arquitetura MVC
-* Repository Pattern
-* Service Layer
-* JWT
-* bcrypt
-* React
-* Next.js
-* Tailwind CSS
-* Integração com APIs externas
-* Webhooks
-* Processamento de pagamentos
-* Transações de banco de dados
-* Autenticação e autorização
-* Desenvolvimento Full Stack
-
-Além do objetivo acadêmico, o projeto foi estruturado buscando representar uma aplicação próxima de um cenário real de mercado.
 
 ---
 

@@ -1,7 +1,9 @@
+
 import crypto from "node:crypto";
 import Database from "../db/database.js";
 import PagamentoRepository from "../repositories/pagamentoRepository.js";
 import AluguelRepository from "../repositories/aluguelRepository.js";
+const ABACATEPAY_SHARED_KEY = "t9dXRhHHo3yDEj5pVDYz0frf7q6bMKyMRmxxCPIPp3RCplBfXRxqlC6ZpiWmOqj4L63qEaeUOtrCI8P0VMUgo6iIga2ri9ogaHFs0WIIywSMg0q7RmBfybe1E5XJcfC4IW3alNqym0tXoAKkzvfEjZxV6bE0oG2zJrNNYmUCKZyV0KZ3JS8Votf9EAWWYdiDkMkpbMdPggfh1EqHlVkMiTady6jOR3hyzGEHrIz2Ret0xHKMbiqkr9HS1JhNHDX9";
 
 export default class WebhookService {
 
@@ -10,416 +12,585 @@ export default class WebhookService {
 
     constructor() {
 
+        console.log("========================================");
+        console.log("WEBHOOK SERVICE INICIADO");
+        console.log("========================================");
+
         this.#pagamentoRepository = new PagamentoRepository();
         this.#aluguelRepository = new AluguelRepository();
-
     }
 
     async processarAbacatePay(
-        rawBody,
-        webhookId,
-        webhookTimestamp,
-        webhookSignature
-    ) {
+    rawBody,
+    webhookSecretHeader,
+    webhookSignature
+) {
 
-        if (!webhookId) {
-            const erro = new Error(
-                "Header webhook-id não enviado."
-            );
+    console.log("\n");
+    console.log("========================================");
+    console.log("🚨 WEBHOOK ENTROU NO WEBHOOK SERVICE");
+    console.log("========================================");
 
-            erro.status = 401;
-            throw erro;
-        }
+    console.log(
+        "RawBody recebido:",
+        !!rawBody
+    );
 
-        if (!webhookTimestamp) {
-            const erro = new Error(
-                "Header webhook-timestamp não enviado."
-            );
+    console.log(
+        "Tipo do RawBody:",
+        Buffer.isBuffer(rawBody)
+            ? "Buffer"
+            : typeof rawBody
+    );
 
-            erro.status = 401;
-            throw erro;
-        }
+    console.log(
+        "Tamanho do RawBody:",
+        rawBody
+            ? rawBody.length
+            : 0
+    );
 
-        if (!webhookSignature) {
-            const erro = new Error(
-                "Header webhook-signature não enviado."
-            );
+    console.log(
+        "x-webhook-secret recebido:",
+        !!webhookSecretHeader
+    );
 
-            erro.status = 401;
-            throw erro;
-        }
+    console.log(
+        "x-webhook-signature recebido:",
+        !!webhookSignature
+    );
 
-        const webhookSecret =
-            process.env.ABACATEPAY_WEBHOOK_SECRET;
-
-        if (!webhookSecret) {
-
-            const erro = new Error(
-                "ABACATEPAY_WEBHOOK_SECRET não configurada."
-            );
-
-            erro.status = 500;
-            throw erro;
-        }
+    console.log(
+        "========================================"
+    );
 
 
-        const timestamp = Number(webhookTimestamp);
+    // ========================================
+    // 1. VALIDAR WEBHOOK
+    // ========================================
 
-        if (!Number.isInteger(timestamp)) {
+    console.log(
+        "1️⃣ Validando autenticação do webhook..."
+    );
 
-            const erro = new Error(
-                "webhook-timestamp inválido."
-            );
+    const webhookSecret =
+        process.env.ABACATEPAY_WEBHOOK_SECRET;
 
-            erro.status = 401;
-            throw erro;
-        }
-
-        const agora =
-            Math.floor(Date.now() / 1000);
-
-        const diferenca =
-            Math.abs(agora - timestamp);
+    console.log(
+        "Secret configurada no .env:",
+        !!webhookSecret
+    );
 
 
-        if (diferenca > 300) {
-
-            const erro = new Error(
-                "Webhook expirado."
-            );
-
-            erro.status = 401;
-            throw erro;
-        }
-
-
-        const assinaturaValida =
-            this.#validarAssinatura(
-                rawBody,
-                webhookId,
-                webhookTimestamp,
-                webhookSignature,
-                webhookSecret
-            );
-
-        if (!assinaturaValida) {
-
-            const erro = new Error(
-                "Assinatura do webhook inválida."
-            );
-
-            erro.status = 401;
-            throw erro;
-        }
-
-        let payload;
-
-        try {
-
-            const textoBody =
-                Buffer.isBuffer(rawBody)
-                    ? rawBody.toString("utf8")
-                    : String(rawBody);
-
-            payload =
-                JSON.parse(textoBody);
-
-            console.log("Tipo:", typeof payload);
-            console.log(
-                "Chaves:",
-                Object.keys(payload || {})
-            );
-
-            console.log(
-                "Tipo do evento:",
-                payload?.type
-            );
-
-            console.log(
-                "API Version:",
-                payload?.apiVersion
-            );
-
-            console.log(
-                "Dev Mode:",
-                payload?.devMode
-            );
-
-        } catch (ex) {
-
-            console.log(
-                "Erro ao converter payload:",
-                ex.message
-            );
-
-            const erro = new Error(
-                "Payload do webhook inválido."
-            );
-
-            erro.status = 400;
-            throw erro;
-        }
-
-        if (
-            !payload ||
-            typeof payload !== "object" ||
-            !payload.type
-        ) {
-
-            console.log(
-                "Payload recebido:",
-                payload
-            );
-
-            const erro = new Error(
-                "Payload do webhook incompleto."
-            );
-
-            erro.status = 400;
-            throw erro;
-        }
+    if (!webhookSecret) {
 
         console.log(
-            "Evento recebido:",
-            payload.type
+            "❌ ABACATEPAY_WEBHOOK_SECRET não configurada."
         );
 
-        if (
-            payload.apiVersion &&
-            payload.apiVersion !== 2
-        ) {
-
-            console.log(
-                "API Version recebida:",
-                payload.apiVersion
-            );
-
-            return {
-                ok: true,
-                msg: "Evento ignorado: versão de API não suportada."
-            };
-        }
-
-
-        const banco =
-            new Database();
-
-        this.#pagamentoRepository.banco =
-            banco;
-
-        this.#aluguelRepository.banco =
-            banco;
-
-        const eventoId =
-            webhookId;
-
-        console.log(
-            "Evento ID:",
-            eventoId
+        const erro = new Error(
+            "ABACATEPAY_WEBHOOK_SECRET não configurada."
         );
 
-        const eventoExistente =
-            await this.#verificarEventoProcessado(
-                banco,
-                eventoId
-            );
+        erro.status = 500;
 
-        if (eventoExistente) {
-
-            return {
-                ok: true,
-                msg: "Evento já processado."
-            };
-        }
-
-        if (
-            payload.type === "checkout.completed"
-        ) {
-
-            const checkout =
-                payload?.data?.checkout;
-
-            console.log(
-                "Evento:",
-                payload.type
-            );
-
-            console.log(
-                "Checkout ID:",
-                checkout?.id
-            );
-
-            console.log(
-                "External ID:",
-                checkout?.externalId
-            );
-
-            console.log(
-                "Status:",
-                checkout?.status
-            );
-
-            console.log(
-                "Valor:",
-                checkout?.amount
-            );
-
-            console.log(
-                "Método:",
-                payload?.data?.payerInformation?.method
-            );
-
-
-            await this.#processarCheckoutConcluido(
-                payload
-            );
-
-        } else {
-
-            console.log(
-                "⚠️ Evento não tratado:",
-                payload.type
-            );
-
-            await this.#registrarEvento(
-                banco,
-                eventoId,
-                payload.type
-            );
-
-            return {
-                ok: true,
-                msg: "Evento recebido e ignorado."
-            };
-        }
-
-        await this.#registrarEvento(
-            banco,
-            eventoId,
-            payload.type
-        );
-
-        return {
-            ok: true,
-            msg: "Webhook processado com sucesso."
-        };
+        throw erro;
     }
 
-    #validarAssinatura(
-        rawBody,
-        webhookId,
-        webhookTimestamp,
-        webhookSignature,
-        webhookSecret
+
+    // ========================================
+    // VALIDAR SECRET
+    // ========================================
+
+    console.log(
+        "🔐 Validando x-webhook-secret..."
+    );
+
+
+    if (!webhookSecretHeader) {
+
+        console.log(
+            "❌ x-webhook-secret não recebido."
+        );
+
+        const erro = new Error(
+            "Secret do webhook não enviada."
+        );
+
+        erro.status = 401;
+
+        throw erro;
+    }
+
+
+    const secretRecebido =
+        Buffer.from(webhookSecretHeader);
+
+    const secretConfigurado =
+        Buffer.from(webhookSecret);
+
+
+    if (
+        secretRecebido.length !==
+        secretConfigurado.length
     ) {
 
-        const body =
+        console.log(
+            "❌ Secret do webhook inválida."
+        );
+
+        const erro = new Error(
+            "Secret do webhook inválida."
+        );
+
+        erro.status = 401;
+
+        throw erro;
+    }
+
+
+    const secretValido =
+        crypto.timingSafeEqual(
+            secretRecebido,
+            secretConfigurado
+        );
+
+
+    if (!secretValido) {
+
+        console.log(
+            "❌ Secret do webhook inválida."
+        );
+
+        const erro = new Error(
+            "Secret do webhook inválida."
+        );
+
+        erro.status = 401;
+
+        throw erro;
+    }
+
+
+    console.log(
+        "✅ Secret do webhook válida."
+    );
+
+
+    // ========================================
+    // VALIDAR ASSINATURA HMAC
+    // ========================================
+
+    console.log(
+        "2️⃣ Validando assinatura HMAC..."
+    );
+
+
+    if (!webhookSignature) {
+
+        console.log(
+            "❌ x-webhook-signature não recebida."
+        );
+
+        const erro = new Error(
+            "Assinatura do webhook não enviada."
+        );
+
+        erro.status = 401;
+
+        throw erro;
+    }
+
+
+    const assinaturaValida =
+    this.#validarAssinatura(
+        rawBody,
+        webhookSignature
+    );
+
+
+    if (!assinaturaValida) {
+
+        console.log(
+            "❌ Assinatura HMAC inválida."
+        );
+
+        const erro = new Error(
+            "Assinatura do webhook inválida."
+        );
+
+        erro.status = 401;
+
+        throw erro;
+    }
+
+
+    console.log(
+        "✅ Assinatura HMAC válida."
+    );
+
+
+    // ========================================
+    // 2. CONVERTER PAYLOAD
+    // ========================================
+
+    console.log(
+        "4️⃣ Convertendo payload JSON..."
+    );
+
+
+    let payload;
+
+
+    try {
+
+        const textoBody =
             Buffer.isBuffer(rawBody)
                 ? rawBody.toString("utf8")
                 : String(rawBody);
 
-        const payloadAssinado =
-            `${webhookId}.${webhookTimestamp}.${body}`;
 
-        let chave;
+        payload =
+            JSON.parse(textoBody);
 
-        if (
-            webhookSecret.startsWith("whsec_")
-        ) {
 
-            const secretBase64 =
-                webhookSecret.substring(6);
+        console.log(
+            "✅ Payload convertido."
+        );
 
-            chave =
-                Buffer.from(
-                    secretBase64,
-                    "base64"
-                );
 
-        } else {
+    } catch (ex) {
 
-            chave =
-                Buffer.from(
-                    webhookSecret,
-                    "utf8"
-                );
-        }
+        console.log(
+            "❌ Erro ao converter payload:",
+            ex.message
+        );
 
-        const assinaturaEsperada =
-            crypto
-                .createHmac(
-                    "sha256",
-                    chave
-                )
-                .update(
-                    payloadAssinado,
-                    "utf8"
-                )
-                .digest("base64");
 
-        const assinaturas =
-            webhookSignature.split(" ");
+        const erro = new Error(
+            "Payload do webhook inválido."
+        );
 
-        for (
-            const assinatura of assinaturas
-        ) {
+        erro.status = 400;
 
-            const partes =
-                assinatura.split(",");
+        throw erro;
+    }
 
-            if (
-                partes.length !== 2
-            ) {
-                continue;
-            }
 
-            const versao =
-                partes[0];
+    // ========================================
+    // 3. VALIDAR PAYLOAD
+    // ========================================
 
-            const valor =
-                partes[1];
+    console.log(
+        "5️⃣ Validando payload..."
+    );
 
-            if (
-                versao !== "v1"
-            ) {
-                continue;
-            }
 
-            const A =
-                Buffer.from(
-                    assinaturaEsperada
-                );
+    if (
+        !payload ||
+        typeof payload !== "object"
+    ) {
 
-            const B =
-                Buffer.from(valor);
+        const erro = new Error(
+            "Payload do webhook incompleto."
+        );
 
-            if (
-                A.length !== B.length
-            ) {
-                continue;
-            }
+        erro.status = 400;
 
-            if (
-                crypto.timingSafeEqual(
-                    A,
-                    B
-                )
-            ) {
+        throw erro;
+    }
 
-                return true;
-            }
-        }
 
+    const tipoEvento =
+        payload.event ||
+        payload.type;
+
+
+    console.log(
+        "Evento recebido:",
+        tipoEvento
+    );
+
+
+    console.log(
+        "API Version:",
+        payload.apiVersion
+    );
+
+
+    if (!tipoEvento) {
+
+        const erro = new Error(
+            "Payload do webhook incompleto."
+        );
+
+        erro.status = 400;
+
+        throw erro;
+    }
+
+
+    if (
+        payload.apiVersion &&
+        Number(payload.apiVersion) !== 2
+    ) {
+
+        console.log(
+            "⚠️ API Version não suportada."
+        );
+
+
+        return {
+            ok: true,
+            msg:
+                "Evento ignorado: versão de API não suportada."
+        };
+    }
+
+
+    // ========================================
+    // 4. BANCO
+    // ========================================
+
+    console.log(
+        "6️⃣ Configurando banco..."
+    );
+
+
+    const banco =
+        new Database();
+
+
+    this.#pagamentoRepository.banco =
+        banco;
+
+
+    this.#aluguelRepository.banco =
+        banco;
+
+
+    // ========================================
+    // 5. EVENT ID
+    // ========================================
+
+    const eventoId =
+        payload.id;
+
+
+    console.log(
+        "Evento ID:",
+        eventoId
+    );
+
+
+    if (!eventoId) {
+
+        const erro = new Error(
+            "ID do evento não encontrado."
+        );
+
+        erro.status = 400;
+
+        throw erro;
+    }
+
+
+    // ========================================
+    // 6. IDEMPOTÊNCIA
+    // ========================================
+
+    console.log(
+        "7️⃣ Verificando idempotência..."
+    );
+
+
+    const eventoExistente =
+        await this.#verificarEventoProcessado(
+            banco,
+            eventoId
+        );
+
+
+    if (eventoExistente) {
+
+        console.log(
+            "⚠️ Evento já processado."
+        );
+
+
+        return {
+            ok: true,
+            msg:
+                "Evento já processado."
+        };
+    }
+
+
+    console.log(
+        "✅ Evento ainda não processado."
+    );
+
+
+    // ========================================
+    // 7. CHECKOUT COMPLETED
+    // ========================================
+
+    if (
+        tipoEvento === "checkout.completed"
+    ) {
+
+        console.log(
+            "========================================"
+        );
+
+        console.log(
+            "✅ CHECKOUT.COMPLETED"
+        );
+
+        console.log(
+            "========================================"
+        );
+
+
+        await this.#processarCheckoutConcluido(
+            payload
+        );
+
+
+    } else {
+
+        console.log(
+            "⚠️ Evento não tratado:",
+            tipoEvento
+        );
+
+
+        await this.#registrarEvento(
+            banco,
+            eventoId,
+            tipoEvento
+        );
+
+
+        return {
+            ok: true,
+            msg:
+                "Evento recebido e ignorado."
+        };
+    }
+
+
+    // ========================================
+    // 8. REGISTRAR EVENTO
+    // ========================================
+
+    console.log(
+        "8️⃣ Registrando evento..."
+    );
+
+
+    await this.#registrarEvento(
+        banco,
+        eventoId,
+        tipoEvento
+    );
+
+
+    console.log(
+        "========================================"
+    );
+
+    console.log(
+        "🎉 WEBHOOK PROCESSADO COM SUCESSO"
+    );
+
+    console.log(
+        "========================================"
+    );
+
+
+    return {
+        ok: true,
+        msg:
+            "Webhook processado com sucesso."
+    };
+}
+
+
+    // ========================================
+    // ASSINATURA HMAC
+    // ========================================
+
+   #validarAssinatura(
+    rawBody,
+    webhookSignature
+) {
+
+    const bodyBuffer =
+        Buffer.isBuffer(rawBody)
+            ? rawBody
+            : Buffer.from(
+                String(rawBody),
+                "utf8"
+            );
+
+    const assinaturaEsperada =
+        crypto
+            .createHmac(
+                "sha256",
+                ABACATEPAY_SHARED_KEY
+            )
+            .update(bodyBuffer)
+            .digest("base64");
+
+    const recebida =
+        Buffer.from(
+            webhookSignature
+        );
+
+    const esperada =
+        Buffer.from(
+            assinaturaEsperada
+        );
+
+    if (
+        recebida.length !==
+        esperada.length
+    ) {
         return false;
     }
 
+    return crypto.timingSafeEqual(
+        recebida,
+        esperada
+    );
+}
+
+
+    // ========================================
+    // PROCESSAR CHECKOUT
+    // ========================================
 
     async #processarCheckoutConcluido(
         payload
     ) {
 
+        console.log(
+            "========================================"
+        );
+
+        console.log(
+            "💰 PROCESSANDO CHECKOUT CONCLUÍDO"
+        );
+
+        console.log(
+            "========================================"
+        );
+
+
         const checkout =
             payload?.data?.checkout;
+
 
         if (!checkout) {
 
@@ -427,6 +598,7 @@ export default class WebhookService {
                 "Checkout não encontrado no payload."
             );
         }
+
 
         console.log(
             "Checkout ID:",
@@ -442,6 +614,7 @@ export default class WebhookService {
             "Status:",
             checkout.status
         );
+
 
         if (
             checkout.status !== "PAID"
@@ -459,24 +632,20 @@ export default class WebhookService {
         const checkoutId =
             checkout.id;
 
-        if (
-            !externalId &&
-            !checkoutId
-        ) {
-
-            throw new Error(
-                "Não foi possível identificar o pagamento."
-            );
-        }
 
         let pagamento = null;
+
+
+        // ========================================
+        // BUSCAR EXTERNAL ID
+        // ========================================
 
         if (externalId) {
 
             console.log(
-                "Buscando pelo External ID:",
-                externalId
+                "🔎 Buscando pelo External ID..."
             );
+
 
             pagamento =
                 await this.#pagamentoRepository
@@ -484,11 +653,17 @@ export default class WebhookService {
                         externalId
                     );
 
+
             console.log(
-                "Resultado da busca por External ID:",
+                "Resultado:",
                 pagamento
             );
         }
+
+
+        // ========================================
+        // BUSCAR CHECKOUT ID
+        // ========================================
 
         if (
             (!pagamento ||
@@ -497,13 +672,9 @@ export default class WebhookService {
         ) {
 
             console.log(
-                "Pagamento não encontrado pelo External ID."
+                "🔎 Buscando pelo Checkout ID..."
             );
 
-            console.log(
-                "Tentando pelo Checkout ID:",
-                checkoutId
-            );
 
             pagamento =
                 await this.#pagamentoRepository
@@ -511,24 +682,44 @@ export default class WebhookService {
                         checkoutId
                     );
 
+
             console.log(
-                "Resultado da busca por Checkout ID:",
+                "Resultado:",
                 pagamento
             );
         }
+
+
+        // ========================================
+        // PAGAMENTO NÃO ENCONTRADO
+        // ========================================
 
         if (
             !pagamento ||
             pagamento.length === 0
         ) {
 
+            console.log(
+                "❌ Pagamento não encontrado."
+            );
+
             throw new Error(
                 "Pagamento não encontrado no sistema."
             );
         }
 
+
         pagamento =
             pagamento[0];
+
+
+        console.log(
+            "========================================"
+        );
+
+        console.log(
+            "💳 PAGAMENTO ENCONTRADO"
+        );
 
         console.log(
             "Pagamento ID:",
@@ -541,23 +732,12 @@ export default class WebhookService {
         );
 
         console.log(
-            "Gateway:",
-            pagamento.gateway
-        );
-
-        console.log(
-            "External ID:",
-            pagamento.externalId
-        );
-
-        console.log(
-            "Checkout ID:",
-            pagamento.checkoutId
-        );
-
-        console.log(
             "Status atual:",
             pagamento.status
+        );
+
+        console.log(
+            "========================================"
         );
 
 
@@ -565,8 +745,21 @@ export default class WebhookService {
             pagamento.status === "PAGO"
         ) {
 
+            console.log(
+                "⚠️ Pagamento já estava PAGO."
+            );
+
             return;
         }
+
+
+        // ========================================
+        // ATUALIZAR PAGAMENTO
+        // ========================================
+
+        console.log(
+            "💰 Atualizando tb_pagamento..."
+        );
 
 
         const pagamentoAtualizado =
@@ -575,18 +768,37 @@ export default class WebhookService {
                     pagamento.id
                 );
 
-        if (!pagamentoAtualizado) {
+
+        console.log(
+            "Resultado UPDATE pagamento:",
+            pagamentoAtualizado
+        );
+
+
+        if (
+            pagamentoAtualizado
+        ) {
+
+            console.log(
+                "✅ Pagamento marcado como PAGO."
+            );
 
         } else {
 
             console.log(
-                "Pagamento marcado como PAGO."
+                "⚠️ Nenhuma linha atualizada em tb_pagamento."
             );
         }
+
+
+        // ========================================
+        // ATUALIZAR ALUGUEL
+        // ========================================
+
         console.log(
-            "Aluguel ID:",
-            pagamento.aluguelId
+            "🏠 Atualizando tb_aluguel..."
         );
+
 
         const aluguelAtualizado =
             await this.#aluguelRepository
@@ -594,50 +806,46 @@ export default class WebhookService {
                     pagamento.aluguelId
                 );
 
+
         console.log(
             "Resultado UPDATE tb_aluguel:",
             aluguelAtualizado
         );
 
-        if (!aluguelAtualizado) {
+
+        if (
+            aluguelAtualizado
+        ) {
 
             console.log(
-                "UPDATE tb_aluguel não afetou nenhuma linha."
+                "✅ Aluguel marcado como PAGO."
             );
 
         } else {
 
             console.log(
-                "Aluguel marcado como PAGO."
+                "⚠️ Nenhuma linha atualizada em tb_aluguel."
             );
         }
 
-       
 
         console.log(
-            "Pagamento ID:",
-            pagamento.id
+            "========================================"
         );
 
         console.log(
-            "Aluguel ID:",
-            pagamento.aluguelId
-        );
-
-        console.log(
-            "Pagamento atualizado:",
-            pagamentoAtualizado
-        );
-
-        console.log(
-            "Aluguel atualizado:",
-            aluguelAtualizado
+            "🏁 PAGAMENTO FINALIZADO"
         );
 
         console.log(
             "========================================"
         );
     }
+
+
+    // ========================================
+    // VERIFICAR EVENTO
+    // ========================================
 
     async #verificarEventoProcessado(
         banco,
@@ -651,17 +859,24 @@ export default class WebhookService {
             LIMIT 1
         `;
 
+
         const resultado =
             await banco.ExecutaComando(
                 sql,
                 [eventoId]
             );
 
+
         return (
             resultado &&
             resultado.length > 0
         );
     }
+
+
+    // ========================================
+    // REGISTRAR EVENTO
+    // ========================================
 
     async #registrarEvento(
         banco,
@@ -679,15 +894,6 @@ export default class WebhookService {
             DO NOTHING
         `;
 
-        console.log(
-            "Registrando evento:",
-            evento
-        );
-
-        console.log(
-            "Evento ID:",
-            eventoId
-        );
 
         await banco.ExecutaComandoNonQuery(
             sql,
@@ -695,10 +901,6 @@ export default class WebhookService {
                 eventoId,
                 evento
             ]
-        );
-
-        console.log(
-            "Evento registrado."
         );
     }
 }

@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "API REST",
-    "description": "API para o gerenciamento de locação de imóveis.",
+    "title": "Vitta Imobiliária - API REST",
+    "description": "API REST desenvolvida para gerenciamento de usuários, imóveis, contratos, aluguéis, pagamentos e autenticação, com integração ao AbacatePay para pagamentos.",
     "version": "1.0.0"
   },
   "servers": [

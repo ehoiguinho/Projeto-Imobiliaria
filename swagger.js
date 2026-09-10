@@ -2,10 +2,10 @@ import swaggerAutogen from "swagger-autogen";
 
 const doc = {
     host: "localhost:3000",
-    info: {
-        title: "API REST",
-        description: "API para o gerenciamento de locação de imóveis."
-    },
+   info: {
+    title: "Vitta Imobiliária - API REST",
+    description: "API REST desenvolvida para gerenciamento de usuários, imóveis, contratos, aluguéis, pagamentos e autenticação, com integração ao AbacatePay para pagamentos.",
+},
     components: {
         schemas: {
             erro: {

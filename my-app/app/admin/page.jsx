@@ -208,7 +208,7 @@ export default function AdminPage() {
                             {contratos.length}
                         </p>
 
-                        <p className="mt-2 text-sm font-medium text-blue-600 group-hover:underline">
+                        <p className="mt-2 text-sm font-medium text-slate-500 group-hover:underline">
                             Gerenciar contratos →
                         </p>
                     </button>
@@ -226,7 +226,7 @@ export default function AdminPage() {
                             {alugueis.length}
                         </p>
 
-                        <p className="mt-2 text-sm font-medium text-blue-600 group-hover:underline">
+                        <p className="mt-2 text-sm font-medium text-slate-500 group-hover:underline">
                             Gerenciar aluguéis →
                         </p>
                     </button>

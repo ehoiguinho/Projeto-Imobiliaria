@@ -6,7 +6,7 @@ O projeto foi desenvolvido com foco em boas práticas de desenvolvimento, separa
 
 ---
 
-# 🚀 Tecnologias Utilizadas
+# Tecnologias Utilizadas
 
 ## Backend
 
@@ -46,7 +46,7 @@ O projeto foi desenvolvido com foco em boas práticas de desenvolvimento, separa
 
 ---
 
-# 🏗️ Arquitetura
+# Arquitetura
 
 O backend utiliza uma arquitetura baseada na separação de responsabilidades:
 
@@ -90,7 +90,7 @@ Essa separação reduz o acoplamento e facilita a manutenção e evolução da a
 
 ---
 
-# 🔐 Autenticação e Autorização
+# Autenticação e Autorização
 
 O sistema possui autenticação baseada em **JWT**.
 
@@ -137,7 +137,7 @@ Rotas administrativas são protegidas tanto no backend quanto na interface.
 
 ---
 
-# 👤 Usuários
+# Usuários
 
 * Cadastro de usuários
 * Login
@@ -152,7 +152,7 @@ Rotas administrativas são protegidas tanto no backend quanto na interface.
 
 ---
 
-# 🏠 Imóveis
+# Imóveis
 
 O sistema possui gerenciamento completo de imóveis.
 
@@ -186,7 +186,7 @@ PNG
 
 ---
 
-# 📄 Contratos
+# Contratos
 
 O sistema permite o gerenciamento dos contratos de locação.
 
@@ -203,7 +203,7 @@ Ao realizar uma locação, o sistema cria automaticamente a estrutura necessári
 
 ---
 
-# 💰 Aluguéis
+# Aluguéis
 
 Cada contrato gera automaticamente **12 parcelas mensais**.
 
@@ -228,7 +228,7 @@ CANCELADO
 
 ---
 
-# 💳 Pagamentos PIX
+# Pagamentos PIX
 
 O sistema possui integração com a **AbacatePay** para processamento de pagamentos via PIX.
 
@@ -262,7 +262,7 @@ A confirmação oficial ocorre através do webhook enviado pela plataforma de pa
 
 ---
 
-# 🔄 Webhooks
+# Webhooks
 
 Foi implementado um sistema de processamento de Webhooks para receber eventos da AbacatePay.
 
@@ -299,7 +299,7 @@ Atualização do banco
 
 ---
 
-# 🧾 Controle de eventos de Webhook
+# Controle de eventos de Webhook
 
 O projeto possui uma tabela específica para armazenamento dos eventos recebidos:
 
@@ -311,7 +311,7 @@ Essa estrutura permite registrar eventos processados e auxilia no controle de **
 
 ---
 
-# 🗄️ Banco de Dados
+# Banco de Dados
 
 O projeto utiliza **PostgreSQL** como banco de dados relacional.
 
@@ -344,7 +344,7 @@ Pagamentos
 
 ---
 
-# 🐳 Docker
+# Docker
 
 O PostgreSQL é executado através do **Docker**, tornando o ambiente de desenvolvimento mais previsível e reproduzível.
 
@@ -397,7 +397,7 @@ ADMIN
 ---
 
 
-# 📚 Documentação da API
+# Documentação da API
 
 A API possui documentação utilizando **Swagger**, permitindo visualizar e testar os endpoints disponíveis.
 
@@ -411,7 +411,7 @@ A documentação facilita:
 
 ---
 
-# 🔒 Segurança
+# Segurança
 
 O projeto implementa diferentes camadas de proteção:
 
@@ -431,7 +431,7 @@ As regras de negócio são aplicadas no backend, evitando depender exclusivament
 
 ---
 
-# 📁 Estrutura do Projeto
+# Estrutura do Projeto
 
 Estrutura simplificada:
 
@@ -547,7 +547,7 @@ http://localhost:5001
 
 ---
 
-# 👨‍💻 Tecnologias e Conceitos Demonstrados
+# Tecnologias e Conceitos Demonstrados
 
 ```text
 Node.js
@@ -578,6 +578,6 @@ Responsive Design
 
 ---
 
-# 📄 Licença
+# Licença
 
 Projeto desenvolvido para fins acadêmicos, de estudo e portfólio.

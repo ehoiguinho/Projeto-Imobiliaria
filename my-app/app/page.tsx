@@ -1,9 +1,16 @@
 "use client";
 
-import {MapPin, Building2, CircleDollarSign, Search, ChevronDown, Settings} from "lucide-react";
+import {
+    MapPin,
+    Building2,
+    CircleDollarSign,
+    Search,
+    ChevronDown,
+    Settings
+} from "lucide-react";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Home() {
 
@@ -15,11 +22,13 @@ export default function Home() {
     const [valorMax, setValorMax] = useState("");
 
     const [menuAjudaAberto, setMenuAjudaAberto] = useState(false);
+    const [menuUsuarioAberto, setMenuUsuarioAberto] = useState(false);
+
     const [animacaoEstatisticas, setAnimacaoEstatisticas] = useState(false);
     const [numeroImoveis, setNumeroImoveis] = useState(0);
     const [numeroAtendimento, setNumeroAtendimento] = useState(0);
     const [numeroTransparencia, setNumeroTransparencia] = useState(0);
-    
+
     const [usuario, setUsuario] = useState(null);
     const [carregandoUsuario, setCarregandoUsuario] = useState(true);
 
@@ -27,28 +36,54 @@ export default function Home() {
     const [carregandoDestaques, setCarregandoDestaques] = useState(true);
 
     const [textoTitulo, setTextoTitulo] = useState("");
+
     const tituloCompleto = "Seu próximo imóvel começa aqui.";
 
+    /*
+     * Referências dos dropdowns.
+     * Usadas para detectar cliques fora dos menus.
+     */
+    const menuAjudaRef = useRef(null);
+    const menuUsuarioRef = useRef(null);
 
 
-
+    /*
+     * ============================================================
+     * EFEITO DE DIGITAÇÃO
+     * ============================================================
+     */
     useEffect(() => {
-    let index = 0;
 
-    const intervalo = setInterval(() => {
-        if (index < tituloCompleto.length) {
-        setTextoTitulo(tituloCompleto.slice(0, index + 1));
-        index++;
-        } else {
-        clearInterval(intervalo);
-        }
-    }, 55);
+        let index = 0;
 
-    return () => clearInterval(intervalo);
+        const intervalo = setInterval(() => {
 
-}, []);
+            if (index < tituloCompleto.length) {
+
+                setTextoTitulo(
+                    tituloCompleto.slice(0, index + 1)
+                );
+
+                index++;
+
+            } else {
+
+                clearInterval(intervalo);
+
+            }
+
+        }, 55);
+
+        return () => clearInterval(intervalo);
+
+    }, []);
 
 
+    /*
+     * ============================================================
+     * CARREGAR USUÁRIO
+     * ============================================================
+     */
     useEffect(() => {
 
         async function carregarUsuario() {
@@ -87,6 +122,7 @@ export default function Home() {
                 setCarregandoUsuario(false);
 
             }
+
         }
 
         carregarUsuario();
@@ -94,6 +130,65 @@ export default function Home() {
     }, []);
 
 
+    /*
+     * ============================================================
+     * FECHAR MENUS AO CLICAR FORA
+     * ============================================================
+     */
+    useEffect(() => {
+
+        function fecharMenusAoClicarFora(event) {
+
+            /*
+             * Fecha o menu Ajuda caso o clique aconteça
+             * fora dele.
+             */
+            if (
+                menuAjudaRef.current &&
+                !menuAjudaRef.current.contains(event.target)
+            ) {
+
+                setMenuAjudaAberto(false);
+
+            }
+
+            /*
+             * Fecha o menu do usuário caso o clique aconteça
+             * fora dele.
+             */
+            if (
+                menuUsuarioRef.current &&
+                !menuUsuarioRef.current.contains(event.target)
+            ) {
+
+                setMenuUsuarioAberto(false);
+
+            }
+
+        }
+
+        document.addEventListener(
+            "mousedown",
+            fecharMenusAoClicarFora
+        );
+
+        return () => {
+
+            document.removeEventListener(
+                "mousedown",
+                fecharMenusAoClicarFora
+            );
+
+        };
+
+    }, []);
+
+
+    /*
+     * ============================================================
+     * CARREGAR IMÓVEIS EM DESTAQUE
+     * ============================================================
+     */
     useEffect(() => {
 
         async function carregarDestaques() {
@@ -128,6 +223,7 @@ export default function Home() {
                 setCarregandoDestaques(false);
 
             }
+
         }
 
         carregarDestaques();
@@ -135,98 +231,112 @@ export default function Home() {
     }, []);
 
 
-useEffect(() => {
+    /*
+     * ============================================================
+     * OBSERVAR ESTATÍSTICAS
+     * ============================================================
+     */
+    useEffect(() => {
 
-    const elemento = document.getElementById(
-        "estatisticas-vitta"
-    );
+        const elemento = document.getElementById(
+            "estatisticas-vitta"
+        );
 
-    if (!elemento) {
-        return;
-    }
+        if (!elemento) {
+            return;
+        }
 
-    const observer = new IntersectionObserver(
-        ([entry]) => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
 
-            if (entry.isIntersecting) {
+                if (entry.isIntersecting) {
 
-                setAnimacaoEstatisticas(true);
+                    setAnimacaoEstatisticas(true);
 
-                observer.disconnect();
+                    observer.disconnect();
+
+                }
+
+            },
+            {
+                threshold: 0.35
+            }
+        );
+
+        observer.observe(elemento);
+
+        return () => {
+            observer.disconnect();
+        };
+
+    }, []);
+
+
+    /*
+     * ============================================================
+     * ANIMAÇÃO DAS ESTATÍSTICAS
+     * ============================================================
+     */
+    useEffect(() => {
+
+        if (!animacaoEstatisticas) {
+            return;
+        }
+
+        const duracao = 1400;
+        const inicio = performance.now();
+
+        function animar(tempoAtual) {
+
+            const progresso = Math.min(
+                (tempoAtual - inicio) / duracao,
+                1
+            );
+
+            const suavizado =
+                1 - Math.pow(1 - progresso, 3);
+
+            setNumeroImoveis(
+                Math.floor(100 * suavizado)
+            );
+
+            setNumeroAtendimento(
+                Math.floor(24 * suavizado)
+            );
+
+            setNumeroTransparencia(
+                Math.floor(100 * suavizado)
+            );
+
+            if (progresso < 1) {
+
+                requestAnimationFrame(animar);
+
+            } else {
+
+                setNumeroImoveis(100);
+                setNumeroAtendimento(24);
+                setNumeroTransparencia(100);
 
             }
 
-        },
-        {
-            threshold: 0.35
         }
-    );
 
-    observer.observe(elemento);
-
-    return () => {
-        observer.disconnect();
-    };
-
-}, []);
-
-
-useEffect(() => {
-
-    if (!animacaoEstatisticas) {
-        return;
-    }
-
-    const duracao = 1400;
-    const inicio = performance.now();
-
-    function animar(tempoAtual) {
-
-        const progresso = Math.min(
-            (tempoAtual - inicio) / duracao,
-            1
-        );
-
-       
-        const suavizado =
-            1 - Math.pow(1 - progresso, 3);
-
-        setNumeroImoveis(
-            Math.floor(100 * suavizado)
-        );
-
-        setNumeroAtendimento(
-            Math.floor(24 * suavizado)
-        );
-
-        setNumeroTransparencia(
-            Math.floor(100 * suavizado)
-        );
-
-        if (progresso < 1) {
-
+        const animationFrame =
             requestAnimationFrame(animar);
 
-        } else {
+        return () => {
+            cancelAnimationFrame(animationFrame);
+        };
 
-            setNumeroImoveis(100);
-            setNumeroAtendimento(24);
-            setNumeroTransparencia(100);
-
-        }
-
-    }
-
-    const animationFrame =
-        requestAnimationFrame(animar);
-
-    return () => {
-        cancelAnimationFrame(animationFrame);
-    };
-
-}, [animacaoEstatisticas]);
+    }, [animacaoEstatisticas]);
 
 
+    /*
+     * ============================================================
+     * BUSCA
+     * ============================================================
+     */
     function buscarImoveis(e) {
 
         e.preventDefault();
@@ -256,6 +366,11 @@ useEffect(() => {
     }
 
 
+    /*
+     * ============================================================
+     * LOGOUT
+     * ============================================================
+     */
     async function logout() {
 
         try {
@@ -278,6 +393,7 @@ useEffect(() => {
             }
 
             setUsuario(null);
+            setMenuUsuarioAberto(false);
 
             router.push("/");
 
@@ -371,17 +487,26 @@ useEffect(() => {
                         </button>
 
 
-                        {/* AJUDA */}
+                        {/* =================================================
+                            AJUDA
+                        ================================================== */}
 
-                        <div className="relative">
+                        <div
+                            ref={menuAjudaRef}
+                            className="relative"
+                        >
 
                             <button
                                 type="button"
-                                onClick={() =>
+                                onClick={() => {
+
                                     setMenuAjudaAberto(
                                         !menuAjudaAberto
-                                    )
-                                }
+                                    );
+
+                                    setMenuUsuarioAberto(false);
+
+                                }}
                                 className="flex items-center gap-1.5 text-sm font-medium text-white/80 transition hover:text-white"
                             >
 
@@ -390,7 +515,7 @@ useEffect(() => {
                                 <ChevronDown
                                     size={15}
                                     strokeWidth={1.8}
-                                    className={`transition-transform ${
+                                    className={`transition-transform duration-200 ${
                                         menuAjudaAberto
                                             ? "rotate-180"
                                             : ""
@@ -404,15 +529,35 @@ useEffect(() => {
 
                             {menuAjudaAberto && (
 
-                                <div className="absolute right-0 top-9 w-48 border border-[#E7E5E0] bg-white p-2 shadow-xl">
+                                <div
+                                    className="
+                                        absolute right-0 top-9 z-50
+                                        w-48 overflow-hidden
+                                        rounded-xl
+                                        border border-[#E3E0D9]
+                                        bg-white py-1.5
+                                        shadow-[0_12px_30px_rgba(23,22,20,0.08)]
+                                    "
+                                >
 
                                     <button
                                         type="button"
                                         onClick={() => {
+
                                             setMenuAjudaAberto(false);
+
                                             router.push("/sobrenos");
+
                                         }}
-                                        className="block w-full px-4 py-3 text-left text-sm text-[#55534E] transition hover:bg-[#F7F5F0] hover:text-[#292825]"
+                                        className="
+                                            flex w-full
+                                            px-4 py-2.5
+                                            text-left text-sm
+                                            text-[#77746E]
+                                            transition
+                                            hover:bg-[#F7F5F0]
+                                            hover:text-[#292825]
+                                        "
                                     >
                                         Sobre nós
                                     </button>
@@ -421,10 +566,21 @@ useEffect(() => {
                                     <button
                                         type="button"
                                         onClick={() => {
+
                                             setMenuAjudaAberto(false);
+
                                             router.push("/atendimento");
+
                                         }}
-                                        className="block w-full px-4 py-3 text-left text-sm text-[#55534E] transition hover:bg-[#F7F5F0] hover:text-[#292825]"
+                                        className="
+                                            flex w-full
+                                            px-4 py-2.5
+                                            text-left text-sm
+                                            text-[#77746E]
+                                            transition
+                                            hover:bg-[#F7F5F0]
+                                            hover:text-[#292825]
+                                        "
                                     >
                                         Atendimento
                                     </button>
@@ -456,25 +612,142 @@ useEffect(() => {
 
                             <>
 
-                                {/* NOME */}
+                                {/* =================================================
+                                    BOTÃO DO USUÁRIO
+                                ================================================== */}
 
-                                <span className="hidden text-sm font-medium text-white/90 lg:block">
-                                    Olá, {usuario.nome}
-                                </span>
-
-
-                                {/* SAIR */}
-
-                                <button
-                                    type="button"
-                                    onClick={logout}
-                                    className="border border-white/50 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-white hover:text-[#292825]"
+                                <div
+                                    ref={menuUsuarioRef}
+                                    className="relative"
                                 >
-                                    Sair
-                                </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+
+                                            setMenuUsuarioAberto(
+                                                !menuUsuarioAberto
+                                            );
+
+                                            setMenuAjudaAberto(false);
+
+                                        }}
+                                        className="
+                                            flex
+                                            items-center
+                                            gap-2
+                                            whitespace-nowrap
+                                            text-sm
+                                            font-medium
+                                            text-white/90
+                                            transition
+                                            hover:text-white
+                                        "
+                                        aria-expanded={
+                                            menuUsuarioAberto
+                                        }
+                                    >
+
+                                        Olá, {usuario.nome}
+
+                                        <ChevronDown
+                                            size={15}
+                                            strokeWidth={1.8}
+                                            className={`
+                                                transition-transform
+                                                duration-200
+                                                ${
+                                                    menuUsuarioAberto
+                                                        ? "rotate-180"
+                                                        : ""
+                                                }
+                                            `}
+                                        />
+
+                                    </button>
 
 
-                                {/* ADMIN */}
+                                    {/* =================================================
+                                        DROPDOWN DO USUÁRIO
+                                    ================================================== */}
+
+                                    {menuUsuarioAberto && (
+
+                                        <div
+                                            className="
+                                                absolute right-0 top-9 z-50
+                                                w-48
+                                                overflow-hidden
+                                                rounded-xl
+                                                border border-[#E3E0D9]
+                                                bg-white
+                                                py-1.5
+                                                shadow-[0_12px_30px_rgba(23,22,20,0.08)]
+                                            "
+                                        >
+
+                                            {/* MINHAS LOCAÇÕES */}
+
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+
+                                                    setMenuUsuarioAberto(
+                                                        false
+                                                    );
+
+                                                    router.push(
+                                                        "/locacoes"
+                                                    );
+
+                                                }}
+                                                className="
+                                                    flex w-full
+                                                    px-4 py-2.5
+                                                    text-left text-sm
+                                                    text-[#77746E]
+                                                    transition
+                                                    hover:bg-[#F7F5F0]
+                                                    hover:text-[#292825]
+                                                "
+                                            >
+                                                Minhas locações
+                                            </button>
+
+
+                                            {/* DIVISOR */}
+
+                                            <div className="my-1 border-t border-[#F0EEE9]" />
+
+
+                                            {/* SAIR */}
+
+                                            <button
+                                                type="button"
+                                                onClick={logout}
+                                                className="
+                                                    flex w-full
+                                                    px-4 py-2.5
+                                                    text-left text-sm
+                                                    text-[#77746E]
+                                                    transition
+                                                    hover:bg-[#F7F5F0]
+                                                    hover:text-[#292825]
+                                                "
+                                            >
+                                                Sair
+                                            </button>
+
+                                        </div>
+
+                                    )}
+
+                                </div>
+
+
+                                {/* =================================================
+                                    ADMIN
+                                ================================================== */}
 
                                 {usuario.perfil === 1 && (
 
@@ -485,8 +758,14 @@ useEffect(() => {
                                         }
                                         title="Painel administrativo"
                                         aria-label="Abrir painel administrativo"
-                                        
-                                        className="flex h-10 w-10 items-center justify-center text-white transition cursor-pointer"
+                                        className="
+                                            flex h-10 w-10
+                                            cursor-pointer
+                                            items-center justify-center
+                                            text-white
+                                            transition
+                                            hover:opacity-70
+                                        "
                                     >
 
                                         <Settings
@@ -566,7 +845,9 @@ useEffect(() => {
 
                             <h1 className="mt-5 min-h-[130px] max-w-[650px] text-5xl font-medium leading-[1.02] tracking-[-0.045em] text-white xl:min-h-[135px] xl:text-[64px]">
                                 {textoTitulo}
+
                                 <span className="ml-1 inline-block h-[0.85em] w-px animate-pulse bg-white/70 align-middle" />
+
                             </h1>
 
                             <p className="mt-7 max-w-lg text-base leading-relaxed text-white/75 sm:text-lg">
@@ -584,7 +865,7 @@ useEffect(() => {
 
                             <form
                                 onSubmit={buscarImoveis}
-                                className="w-full max-w-md bg-white p-7 shadow-2xl sm:p-8"
+                                className="w-full max-w-md bg-white/95 p-7 shadow-2xl sm:p-8"
                             >
 
                                 <div className="mb-7">
@@ -805,7 +1086,6 @@ useEffect(() => {
             <section className="bg-[#F7F5F0] py-24 sm:py-28">
 
                 <div className="mx-auto max-w-7xl px-6 lg:px-8">
-
 
                     <div className="mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end">
 
@@ -1045,135 +1325,120 @@ useEffect(() => {
 
             </section>
 
-                <section
-                    id="estatisticas-vitta"
-                    className="border-y border-[#E3E0D9] bg-white py-24"
-                >
-
-                    <div className="mx-auto max-w-7xl px-6 lg:px-8">
-
-                        <div className="grid grid-cols-1 gap-14 lg:grid-cols-2 lg:items-center">
 
 
-                            {/* =================================================
-                                TEXTO
-                            ================================================== */}
+            {/* =====================================================
+                ESTATÍSTICAS
+            ====================================================== */}
 
-                            <div
-                                className={`max-w-xl transition-all duration-1000 ${
-                                    animacaoEstatisticas
-                                        ? "translate-y-0 opacity-100"
-                                        : "translate-y-8 opacity-0"
-                                }`}
+            <section
+                id="estatisticas-vitta"
+                className="border-y border-[#E3E0D9] bg-white py-24"
+            >
+
+                <div className="mx-auto max-w-7xl px-6 lg:px-8">
+
+                    <div className="grid grid-cols-1 gap-14 lg:grid-cols-2 lg:items-center">
+
+
+                        {/* =================================================
+                            TEXTO
+                        ================================================== */}
+
+                        <div
+                            className={`max-w-xl transition-all duration-1000 ${
+                                animacaoEstatisticas
+                                    ? "translate-y-0 opacity-100"
+                                    : "translate-y-8 opacity-0"
+                            }`}
+                        >
+
+                            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#8A8883]">
+                                VITTA
+                            </p>
+
+                            <h2 className="mt-4 text-4xl font-medium leading-tight tracking-[-0.03em] text-[#292825] sm:text-5xl">
+
+                                Mais do que encontrar um imóvel.
+
+                                <span className="block text-[#8A8883]">
+                                    Encontrar seu lugar.
+                                </span>
+
+                            </h2>
+
+                            <p className="mt-6 text-base leading-8 text-[#77746E]">
+                                A Vitta nasceu para tornar a busca por
+                                um novo lar mais simples, transparente
+                                e próxima das pessoas.
+                            </p>
+
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    router.push("/sobrenos")
+                                }
+                                className="mt-8 inline-flex items-center gap-3 border-b border-[#292825] pb-2 text-sm font-semibold text-[#292825] transition hover:border-[#8A8883] hover:text-[#77746E]"
                             >
 
-                                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#8A8883]">
-                                    VITTA
+                                Conheça a Vitta
+
+                                <span>
+                                    →
+                                </span>
+
+                            </button>
+
+                        </div>
+
+
+                        {/* =================================================
+                            ESTATÍSTICAS
+                        ================================================== */}
+
+                        <div
+                            className={`grid grid-cols-2 border-t border-[#E3E0D9] transition-all duration-1000 delay-200 sm:grid-cols-3 lg:border-l lg:border-t-0 ${
+                                animacaoEstatisticas
+                                    ? "translate-y-0 opacity-100"
+                                    : "translate-y-8 opacity-0"
+                            }`}
+                        >
+
+                            <div className="border-b border-r border-[#E3E0D9] px-6 py-8 lg:border-b-0">
+
+                                <p className="text-3xl font-medium tabular-nums text-[#292825]">
+                                    {numeroImoveis}+
                                 </p>
 
-                                <h2 className="mt-4 text-4xl font-medium leading-tight tracking-[-0.03em] text-[#292825] sm:text-5xl">
-
-                                    Mais do que encontrar um imóvel.
-
-                                    <span className="block text-[#8A8883]">
-                                        Encontrar seu lugar.
-                                    </span>
-
-                                </h2>
-
-                                <p className="mt-6 text-base leading-8 text-[#77746E]">
-                                    A Vitta nasceu para tornar a busca por
-                                    um novo lar mais simples, transparente
-                                    e próxima das pessoas.
+                                <p className="mt-2 text-xs uppercase tracking-wide text-[#8A8883]">
+                                    Imóveis
                                 </p>
-
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        router.push("/sobrenos")
-                                    }
-                                    className="mt-8 inline-flex items-center gap-3 border-b border-[#292825] pb-2 text-sm font-semibold text-[#292825] transition hover:border-[#8A8883] hover:text-[#77746E]"
-                                >
-
-                                    Conheça a Vitta
-
-                                    <span>
-                                        →
-                                    </span>
-
-                                </button>
 
                             </div>
 
 
-                            {/* =================================================
-                                ESTATÍSTICAS
-                            ================================================== */}
+                            <div className="border-b border-[#E3E0D9] px-6 py-8 lg:border-b-0">
 
-                            <div
-                                className={`grid grid-cols-2 border-t border-[#E3E0D9] transition-all duration-1000 delay-200 sm:grid-cols-3 lg:border-l lg:border-t-0 ${
-                                    animacaoEstatisticas
-                                        ? "translate-y-0 opacity-100"
-                                        : "translate-y-8 opacity-0"
-                                }`}
-                            >
+                                <p className="text-3xl font-medium tabular-nums text-[#292825]">
+                                    {numeroAtendimento}h
+                                </p>
 
+                                <p className="mt-2 text-xs uppercase tracking-wide text-[#8A8883]">
+                                    Atendimento
+                                </p>
 
-                                {/* =================================================
-                                    IMÓVEIS
-                                ================================================== */}
-
-                                <div className="border-b border-r border-[#E3E0D9] px-6 py-8 lg:border-b-0">
-
-                                    <p className="text-3xl font-medium tabular-nums text-[#292825]">
-
-                                        {numeroImoveis}+
-
-                                    </p>
-
-                                    <p className="mt-2 text-xs uppercase tracking-wide text-[#8A8883]">
-                                        Imóveis
-                                    </p>
-
-                                </div>
+                            </div>
 
 
-                                {/* =================================================
-                                    ATENDIMENTO
-                                ================================================== */}
+                            <div className="col-span-2 px-6 py-8 sm:col-span-1">
 
-                                <div className="border-b border-[#E3E0D9] px-6 py-8 lg:border-b-0">
+                                <p className="text-3xl font-medium tabular-nums text-[#292825]">
+                                    {numeroTransparencia}%
+                                </p>
 
-                                    <p className="text-3xl font-medium tabular-nums text-[#292825]">
-
-                                        {numeroAtendimento}h
-
-                                    </p>
-
-                                    <p className="mt-2 text-xs uppercase tracking-wide text-[#8A8883]">
-                                        Atendimento
-                                    </p>
-
-                                </div>
-
-
-                                {/* =================================================
-                                    TRANSPARÊNCIA
-                                ================================================== */}
-
-                                <div className="col-span-2 px-6 py-8 sm:col-span-1">
-
-                                    <p className="text-3xl font-medium tabular-nums text-[#292825]">
-
-                                        {numeroTransparencia}%
-
-                                    </p>
-
-                                    <p className="mt-2 text-xs uppercase tracking-wide text-[#8A8883]">
-                                        Transparência
-                                    </p>
-
-                                </div>
+                                <p className="mt-2 text-xs uppercase tracking-wide text-[#8A8883]">
+                                    Transparência
+                                </p>
 
                             </div>
 
@@ -1181,7 +1446,9 @@ useEffect(() => {
 
                     </div>
 
-                </section>
+                </div>
+
+            </section>
 
 
 
@@ -1206,9 +1473,23 @@ useEffect(() => {
                     </div>
 
 
-                    <button type="button" onClick={() => router.push("/imoveis") }
-                     className="group shrink-0 cursor-pointer bg-white px-7 py-3.5 text-sm font-semibold text-[#292825] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#F1F0ED] hover:text-[#171614]" >
-                    <span className="inline-flex items-center gap-2"> Explorar imóveis <span className="transition-transform duration-300 group-hover:translate-x-1"> → </span> </span> </button>
+                    <button
+                        type="button"
+                        onClick={() => router.push("/imoveis")}
+                        className="group shrink-0 cursor-pointer bg-white px-7 py-3.5 text-sm font-semibold text-[#292825] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#F1F0ED] hover:text-[#171614]"
+                    >
+
+                        <span className="inline-flex items-center gap-2">
+
+                            Explorar imóveis
+
+                            <span className="transition-transform duration-300 group-hover:translate-x-1">
+                                →
+                            </span>
+
+                        </span>
+
+                    </button>
 
                 </div>
 
@@ -1323,7 +1604,6 @@ useEffect(() => {
 
                                 <span>
                                     Segunda a sexta 08:00 às 18:00
-
                                 </span>
 
                                 <button
@@ -1343,7 +1623,7 @@ useEffect(() => {
                     </div>
 
 
-                       <div className="mt-12 border-t border-[#E7E5E0] pt-6">
+                    <div className="mt-12 border-t border-[#E7E5E0] pt-6">
 
                         <p className="text-center text-xs text-[#A19E98]">
                             © {new Date().getFullYear()} Vitta Imobiliária.

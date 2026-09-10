@@ -58,7 +58,7 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-white text-[#292825]">
+    <main className="min-h-screen bg-white/95 text-[#292825]">
       <div className="grid min-h-screen lg:grid-cols-[1.05fr_0.95fr]">
 
         {/* =========================================================
@@ -133,7 +133,7 @@ export default function LoginPage() {
         ========================================================= */}
         <section className="flex min-h-screen items-center justify-center px-6 py-12 sm:px-10 lg:px-16">
 
-          <div className="w-full max-w-x1 p-25 border border-[#292825]/15 bg-white p-5 backdrop-blur-sm">
+          <div className="w-full max-w-x1 p-25 border border-[#292825]/15 bg-white/95 p-5 backdrop-blur-sm">
 
 
             {/* Logo mobile */}

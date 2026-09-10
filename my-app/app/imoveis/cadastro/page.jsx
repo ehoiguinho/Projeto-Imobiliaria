@@ -119,7 +119,7 @@ export default function CadastroImovelPage() {
 
     return (
 
-        <main className="min-h-screen bg-white text-[#292825]">
+        <main className="min-h-screen bg-white/95 text-[#292825]">
 
             <div className="mx-auto max-w-5xl px-6 py-10 lg:px-8">
 

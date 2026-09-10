@@ -1,6 +1,7 @@
 "use client";
 
-import {Building2, Heart, ShieldCheck, ArrowRight} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Building2, Heart, ShieldCheck, ArrowRight } from "lucide-react";
 
 import { useRouter } from "next/navigation";
 
@@ -8,7 +9,34 @@ import { useRouter } from "next/navigation";
 
 export default function SobreNosPage() {
 
-     const router = useRouter();
+    const router = useRouter();
+
+    // =====================================================
+    // ANIMAÇÃO DOS CARDS
+    // =====================================================
+
+    const [cardsVisiveis, setCardsVisiveis] = useState(false);
+    const cardsRef = useRef(null);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setCardsVisiveis(true);
+                    observer.disconnect();
+                }
+            },
+            {
+                threshold: 0.2,
+            }
+        );
+
+        if (cardsRef.current) {
+            observer.observe(cardsRef.current);
+        }
+
+        return () => observer.disconnect();
+    }, []);
 
 
     return (
@@ -103,117 +131,167 @@ export default function SobreNosPage() {
                 VALORES
             ===================================================== */}
 
-        <section
-            className="relative bg-cover bg-[center_20%] bg-no-repeat py-24 sm:py-28"
-            style={{
-                backgroundImage: "url('/images/sobrenos.jpg')",
-            }}
-        >
+            <section
+                className="relative bg-cover bg-[center_20%] bg-no-repeat py-24 sm:py-28"
+                style={{
+                    backgroundImage: "url('/images/sobrenos.jpg')",
+                }}
+            >
 
-            {/* Overlay */}
+                {/* Overlay */}
 
-            <div className="absolute inset-0 bg-[#F7F5F0]/50" />
+                <div className="absolute inset-0 bg-[#F7F5F0]/50" />
 
 
-            {/* Conteúdo */}
+                {/* Conteúdo */}
 
-            <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
+                <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
 
-                <div className="-mt-10 mb-2">
+                    <div className="-mt-10 mb-2">
 
-                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#292825]">
-                        O que nos guia
-                    </p>
+                        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#292825]">
+                            O que nos guia
+                        </p>
 
-                    <h2 className="mt-3 text-4xl font-medium tracking-[-0.03em] text-[#292825]">
-                        Nossos valores
-                    </h2>
-                    <br></br>
+                        <h2 className="mt-3 text-4xl font-medium tracking-[-0.03em] text-[#292825]">
+                            Nossos valores
+                        </h2>
+                        <br></br>
+
+                    </div>
+
+
+                    <div
+                        ref={cardsRef}
+                        className="grid grid-cols-1 gap-px overflow-hidden border border-[#DDDAD3] bg-[#DDDAD3] md:grid-cols-3"
+                    >
+
+                        {/* IMÓVEIS */}
+
+                        <div
+                            className={`
+                                group
+                                bg-white/95
+                                p-8
+                                transition-all
+                                duration-700
+                                hover:-translate-y-1
+                                sm:p-10
+                                ${
+                                    cardsVisiveis
+                                        ? "translate-y-0 opacity-100"
+                                        : "-translate-y-8 opacity-0"
+                                }
+                            `}
+                        >
+
+                            <div className="flex h-12 w-12 items-center justify-center text-[#55534E] transition-all duration-300 group-hover:-translate-y-1">
+                                <Building2
+                                    size={23}
+                                    strokeWidth={1.5}
+                                />
+
+                            </div>
+
+                            <h3 className="mt-7 text-xl font-medium tracking-tight text-[#292825]">
+                                Bons imóveis
+                            </h3>
+
+                            <p className="mt-3 text-sm leading-7 text-[#77746E]">
+                                Buscamos oferecer opções de imóveis
+                                para diferentes necessidades, momentos
+                                e estilos de vida.
+                            </p>
+
+                        </div>
+
+
+                        {/* SEGURANÇA */}
+
+                        <div
+                            className={`
+                                group
+                                bg-white/95
+                                p-8
+                                transition-all
+                                duration-700
+                                delay-100
+                                hover:-translate-y-1
+                                sm:p-10
+                                ${
+                                    cardsVisiveis
+                                        ? "translate-y-0 opacity-100"
+                                        : "translate-y-8 opacity-0"
+                                }
+                            `}
+                        >
+
+                            <div className="flex h-12 w-12 items-center justify-center text-[#55534E] transition-all duration-300 group-hover:-translate-y-1">
+                                <ShieldCheck
+                                    size={23}
+                                    strokeWidth={1.5}
+                                />
+
+                            </div>
+
+                            <h3 className="mt-7 text-xl font-medium tracking-tight text-[#292825]">
+                                Segurança
+                            </h3>
+
+                            <p className="mt-3 text-sm leading-7 text-[#77746E]">
+                                Valorizamos uma experiência segura,
+                                transparente e responsável durante
+                                todo o processo.
+                            </p>
+
+                        </div>
+
+
+                        {/* ATENDIMENTO */}
+
+                        <div
+                            className={`
+                                group
+                                bg-white/95
+                                p-8
+                                transition-all
+                                duration-700
+                                delay-200
+                                hover:-translate-y-1
+                                sm:p-10
+                                ${
+                                    cardsVisiveis
+                                        ? "translate-y-0 opacity-100"
+                                        : "translate-y-8 opacity-0"
+                                }
+                            `}
+                        >
+
+                            <div className="flex h-12 w-12 items-center justify-center text-[#55534E] transition-all duration-300 group-hover:-translate-y-1">
+                                <Heart
+                                    size={23}
+                                    strokeWidth={1.5}
+                                />
+
+                            </div>
+
+                            <h3 className="mt-7 text-xl font-medium tracking-tight text-[#292825]">
+                                Atendimento
+                            </h3>
+
+                            <p className="mt-3 text-sm leading-7 text-[#77746E]">
+                                Estamos aqui para entender suas
+                                necessidades e ajudar você a encontrar
+                                uma opção que realmente faça sentido.
+                            </p>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
-
-                <div className="grid grid-cols-1 gap-px overflow-hidden border border-[#DDDAD3] bg-[#DDDAD3] md:grid-cols-3">
-
-                    {/* IMÓVEIS */}
-
-                    <div className="bg-white/95 p-8 sm:p-10">
-
-                        <div className="flex h-12 w-12 items-center justify-center text-[#55534E]">
-                            <Building2
-                                size={23}
-                                strokeWidth={1.5}
-                            />
-
-                        </div>
-
-                        <h3 className="mt-7 text-xl font-medium tracking-tight text-[#292825]">
-                            Bons imóveis
-                        </h3>
-
-                        <p className="mt-3 text-sm leading-7 text-[#77746E]">
-                            Buscamos oferecer opções de imóveis
-                            para diferentes necessidades, momentos
-                            e estilos de vida.
-                        </p>
-
-                    </div>
-
-
-                    {/* SEGURANÇA */}
-
-                    <div className="bg-white/95 p-8 sm:p-10">
-
-                        <div className="flex h-12 w-12 items-center justify-center text-[#55534E]">
-                            <ShieldCheck
-                                size={23}
-                                strokeWidth={1.5}
-                            />
-
-                        </div>
-
-                        <h3 className="mt-7 text-xl font-medium tracking-tight text-[#292825]">
-                            Segurança
-                        </h3>
-
-                        <p className="mt-3 text-sm leading-7 text-[#77746E]">
-                            Valorizamos uma experiência segura,
-                            transparente e responsável durante
-                            todo o processo.
-                        </p>
-
-                    </div>
-
-
-                    {/* ATENDIMENTO */}
-
-                    <div className="bg-white/95 p-8 sm:p-10">
-
-                        <div className="flex h-12 w-12 items-center justify-center text-[#55534E]">
-                            <Heart
-                                size={23}
-                                strokeWidth={1.5}
-                            />
-
-                        </div>
-
-                        <h3 className="mt-7 text-xl font-medium tracking-tight text-[#292825]">
-                            Atendimento
-                        </h3>
-
-                        <p className="mt-3 text-sm leading-7 text-[#77746E]">
-                            Estamos aqui para entender suas
-                            necessidades e ajudar você a encontrar
-                            uma opção que realmente faça sentido.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
+            </section>
 
 
 
@@ -241,6 +319,7 @@ export default function SobreNosPage() {
                                     <span className="block text-[#8A8883]">
                                         É aquele que combina com você.
                                     </span>
+
                                 </p>
 
                             </div>
@@ -294,20 +373,21 @@ export default function SobreNosPage() {
                     </div>
 
 
-                        <button
-                            type="button"
-                            onClick={() =>
-                                router.push("/imoveis")
-                            }
-                            className="group shrink-0 cursor-pointer bg-white px-7 py-3.5 text-sm font-semibold text-[#292825] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#F1F0ED] hover:text-[#171614]"
-                        >
-                            <span className="inline-flex items-center gap-2">
-                                Ver imóveis
-                                <span className="transition-transform duration-300 group-hover:translate-x-1">
-                                    →
-                                </span>
+                    <button
+                        type="button"
+                        onClick={() =>
+                            router.push("/imoveis")
+                        }
+                        className="group shrink-0 cursor-pointer bg-white px-7 py-3.5 text-sm font-semibold text-[#292825] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#F1F0ED] hover:text-[#171614]"
+                    >
+                        <span className="inline-flex items-center gap-2">
+                            Ver imóveis
+                            <span className="transition-transform duration-300 group-hover:translate-x-1">
+                                →
                             </span>
-                        </button>
+                        </span>
+                    </button>
+
                 </div>
 
             </section>
@@ -424,7 +504,7 @@ export default function SobreNosPage() {
 
                     {/* COPYRIGHT */}
 
-                     <div className="mt-12 border-t border-[#E7E5E0] pt-6">
+                    <div className="mt-12 border-t border-[#E7E5E0] pt-6">
 
                         <p className="text-center text-xs text-[#A19E98]">
                             © {new Date().getFullYear()} Vitta Imobiliária.
@@ -432,6 +512,7 @@ export default function SobreNosPage() {
                         </p>
 
                     </div>
+
                 </div>
 
             </footer>

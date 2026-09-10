@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { ChevronDown, Settings } from "lucide-react";
 import Sidebar from "./Sidebar";
@@ -12,18 +12,35 @@ export default function AppShell({ children }) {
 
     const [usuario, setUsuario] = useState(null);
     const [carregandoUsuario, setCarregandoUsuario] = useState(true);
+
     const [menuAjudaAberto, setMenuAjudaAberto] = useState(false);
+    const [menuUsuarioAberto, setMenuUsuarioAberto] = useState(false);
+
+    /*
+     * Referências dos menus.
+     * Usadas para detectar cliques fora dos dropdowns.
+     */
+    const menuAjudaRef = useRef(null);
+    const menuUsuarioRef = useRef(null);
+
 
     /*
      * A Sidebar aparece somente nas áreas administrativas.
      */
     const mostrarSidebar = pathname.startsWith("/admin");
 
+
     /*
      * A Home possui sua própria navbar sobre o hero.
-     * Portanto, a navbar global não aparece em "/".
+     * As páginas de autenticação também não possuem navbar.
      */
-    const mostrarNavbar = pathname !== "/" && pathname !== "/login" && pathname !=="/cadastro";
+    const mostrarNavbar =
+        pathname !== "/" &&
+        pathname !== "/login" &&
+        pathname !== "/cadastro" &&
+        pathname !== "/esqueci-senha" &&
+        pathname !== "/redefinir-senha";
+
 
     /*
      * ============================================================
@@ -45,7 +62,9 @@ export default function AppShell({ children }) {
                 );
 
                 if (!resposta.ok) {
+
                     setUsuario(null);
+
                     return;
                 }
 
@@ -64,11 +83,67 @@ export default function AppShell({ children }) {
                 setCarregandoUsuario(false);
 
             }
+
         }
 
         carregarUsuario();
 
     }, [pathname]);
+
+
+    /*
+     * ============================================================
+     * FECHAR MENUS AO CLICAR FORA
+     * ============================================================
+     */
+    useEffect(() => {
+
+        function fecharMenusAoClicarFora(event) {
+
+            /*
+             * Fecha o menu Ajuda caso o clique
+             * tenha acontecido fora dele.
+             */
+            if (
+                menuAjudaRef.current &&
+                !menuAjudaRef.current.contains(event.target)
+            ) {
+
+                setMenuAjudaAberto(false);
+
+            }
+
+
+            /*
+             * Fecha o menu do usuário caso o clique
+             * tenha acontecido fora dele.
+             */
+            if (
+                menuUsuarioRef.current &&
+                !menuUsuarioRef.current.contains(event.target)
+            ) {
+
+                setMenuUsuarioAberto(false);
+
+            }
+
+        }
+
+        document.addEventListener(
+            "mousedown",
+            fecharMenusAoClicarFora
+        );
+
+        return () => {
+
+            document.removeEventListener(
+                "mousedown",
+                fecharMenusAoClicarFora
+            );
+
+        };
+
+    }, []);
 
 
     /*
@@ -79,6 +154,8 @@ export default function AppShell({ children }) {
     function navegarPara(rota) {
 
         setMenuAjudaAberto(false);
+        setMenuUsuarioAberto(false);
+
         router.push(rota);
 
     }
@@ -111,6 +188,7 @@ export default function AppShell({ children }) {
             }
 
             setUsuario(null);
+            setMenuUsuarioAberto(false);
 
             router.push("/");
 
@@ -132,14 +210,25 @@ export default function AppShell({ children }) {
 
             {/* =====================================================
                 NAVBAR GLOBAL VITTA
-                Não aparece na Home.
+                Não aparece na Home nem nas páginas de autenticação.
             ====================================================== */}
 
             {mostrarNavbar && (
 
                 <nav className="h-20 w-full border-b border-[#E7E5E0] bg-white">
 
-                    <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-6 lg:px-8">
+                    <div
+                        className="
+                            relative
+                            mx-auto
+                            flex
+                            h-full
+                            max-w-7xl
+                            items-center
+                            px-6
+                            lg:px-8
+                        "
+                    >
 
                         {/* =================================================
                             LOGO
@@ -155,9 +244,13 @@ export default function AppShell({ children }) {
 
                             <div
                                 className="
-                                    flex h-10 w-10
-                                    items-center justify-center
-                                    border border-[#292825]
+                                    flex
+                                    h-10
+                                    w-10
+                                    items-center
+                                    justify-center
+                                    border
+                                    border-[#292825]
                                     bg-[#292825]
                                     text-white
                                     transition
@@ -165,7 +258,13 @@ export default function AppShell({ children }) {
                                 "
                             >
 
-                                <span className="text-lg font-medium tracking-[-0.08em]">
+                                <span
+                                    className="
+                                        text-lg
+                                        font-medium
+                                        tracking-[-0.08em]
+                                    "
+                                >
                                     V
                                 </span>
 
@@ -178,7 +277,9 @@ export default function AppShell({ children }) {
 
                                 <span
                                     className="
-                                        block text-lg font-semibold
+                                        block
+                                        text-lg
+                                        font-semibold
                                         tracking-[0.18em]
                                         text-[#292825]
                                     "
@@ -188,7 +289,10 @@ export default function AppShell({ children }) {
 
                                 <span
                                     className="
-                                        mt-1 block text-[8px] font-medium
+                                        mt-1
+                                        block
+                                        text-[8px]
+                                        font-medium
                                         tracking-[0.28em]
                                         text-[#8A8883]
                                     "
@@ -202,21 +306,39 @@ export default function AppShell({ children }) {
 
 
                         {/* =================================================
-                            NAVEGAÇÃO + USUÁRIO
+                            NAVEGAÇÃO CENTRAL
                         ================================================== */}
 
-                        <div className="flex items-center gap-8">
+                        <div
+                            className="
+                                absolute
+                                left-1/2
+                                top-1/2
+                                flex
+                                -translate-x-1/2
+                                -translate-y-1/2
+                                items-center
+                                gap-8
+                            "
+                        >
 
                             {/* INÍCIO */}
 
                             <button
                                 type="button"
-                                onClick={() => navegarPara("/")}
-                                className={`text-sm font-medium transition ${
-                                    pathname === "/"
-                                        ? "text-zinc-950"
-                                        : "text-zinc-500 hover:text-zinc-950"
-                                }`}
+                                onClick={() =>
+                                    navegarPara("/")
+                                }
+                                className={`
+                                    text-sm
+                                    font-medium
+                                    transition
+                                    ${
+                                        pathname === "/"
+                                            ? "text-zinc-950"
+                                            : "text-zinc-500 hover:text-zinc-950"
+                                    }
+                                `}
                             >
                                 Início
                             </button>
@@ -229,33 +351,55 @@ export default function AppShell({ children }) {
                                 onClick={() =>
                                     navegarPara("/imoveis")
                                 }
-                                className={`text-sm font-medium transition ${
-                                    pathname.startsWith("/imoveis")
-                                        ? "text-zinc-950"
-                                        : "text-zinc-500 hover:text-zinc-950"
-                                }`}
+                                className={`
+                                    text-sm
+                                    font-medium
+                                    transition
+                                    ${
+                                        pathname.startsWith("/imoveis")
+                                            ? "text-zinc-950"
+                                            : "text-zinc-500 hover:text-zinc-950"
+                                    }
+                                `}
                             >
                                 Imóveis
                             </button>
 
 
-                            {/* AJUDA */}
+                            {/* =================================================
+                                AJUDA
+                            ================================================== */}
 
-                            <div className="relative">
+                            <div
+                                ref={menuAjudaRef}
+                                className="relative"
+                            >
 
                                 <button
                                     type="button"
-                                    onClick={() =>
+                                    onClick={() => {
+
                                         setMenuAjudaAberto(
                                             !menuAjudaAberto
-                                        )
-                                    }
-                                    className={`flex items-center gap-1.5 text-sm font-medium transition ${
-                                        pathname === "/sobrenos" ||
-                                        pathname === "/atendimento"
-                                            ? "text-zinc-950"
-                                            : "text-zinc-500 hover:text-zinc-950"
-                                    }`}
+                                        );
+
+                                        setMenuUsuarioAberto(false);
+
+                                    }}
+                                    className={`
+                                        flex
+                                        items-center
+                                        gap-1.5
+                                        text-sm
+                                        font-medium
+                                        transition
+                                        ${
+                                            pathname === "/sobrenos" ||
+                                            pathname === "/atendimento"
+                                                ? "text-zinc-950"
+                                                : "text-zinc-500 hover:text-zinc-950"
+                                        }
+                                    `}
                                 >
 
                                     Ajuda
@@ -263,27 +407,39 @@ export default function AppShell({ children }) {
                                     <ChevronDown
                                         size={15}
                                         strokeWidth={1.8}
-                                        className={`transition-transform duration-200 ${
-                                            menuAjudaAberto
-                                                ? "rotate-180"
-                                                : ""
-                                        }`}
+                                        className={`
+                                            transition-transform
+                                            duration-200
+                                            ${
+                                                menuAjudaAberto
+                                                    ? "rotate-180"
+                                                    : ""
+                                            }
+                                        `}
                                     />
 
                                 </button>
 
 
-                                {/* DROPDOWN */}
+                                {/* DROPDOWN AJUDA */}
 
                                 {menuAjudaAberto && (
 
                                     <div
                                         className="
-                                            absolute right-0 top-9 z-50 w-48
-                                            overflow-hidden rounded-xl
-                                            border border-zinc-200
-                                            bg-white py-1.5
-                                            shadow-lg
+                                            absolute
+                                            left-1/2
+                                            top-9
+                                            z-50
+                                            w-48
+                                            -translate-x-1/2
+                                            overflow-hidden
+                                            rounded-xl
+                                            border
+                                            border-[#E3E0D9]
+                                            bg-white
+                                            py-1.5
+                                            shadow-[0_12px_30px_rgba(23,22,20,0.08)]
                                         "
                                     >
 
@@ -295,17 +451,21 @@ export default function AppShell({ children }) {
                                                 )
                                             }
                                             className="
-                                                flex w-full
-                                                px-4 py-2.5
-                                                text-left text-sm
-                                                text-zinc-600
+                                                flex
+                                                w-full
+                                                px-4
+                                                py-2.5
+                                                text-left
+                                                text-sm
+                                                text-[#77746E]
                                                 transition
-                                                hover:bg-zinc-50
-                                                hover:text-zinc-950
+                                                hover:bg-[#F7F5F0]
+                                                hover:text-[#292825]
                                             "
                                         >
                                             Sobre nós
                                         </button>
+
 
                                         <button
                                             type="button"
@@ -315,13 +475,16 @@ export default function AppShell({ children }) {
                                                 )
                                             }
                                             className="
-                                                flex w-full
-                                                px-4 py-2.5
-                                                text-left text-sm
-                                                text-zinc-600
+                                                flex
+                                                w-full
+                                                px-4
+                                                py-2.5
+                                                text-left
+                                                text-sm
+                                                text-[#77746E]
                                                 transition
-                                                hover:bg-zinc-50
-                                                hover:text-zinc-950
+                                                hover:bg-[#F7F5F0]
+                                                hover:text-[#292825]
                                             "
                                         >
                                             Atendimento
@@ -333,124 +496,242 @@ export default function AppShell({ children }) {
 
                             </div>
 
+                        </div>
 
-                            {/* =================================================
-                                ÁREA DO USUÁRIO
-                            ================================================== */}
 
-                            <div className="flex items-center gap-3">
+                        {/* =================================================
+                            ÁREA DO USUÁRIO
+                        ================================================== */}
 
-                                {carregandoUsuario ? (
+                        <div className="ml-auto flex items-center gap-3">
+
+                            {carregandoUsuario ? (
+
+                                <div
+                                    className="
+                                        h-9
+                                        w-28
+                                        animate-pulse
+                                        rounded-full
+                                        bg-[#F1F0ED]
+                                    "
+                                />
+
+                            ) : usuario ? (
+
+                                <>
+
+                                    {/* =================================================
+                                        DROPDOWN DO USUÁRIO
+                                    ================================================== */}
 
                                     <div
-                                        className="
-                                            h-9 w-24
-                                            animate-pulse
-                                            rounded-full
-                                            bg-zinc-100
-                                        "
-                                    />
+                                        ref={menuUsuarioRef}
+                                        className="relative"
+                                    >
 
-                                ) : usuario ? (
-
-                                    <>
-
-                                        {/* NOME */}
-
-                                        <span
-                                            className="
-                                                whitespace-nowrap
-                                                text-sm font-medium
-                                                text-zinc-600
-                                            "
-                                        >
-                                            Olá, {usuario.nome}
-                                        </span>
-
-
-                                        {/* SAIR */}
+                                        {/* BOTÃO DO USUÁRIO */}
 
                                         <button
                                             type="button"
-                                            onClick={logout}
+                                            onClick={() => {
+
+                                                setMenuUsuarioAberto(
+                                                    !menuUsuarioAberto
+                                                );
+
+                                                setMenuAjudaAberto(false);
+
+                                            }}
                                             className="
-                                                rounded-full
-                                                border border-zinc-200
-                                                px-5 py-2.5
-                                                text-sm font-medium
-                                                text-zinc-600
+                                                flex
+                                                cursor-pointer
+                                                items-center
+                                                gap-1.5
+                                                whitespace-nowrap
+                                                text-sm
+                                                font-medium
+                                                text-[#55534E]
                                                 transition
-                                                hover:border-zinc-300
-                                                hover:bg-zinc-50
-                                                hover:text-zinc-950
+                                                hover:text-[#171614]
                                             "
+                                            aria-expanded={
+                                                menuUsuarioAberto
+                                            }
                                         >
-                                            Sair
+
+                                            Olá, {usuario.nome}
+
+                                            <ChevronDown
+                                                size={15}
+                                                strokeWidth={1.8}
+                                                className={`
+                                                    transition-transform
+                                                    duration-200
+                                                    ${
+                                                        menuUsuarioAberto
+                                                            ? "rotate-180"
+                                                            : ""
+                                                    }
+                                                `}
+                                            />
+
                                         </button>
 
 
-                                        {/* ADMIN */}
+                                        {/* =================================================
+                                            MENU DO USUÁRIO
+                                        ================================================== */}
 
-                                        {usuario.perfil === 1 && (
+                                        {menuUsuarioAberto && (
 
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    router.push(
-                                                        "/admin"
-                                                    )
-                                                }
-                                                title="Painel administrativo"
-                                                aria-label="Abrir painel administrativo"
+                                            <div
                                                 className="
-                                                    flex h-9 w-9
-                                                    items-center justify-center
-                                                    rounded-full
-                                                    text-zinc-500
-                                                    transition
-                                                    hover:bg-zinc-100
-                                                    hover:text-zinc-950
+                                                    absolute
+                                                    right-0
+                                                    top-11
+                                                    z-50
+                                                    w-48
+                                                    overflow-hidden
+                                                    rounded-xl
+                                                    border
+                                                    border-[#E3E0D9]
+                                                    bg-white
+                                                    py-1.5
+                                                    shadow-[0_12px_30px_rgba(23,22,20,0.08)]
                                                 "
                                             >
 
-                                                <Settings
-                                                    size={18}
-                                                    strokeWidth={1.8}
+                                                {/* MINHAS LOCAÇÕES */}
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        navegarPara(
+                                                            "/locacoes"
+                                                        )
+                                                    }
+                                                    className="
+                                                        flex
+                                                        w-full
+                                                        px-4
+                                                        py-2.5
+                                                        text-left
+                                                        text-sm
+                                                        text-[#77746E]
+                                                        transition
+                                                        hover:bg-[#F7F5F0]
+                                                        hover:text-[#292825]
+                                                    "
+                                                >
+                                                    Minhas locações
+                                                </button>
+
+
+                                                {/* DIVISOR */}
+
+                                                <div
+                                                    className="
+                                                        my-1
+                                                        border-t
+                                                        border-[#F0EEE9]
+                                                    "
                                                 />
 
-                                            </button>
+
+                                                {/* SAIR */}
+
+                                                <button
+                                                    type="button"
+                                                    onClick={logout}
+                                                    className="
+                                                        flex
+                                                        w-full
+                                                        px-4
+                                                        py-2.5
+                                                        text-left
+                                                        text-sm
+                                                        text-[#77746E]
+                                                        transition
+                                                        hover:bg-[#F7F5F0]
+                                                        hover:text-[#292825]
+                                                    "
+                                                >
+                                                    Sair
+                                                </button>
+
+                                            </div>
 
                                         )}
 
-                                    </>
+                                    </div>
 
-                                ) : (
 
-                                    /* =================================================
-                                       USUÁRIO NÃO AUTENTICADO
-                                    ================================================== */
+                                    {/* =================================================
+                                        BOTÃO ADMIN
+                                        Fica separado do dropdown.
+                                    ================================================== */}
 
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            router.push("/login")
-                                        }
-                                        className="
-                                            rounded-full
-                                            bg-zinc-950
-                                            px-6 py-2.5
-                                            text-sm font-medium
-                                            text-white
-                                            transition
-                                            hover:bg-zinc-800
-                                        "
-                                    >
-                                        Entrar
-                                    </button>
+                                    {usuario?.perfil === 1 && (
 
-                                )}
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                router.push("/admin")
+                                            }
+                                            title="Painel administrativo"
+                                            aria-label="Abrir painel administrativo"
+                                            className="
+                                                flex
+                                                h-9
+                                                w-9
+                                                cursor-pointer
+                                                items-center
+                                                justify-center
+                                                text-[#77746E]
+                                                transition
+                                                hover:text-[#292825]
+                                            "
+                                        >
 
-                            </div>
+                                            <Settings
+                                                size={18}
+                                                strokeWidth={1.8}
+                                            />
+
+                                        </button>
+
+                                    )}
+
+                                </>
+
+                            ) : (
+
+                                /* =================================================
+                                   USUÁRIO NÃO AUTENTICADO
+                                ================================================== */
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        router.push("/login")
+                                    }
+                                    className="
+                                        rounded-full
+                                        bg-zinc-950
+                                        px-6
+                                        py-2.5
+                                        text-sm
+                                        font-medium
+                                        text-white
+                                        transition
+                                        hover:bg-zinc-800
+                                    "
+                                >
+                                    Entrar
+                                </button>
+
+                            )}
 
                         </div>
 
@@ -469,7 +750,8 @@ export default function AppShell({ children }) {
 
                 <div
                     className={`
-                        flex bg-[#F1EFEA]
+                        flex
+                        bg-[#F1EFEA]
                         ${
                             mostrarNavbar
                                 ? "h-[calc(100vh-80px)]"

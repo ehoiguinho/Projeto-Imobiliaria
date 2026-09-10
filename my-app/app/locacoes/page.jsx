@@ -553,7 +553,7 @@ export default function LocacoesPage() {
 
                                 <div className="flex min-w-0 items-center gap-4">
 
-                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-[#F1F0ED] text-[#55534E]">
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center text-[#55534E]">
 
                                         <FileText
                                             size={18}
@@ -571,17 +571,13 @@ export default function LocacoesPage() {
                                                 Meus contratos
                                             </h2>
 
-                                            <span className="bg-[#F1F0ED] px-2 py-0.5 text-[10px] font-semibold text-[#77746E]">
-                                                {contratos.length}
-                                            </span>
-
                                         </div>
 
 
                                         <p className="mt-1 truncate text-xs text-[#8A8883]">
 
                                             {contratoAtual
-                                                ? `Contrato #${contratoAtual.id} • ${
+                                                ? `Contrato ${contratoAtual.id} • ${
                                                       contratoAtual.imovel ||
                                                       "Imóvel vinculado"
                                                   }`
@@ -707,15 +703,6 @@ export default function LocacoesPage() {
                         {!contratoSelecionado && (
 
                             <div className="border border-dashed border-[#D5D1C9] bg-white px-6 py-14 text-center">
-
-                                <div className="mx-auto flex h-11 w-11 items-center justify-center bg-[#F1F0ED] text-[#77746E]">
-
-                                    <FileText
-                                        size={19}
-                                        strokeWidth={1.4}
-                                    />
-
-                                </div>
 
                                 <h2 className="mt-4 text-sm font-semibold text-[#292825]">
                                     Selecione um contrato
@@ -996,7 +983,7 @@ export default function LocacoesPage() {
                                                                             </p>
 
                                                                             <p className="mt-0.5 text-[10px] text-[#A19E98]">
-                                                                                #
+                                                                                
                                                                                 {
                                                                                     aluguel.id
                                                                                 }

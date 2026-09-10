@@ -85,10 +85,6 @@ export default function RedefinirSenhaPage() {
             setSenha("");
             setConfirmarSenha("");
 
-            /*
-             * Depois de alterar a senha,
-             * encaminha o usuário para o login.
-             */
             setTimeout(() => {
                 router.push("/login");
             }, 2000);
@@ -105,120 +101,239 @@ export default function RedefinirSenhaPage() {
     }
 
     return (
-        <main className="min-h-screen bg-slate-100 px-4">
 
-            <div className="flex min-h-screen items-center justify-center">
+        <main className="relative min-h-screen overflow-hidden text-[#292825]">
 
-                <section className="w-full max-w-md">
+            {/* =====================================================
+                BACKGROUND
+            ====================================================== */}
+
+            <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{
+                    backgroundImage: "url('/images/login.jpg')"
+                }}
+            />
+
+            <div className="absolute inset-0 bg-[#171614]/70" />
 
 
-                    <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-xl">
+            {/* =====================================================
+                CONTEÚDO
+            ====================================================== */}
+
+            <div className="relative z-10 flex min-h-screen items-center justify-center px-6 py-12">
+
+                <section className="w-full max-w-xl">
+
+                    {/* =================================================
+                        LOGO
+                    ================================================== */}
+
+                    <div className="mb-8 text-center">
+
+                        <button
+                            type="button"
+                            onClick={() => router.push("/")}
+                            className="cursor-pointer text-left transition-opacity duration-300 hover:opacity-70"
+                        >
+
+                            <span className="block text-2xl font-semibold tracking-[0.18em] text-white">
+                                VITTA
+                            </span>
+
+                            <span className="mt-0.5 block text-[8px] font-semibold tracking-[0.35em] text-white/70">
+                                IMOBILIÁRIA
+                            </span>
+
+                        </button>
+
+                    </div>
+
+
+                    {/* =================================================
+                        CARD
+                    ================================================== */}
+
+                    <div className="border border-white/20 bg-white/95 p-8 shadow-2xl backdrop-blur-xl sm:p-10">
+
+
+                        {/* =================================================
+                            CABEÇALHO
+                        ================================================== */}
 
                         <div className="mb-8">
 
-                            <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-zinc-900 text-white">
+                            <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-full border border-[#E3E0D9] bg-white text-[#55534E]">
 
-                                <LockKeyhole size={24} />
+                                <LockKeyhole
+                                    size={21}
+                                    strokeWidth={1.5}
+                                />
 
                             </div>
 
-                            <h1 className="text-3xl font-bold text-slate-900">
+
+                            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#8A8883]">
+                                Segurança da conta
+                            </p>
+
+
+                            <h1 className="mt-3 text-3xl font-medium tracking-[-0.035em] text-[#292825] sm:text-4xl">
                                 Redefinir senha
                             </h1>
 
-                            <p className="mt-2 text-sm leading-relaxed text-slate-500">
-                                Crie uma nova senha para acessar
-                                sua conta.
+
+                            <p className="mt-3 max-w-md text-sm leading-6 text-[#77746E]">
+                                Crie uma nova senha para continuar
+                                acessando sua conta.
                             </p>
 
                         </div>
 
 
+                        {/* =================================================
+                            FORMULÁRIO
+                        ================================================== */}
+
                         <form
                             onSubmit={redefinirSenha}
-                            className="space-y-5"
+                            className="space-y-6"
                         >
+
+                            {/* =================================================
+                                NOVA SENHA
+                            ================================================== */}
 
                             <div>
 
                                 <label
                                     htmlFor="senha"
-                                    className="mb-2 block text-sm font-medium text-slate-700"
+                                    className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.12em] text-[#77746E]"
                                 >
                                     Nova senha
                                 </label>
 
-                                <input
-                                    id="senha"
-                                    type="password"
-                                    value={senha}
-                                    onChange={(event) =>
-                                        setSenha(event.target.value)
-                                    }
-                                    placeholder="Digite sua nova senha"
-                                    required
-                                    minLength={6}
-                                    className="w-full rounded-lg border border-slate-300 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
-                                />
 
-                                <p className="mt-2 text-xs text-slate-400">
+                                <div className="relative">
+
+                                    <LockKeyhole
+                                        size={17}
+                                        strokeWidth={1.5}
+                                        className="absolute left-4 top-1/2 -translate-y-1/2 text-[#A19E98]"
+                                    />
+
+
+                                    <input
+                                        id="senha"
+                                        type="password"
+                                        value={senha}
+                                        onChange={(event) =>
+                                            setSenha(event.target.value)
+                                        }
+                                        placeholder="Digite sua nova senha"
+                                        required
+                                        minLength={6}
+                                        disabled={carregando || !!mensagem}
+                                        className="w-full border border-[#DAD7D0] bg-white py-3.5 pl-11 pr-4 text-sm text-[#292825] outline-none transition placeholder:text-[#A19E98] focus:border-[#8A8883] disabled:cursor-not-allowed disabled:bg-[#F1F0ED]"
+                                    />
+
+                                </div>
+
+
+                                <p className="mt-2 text-xs text-[#A19E98]">
                                     A senha deve possuir pelo menos 6 caracteres.
                                 </p>
 
                             </div>
 
+
+                            {/* =================================================
+                                CONFIRMAR SENHA
+                            ================================================== */}
+
                             <div>
 
                                 <label
                                     htmlFor="confirmarSenha"
-                                    className="mb-2 block text-sm font-medium text-slate-700"
+                                    className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.12em] text-[#77746E]"
                                 >
                                     Confirmar nova senha
                                 </label>
 
-                                <input
-                                    id="confirmarSenha"
-                                    type="password"
-                                    value={confirmarSenha}
-                                    onChange={(event) =>
-                                        setConfirmarSenha(event.target.value)
-                                    }
-                                    placeholder="Digite novamente sua senha"
-                                    required
-                                    minLength={6}
-                                    className="w-full rounded-lg border border-slate-300 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
-                                />
+
+                                <div className="relative">
+
+                                    <LockKeyhole
+                                        size={17}
+                                        strokeWidth={1.5}
+                                        className="absolute left-4 top-1/2 -translate-y-1/2 text-[#A19E98]"
+                                    />
+
+
+                                    <input
+                                        id="confirmarSenha"
+                                        type="password"
+                                        value={confirmarSenha}
+                                        onChange={(event) =>
+                                            setConfirmarSenha(event.target.value)
+                                        }
+                                        placeholder="Digite novamente sua senha"
+                                        required
+                                        minLength={6}
+                                        disabled={carregando || !!mensagem}
+                                        className="w-full border border-[#DAD7D0] bg-white py-3.5 pl-11 pr-4 text-sm text-[#292825] outline-none transition placeholder:text-[#A19E98] focus:border-[#8A8883] disabled:cursor-not-allowed disabled:bg-[#F1F0ED]"
+                                    />
+
+                                </div>
 
                             </div>
 
-                            {/* ERRO */}
+
+                            {/* =================================================
+                                ERRO
+                            ================================================== */}
 
                             {erro && (
 
-                                <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                                    {erro}
+                                <div className="border border-[#D6D2CA] bg-white px-4 py-4">
+
+                                    <p className="text-sm leading-6 text-[#55534E]">
+                                        <span className="font-semibold">
+                                            Erro:
+                                        </span>{" "}
+                                        {erro}
+                                    </p>
+
                                 </div>
 
                             )}
 
 
+                            {/* =================================================
+                                SUCESSO
+                            ================================================== */}
+
                             {mensagem && (
 
-                                <div className="flex gap-3 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+                                <div className="flex gap-3 border border-[#D5D1C9] bg-white px-4 py-4">
 
                                     <CheckCircle
-                                        size={18}
-                                        className="mt-0.5 shrink-0"
+                                        size={19}
+                                        strokeWidth={1.5}
+                                        className="mt-0.5 shrink-0 text-[#55534E]"
                                     />
 
                                     <div>
-                                        <p>
+
+                                        <p className="text-sm leading-6 text-[#55534E]">
                                             {mensagem}
                                         </p>
 
-                                        <p className="mt-1 text-xs text-green-600">
+                                        <p className="mt-1 text-xs text-[#8A8883]">
                                             Redirecionando para o login...
                                         </p>
+
                                     </div>
 
                                 </div>
@@ -226,36 +341,72 @@ export default function RedefinirSenhaPage() {
                             )}
 
 
+                            {/* =================================================
+                                BOTÃO
+                            ================================================== */}
+
                             <button
                                 type="submit"
-                                disabled={carregando}
-                                className="w-full rounded-lg bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70"
+                                disabled={carregando || !!mensagem}
+                                className="group flex w-full cursor-pointer items-center justify-center gap-2 bg-[#292825] px-5 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#171614] disabled:cursor-not-allowed disabled:opacity-60"
                             >
+
                                 {carregando
                                     ? "Alterando senha..."
-                                    : "Alterar senha"}
+                                    : "Alterar senha"
+                                }
+
+                                {!carregando && !mensagem && (
+
+                                    <span className="transition-transform duration-300 group-hover:translate-x-1">
+                                        →
+                                    </span>
+
+                                )}
+
                             </button>
 
                         </form>
 
 
+                        {/* =================================================
+                            VOLTAR
+                        ================================================== */}
+
                         {!mensagem && (
 
-                            <button
-                                type="button"
-                                onClick={() => router.push("/login")}
-                                className="mt-6 flex w-full items-center justify-center gap-2 text-sm font-medium text-slate-500 transition hover:text-slate-900"
-                            >
+                            <div className="mt-8 border-t border-[#E3E0D9] pt-6">
 
-                                <ArrowLeft size={16} />
+                                <button
+                                    type="button"
+                                    onClick={() => router.push("/login")}
+                                    className="group mx-auto flex cursor-pointer items-center gap-2 text-sm font-medium text-[#8A8883] transition-colors duration-300 hover:text-[#292825]"
+                                >
 
-                                Voltar para o login
+                                    <ArrowLeft
+                                        size={16}
+                                        strokeWidth={1.7}
+                                        className="transition-transform duration-300 group-hover:-translate-x-1"
+                                    />
 
-                            </button>
+                                    Voltar para o login
+
+                                </button>
+
+                            </div>
 
                         )}
 
                     </div>
+
+
+                    {/* =================================================
+                        COPYRIGHT
+                    ================================================== */}
+
+                    <p className="mt-6 text-center text-[10px] tracking-wide text-white/50">
+                        © 2026 Vitta Imobiliária. Todos os direitos reservados.
+                    </p>
 
                 </section>
 

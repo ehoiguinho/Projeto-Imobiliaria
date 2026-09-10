@@ -20,22 +20,15 @@
         "description": "",
         "parameters": [
           {
-            "name": "webhook-signature",
+            "name": "x-webhook-signature",
             "in": "header",
             "schema": {
               "type": "string"
             }
           },
           {
-            "name": "webhook-id",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "webhook-timestamp",
-            "in": "header",
+            "name": "webhookSecret",
+            "in": "query",
             "schema": {
               "type": "string"
             }
@@ -146,7 +139,12 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/usuario/{id}": {
@@ -563,6 +561,11 @@
             "description": "Not Found"
           }
         },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {

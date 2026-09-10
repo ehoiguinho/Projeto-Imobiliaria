@@ -48,6 +48,10 @@ router.post('/', authMiddleware.validar, (req, res) => {
 });
 
 router.get('/',  authMiddleware.validar, (req, res) => {
+    /* #swagger.security = [{
+        "bearerAuth": []
+    }]
+    */
     // #swagger.tags = ['Usuário']
     // #swagger.summary = 'Listar todos os usuários cadastrados'
 

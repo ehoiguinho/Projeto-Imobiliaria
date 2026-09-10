@@ -117,6 +117,10 @@ router.get("/:id/imagem", (req, res) => {
 });
 
 router.post("/:id/imagem", authMiddleware.validar, authMiddleware.validarAdmin, upload.array("imagens", 5), (req, res) => {
+    /* #swagger.security = [{
+        "bearerAuth": []
+    }]
+    */
    // #swagger.tags = ['Imóvel']
         // #swagger.summary = "Adiciona imagens a um imóvel"
 

@@ -22,12 +22,6 @@ export default class RecuperarSenhaService {
 
         const usuario =
             await this.#usuarioRepository.buscarEmail(email);
-
-        /*
-        * Por segurança, não revelamos se o e-mail
-        * está cadastrado ou não.
-        */
-
         if (!usuario) {
             return;
         }

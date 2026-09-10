@@ -63,9 +63,6 @@ export default class Database {
 
     async ExecutaComando(sql, valores = [], client = null) {
 
-        console.log("SQL:", sql);
-        console.log("VALORES:", valores);
-
         const conexao = client || this.#conexao;
 
         const result = await conexao.query(sql, valores);

@@ -16,14 +16,7 @@ export default class PagamentoService {
 
         this.#pagamentoRepository = new PagamentoRepository();
 
-        console.log(
-            "ABACATEPAY_API_KEY configurada:",
-            !!process.env.ABACATEPAY_API_KEY
-        );
-
-        this.#abacatePay = AbacatePay({
-            secret: process.env.ABACATEPAY_API_KEY
-        });
+        this.#abacatePay = AbacatePay({secret: process.env.ABACATEPAY_API_KEY});
     }
 
     async criarCheckout(aluguelId, usuarioId) {
@@ -88,10 +81,7 @@ export default class PagamentoService {
             );
         }
 
-        /*
-         * Somente aluguéis pendentes ou atrasados
-         * podem gerar pagamento.
-         */
+       
         if (
             aluguel.status !== "PENDENTE" &&
             aluguel.status !== "ATRASADO"
@@ -102,14 +92,7 @@ export default class PagamentoService {
             );
         }
 
-        /*
-         * ============================================================
-         * 1. VERIFICA PAGAMENTO PENDENTE NO BANCO
-         * ============================================================
-         *
-         * Se já existe um checkout pendente registrado localmente,
-         * simplesmente reutilizamos a URL.
-         */
+
         const ultimoPagamento =
             await this.#pagamentoRepository
                 .obterUltimoPorAluguel(aluguelId);
@@ -120,10 +103,6 @@ export default class PagamentoService {
             ultimoPagamento[0].status === "PENDENTE" &&
             ultimoPagamento[0].url
         ) {
-
-            console.log(
-                "♻️ Pagamento pendente encontrado no banco."
-            );
 
             return {
 
@@ -138,37 +117,13 @@ export default class PagamentoService {
             };
         }
 
-        /*
-         * ============================================================
-         * 2. EXTERNAL ID DETERMINÍSTICO
-         * ============================================================
-         *
-         * O mesmo aluguel sempre utiliza o mesmo externalId.
-         *
-         * Isso permite recuperar um produto/checkout que tenha sido
-         * criado na AbacatePay mas cuja resposta não tenha sido salva
-         * no banco.
-         */
+      
         const externalId =
             `ALUGUEL-${aluguelId}`;
 
-        console.log("========================================");
-        console.log("🆔 EXTERNAL ID DO PAGAMENTO");
-        console.log("External ID:", externalId);
-        console.log("========================================");
-
-        /*
-         * ============================================================
-         * 3. PROCURA O PRODUTO NA ABACATEPAY
-         * ============================================================
-         */
         let produto;
 
         try {
-
-            console.log(
-                "🔎 Procurando produto existente na AbacatePay..."
-            );
 
             const respostaProduto =
                 await this.#abacatePay.products.get({
@@ -183,40 +138,17 @@ export default class PagamentoService {
             ) {
 
                 produto = respostaProduto.data;
-
-                console.log(
-                    "♻️ Produto existente encontrado:",
-                    produto.id
-                );
             }
 
         } catch (erro) {
-
-            /*
-             * O produto não existir não é um erro fatal.
-             *
-             * Nesse caso simplesmente seguimos para products.create().
-             */
-            console.log(
-                "ℹ️ Produto existente não encontrado."
-            );
-
             console.log(
                 "Mensagem:",
                 erro.message
             );
         }
 
-        /*
-         * ============================================================
-         * 4. CRIA O PRODUTO SE NECESSÁRIO
-         * ============================================================
-         */
+      
         if (!produto) {
-
-            console.log(
-                "📦 Criando produto na AbacatePay..."
-            );
 
             const respostaProduto =
                 await this.#abacatePay.products.create({
@@ -251,26 +183,7 @@ export default class PagamentoService {
                 produto =
                     respostaProduto.data;
 
-                console.log(
-                    "✅ Produto criado:",
-                    produto.id
-                );
-
             } else {
-
-                /*
-                 * Existe uma possibilidade importante:
-                 *
-                 * A API pode ter criado o produto, mas nossa aplicação
-                 * pode ter perdido a resposta.
-                 *
-                 * Então fazemos uma segunda tentativa de recuperação
-                 * pelo externalId antes de desistir.
-                 */
-                console.log(
-                    "⚠️ Produto não retornou normalmente."
-                );
-
                 console.log(
                     "Resposta produto:",
                     respostaProduto
@@ -292,18 +205,9 @@ export default class PagamentoService {
 
                         produto =
                             produtoExistente.data;
-
-                        console.log(
-                            "♻️ Produto recuperado após tentativa de criação:",
-                            produto.id
-                        );
                     }
 
                 } catch (erroRecuperacao) {
-
-                    console.log(
-                        "❌ Não foi possível recuperar o produto."
-                    );
 
                     console.log(
                         "Mensagem:",
@@ -323,23 +227,10 @@ export default class PagamentoService {
             );
         }
 
-        /*
-         * ============================================================
-         * 5. PROCURA CHECKOUT EXISTENTE
-         * ============================================================
-         *
-         * A API de listagem de checkouts não permite filtrar
-         * diretamente por externalId.
-         *
-         * Por isso consultamos a listagem e procuramos localmente.
-         */
+        
         let checkoutExistente = null;
 
         try {
-
-            console.log(
-                "🔎 Procurando checkout existente..."
-            );
 
             const respostaCheckouts =
                 await this.#abacatePay.checkouts.list({
@@ -353,10 +244,7 @@ export default class PagamentoService {
                 respostaCheckouts.data
             ) {
 
-                /*
-                 * Dependendo da resposta da API, os dados podem
-                 * estar diretamente em data ou dentro de data.data.
-                 */
+                
                 let checkouts =
                     Array.isArray(respostaCheckouts.data)
                         ? respostaCheckouts.data
@@ -375,11 +263,6 @@ export default class PagamentoService {
             if (checkoutExistente) {
 
                 console.log(
-                    "♻️ Checkout existente encontrado:",
-                    checkoutExistente.id
-                );
-
-                console.log(
                     "Status:",
                     checkoutExistente.status
                 );
@@ -387,24 +270,12 @@ export default class PagamentoService {
 
         } catch (erro) {
 
-            /*
-             * Falha na consulta não impede a tentativa de criação.
-             */
-            console.log(
-                "⚠️ Não foi possível consultar checkouts existentes."
-            );
-
             console.log(
                 "Mensagem:",
                 erro.message
             );
         }
 
-        /*
-         * ============================================================
-         * 6. SE NÃO EXISTE CHECKOUT, CRIA
-         * ============================================================
-         */
         let checkout;
 
         if (checkoutExistente) {
@@ -413,10 +284,6 @@ export default class PagamentoService {
                 checkoutExistente;
 
         } else {
-
-            console.log(
-                "💳 Criando checkout na AbacatePay..."
-            );
 
             const respostaCheckout =
                 await this.#abacatePay.checkouts.create({
@@ -454,21 +321,7 @@ export default class PagamentoService {
                 checkout =
                     respostaCheckout.data;
 
-                console.log(
-                    "✅ Checkout criado:",
-                    checkout.id
-                );
-
             } else {
-
-                /*
-                 * Assim como no produto, fazemos uma última tentativa
-                 * de encontrar o checkout caso a criação tenha ocorrido
-                 * mas a resposta tenha sido perdida.
-                 */
-                console.log(
-                    "⚠️ Checkout não retornou normalmente."
-                );
 
                 console.log(
                     "Resposta checkout:",
@@ -507,10 +360,6 @@ export default class PagamentoService {
                 } catch (erroRecuperacao) {
 
                     console.log(
-                        "❌ Não foi possível recuperar o checkout."
-                    );
-
-                    console.log(
                         "Mensagem:",
                         erroRecuperacao.message
                     );
@@ -518,11 +367,6 @@ export default class PagamentoService {
             }
         }
 
-        /*
-         * ============================================================
-         * 7. VALIDA CHECKOUT
-         * ============================================================
-         */
         if (
             !checkout ||
             !checkout.id ||
@@ -534,13 +378,7 @@ export default class PagamentoService {
             );
         }
 
-        /*
-         * ============================================================
-         * 8. VERIFICA SE O CHECKOUT JÁ ESTÁ PAGO
-         * ============================================================
-         *
-         * Isso é uma proteção adicional.
-         */
+      
         if (
             checkout.status === "PAID"
         ) {
@@ -550,14 +388,7 @@ export default class PagamentoService {
             );
         }
 
-        /*
-         * ============================================================
-         * 9. VERIFICA NOVAMENTE O BANCO
-         * ============================================================
-         *
-         * Evita duplicidade caso duas requisições tenham chegado
-         * praticamente ao mesmo tempo.
-         */
+      
         const pagamentoExistente =
             await this.#pagamentoRepository
                 .obterPorExternalId(externalId);
@@ -570,10 +401,6 @@ export default class PagamentoService {
             const pagamento =
                 pagamentoExistente[0];
 
-            /*
-             * Se o pagamento local já existe, atualizamos o checkout
-             * caso necessário e reutilizamos o registro.
-             */
             if (
                 pagamento.checkoutId !== checkout.id ||
                 pagamento.url !== checkout.url
@@ -600,11 +427,7 @@ export default class PagamentoService {
             };
         }
 
-        /*
-         * ============================================================
-         * 10. SALVA PAGAMENTO NO POSTGRESQL
-         * ============================================================
-         */
+        
         const pagamento = {
 
             aluguelId:
@@ -640,20 +463,7 @@ export default class PagamentoService {
                 "Checkout criado, mas não foi possível registrar o pagamento no banco."
             );
         }
-
-        console.log("========================================");
-        console.log("✅ PAGAMENTO CRIADO");
-        console.log("Pagamento ID:", pagamentoId);
-        console.log("Aluguel ID:", aluguelId);
-        console.log("Produto ID:", produto.id);
-        console.log("Checkout ID:", checkout.id);
-        console.log("========================================");
-
-        /*
-         * ============================================================
-         * 11. RETORNO PARA O FRONTEND
-         * ============================================================
-         */
+      
         return {
 
             msg:

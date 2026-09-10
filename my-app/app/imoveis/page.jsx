@@ -55,6 +55,7 @@ export default function ImoveisPage() {
       );
 
       const dados = await resposta.json();
+      console.log("IMÓVEIS RECEBIDOS:", dados);
 
       if (!resposta.ok) {
         throw new Error(

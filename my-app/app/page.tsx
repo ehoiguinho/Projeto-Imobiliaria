@@ -22,6 +22,10 @@ export default function Home() {
     const [valorMax, setValorMax] = useState("");
 
     const [menuAjudaAberto, setMenuAjudaAberto] = useState(false);
+    const [animacaoEstatisticas, setAnimacaoEstatisticas] = useState(false);
+    const [numeroImoveis, setNumeroImoveis] = useState(0);
+    const [numeroAtendimento, setNumeroAtendimento] = useState(0);
+    const [numeroTransparencia, setNumeroTransparencia] = useState(0);
 
     /*
      * USUÁRIO AUTENTICADO
@@ -132,6 +136,114 @@ export default function Home() {
         carregarDestaques();
 
     }, []);
+
+/*
+ * ==========================================================
+ * ANIMAÇÃO DA SEÇÃO INSTITUCIONAL
+ * ==========================================================
+ */
+
+useEffect(() => {
+
+    const elemento = document.getElementById(
+        "estatisticas-vitta"
+    );
+
+    if (!elemento) {
+        return;
+    }
+
+    const observer = new IntersectionObserver(
+        ([entry]) => {
+
+            if (entry.isIntersecting) {
+
+                setAnimacaoEstatisticas(true);
+
+                observer.disconnect();
+
+            }
+
+        },
+        {
+            threshold: 0.35
+        }
+    );
+
+    observer.observe(elemento);
+
+    return () => {
+        observer.disconnect();
+    };
+
+}, []);
+
+
+/*
+ * ==========================================================
+ * CONTADORES
+ * ==========================================================
+ */
+
+useEffect(() => {
+
+    if (!animacaoEstatisticas) {
+        return;
+    }
+
+    const duracao = 1400;
+    const inicio = performance.now();
+
+    function animar(tempoAtual) {
+
+        const progresso = Math.min(
+            (tempoAtual - inicio) / duracao,
+            1
+        );
+
+        /*
+         * Ease-out:
+         * começa mais rápido e desacelera
+         * suavemente no final.
+         */
+        const suavizado =
+            1 - Math.pow(1 - progresso, 3);
+
+        setNumeroImoveis(
+            Math.floor(100 * suavizado)
+        );
+
+        setNumeroAtendimento(
+            Math.floor(24 * suavizado)
+        );
+
+        setNumeroTransparencia(
+            Math.floor(100 * suavizado)
+        );
+
+        if (progresso < 1) {
+
+            requestAnimationFrame(animar);
+
+        } else {
+
+            setNumeroImoveis(100);
+            setNumeroAtendimento(24);
+            setNumeroTransparencia(100);
+
+        }
+
+    }
+
+    const animationFrame =
+        requestAnimationFrame(animar);
+
+    return () => {
+        cancelAnimationFrame(animationFrame);
+    };
+
+}, [animacaoEstatisticas]);
+
 
 
     /*
@@ -963,90 +1075,135 @@ export default function Home() {
 
             </section>
 
+                <section
+                    id="estatisticas-vitta"
+                    className="border-y border-[#E3E0D9] bg-white py-24"
+                >
+
+                    <div className="mx-auto max-w-7xl px-6 lg:px-8">
+
+                        <div className="grid grid-cols-1 gap-14 lg:grid-cols-2 lg:items-center">
 
 
-            {/* =====================================================
-                SEÇÃO INSTITUCIONAL
-            ====================================================== */}
+                            {/* =================================================
+                                TEXTO
+                            ================================================== */}
 
-            <section className="border-y border-[#E3E0D9] bg-white py-24">
-
-                <div className="mx-auto max-w-7xl px-6 lg:px-8">
-
-                    <div className="grid grid-cols-1 gap-14 lg:grid-cols-2 lg:items-center">
-
-
-                        <div className="max-w-xl">
-
-                            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#8A8883]">
-                                VITTA
-                            </p>
-
-                            <h2 className="mt-4 text-4xl font-medium leading-tight tracking-[-0.03em] text-[#292825] sm:text-5xl">
-                                Mais do que encontrar um imóvel.
-
-                                <span className="block text-[#8A8883]">
-                                    Encontrar seu lugar.
-                                </span>
-                            </h2>
-
-                            <p className="mt-6 text-base leading-8 text-[#77746E]">
-                                A Vitta nasceu para tornar a busca por
-                                um novo lar mais simples, transparente
-                                e próxima das pessoas.
-                            </p>
-
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    router.push("/sobrenos")
-                                }
-                                className="mt-8 inline-flex items-center gap-3 border-b border-[#292825] pb-2 text-sm font-semibold text-[#292825] transition hover:border-[#8A8883] hover:text-[#77746E]"
+                            <div
+                                className={`max-w-xl transition-all duration-1000 ${
+                                    animacaoEstatisticas
+                                        ? "translate-y-0 opacity-100"
+                                        : "translate-y-8 opacity-0"
+                                }`}
                             >
-                                Conheça a Vitta
-                                <span>→</span>
-                            </button>
 
-                        </div>
-
-
-                        <div className="grid grid-cols-2 border-t border-[#E3E0D9] sm:grid-cols-3 lg:border-l lg:border-t-0">
-
-                            <div className="border-b border-r border-[#E3E0D9] px-6 py-8 lg:border-b-0">
-
-                                <p className="text-3xl font-medium text-[#292825]">
-                                    100+
+                                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#8A8883]">
+                                    VITTA
                                 </p>
 
-                                <p className="mt-2 text-xs uppercase tracking-wide text-[#8A8883]">
-                                    Imóveis
+                                <h2 className="mt-4 text-4xl font-medium leading-tight tracking-[-0.03em] text-[#292825] sm:text-5xl">
+
+                                    Mais do que encontrar um imóvel.
+
+                                    <span className="block text-[#8A8883]">
+                                        Encontrar seu lugar.
+                                    </span>
+
+                                </h2>
+
+                                <p className="mt-6 text-base leading-8 text-[#77746E]">
+                                    A Vitta nasceu para tornar a busca por
+                                    um novo lar mais simples, transparente
+                                    e próxima das pessoas.
                                 </p>
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        router.push("/sobrenos")
+                                    }
+                                    className="mt-8 inline-flex items-center gap-3 border-b border-[#292825] pb-2 text-sm font-semibold text-[#292825] transition hover:border-[#8A8883] hover:text-[#77746E]"
+                                >
+
+                                    Conheça a Vitta
+
+                                    <span>
+                                        →
+                                    </span>
+
+                                </button>
 
                             </div>
 
 
-                            <div className="border-b border-[#E3E0D9] px-6 py-8 lg:border-b-0">
+                            {/* =================================================
+                                ESTATÍSTICAS
+                            ================================================== */}
 
-                                <p className="text-3xl font-medium text-[#292825]">
-                                    24h
-                                </p>
-
-                                <p className="mt-2 text-xs uppercase tracking-wide text-[#8A8883]">
-                                    Atendimento
-                                </p>
-
-                            </div>
+                            <div
+                                className={`grid grid-cols-2 border-t border-[#E3E0D9] transition-all duration-1000 delay-200 sm:grid-cols-3 lg:border-l lg:border-t-0 ${
+                                    animacaoEstatisticas
+                                        ? "translate-y-0 opacity-100"
+                                        : "translate-y-8 opacity-0"
+                                }`}
+                            >
 
 
-                            <div className="col-span-2 px-6 py-8 sm:col-span-1">
+                                {/* =================================================
+                                    IMÓVEIS
+                                ================================================== */}
 
-                                <p className="text-3xl font-medium text-[#292825]">
-                                    100%
-                                </p>
+                                <div className="border-b border-r border-[#E3E0D9] px-6 py-8 lg:border-b-0">
 
-                                <p className="mt-2 text-xs uppercase tracking-wide text-[#8A8883]">
-                                    Transparência
-                                </p>
+                                    <p className="text-3xl font-medium tabular-nums text-[#292825]">
+
+                                        {numeroImoveis}+
+
+                                    </p>
+
+                                    <p className="mt-2 text-xs uppercase tracking-wide text-[#8A8883]">
+                                        Imóveis
+                                    </p>
+
+                                </div>
+
+
+                                {/* =================================================
+                                    ATENDIMENTO
+                                ================================================== */}
+
+                                <div className="border-b border-[#E3E0D9] px-6 py-8 lg:border-b-0">
+
+                                    <p className="text-3xl font-medium tabular-nums text-[#292825]">
+
+                                        {numeroAtendimento}h
+
+                                    </p>
+
+                                    <p className="mt-2 text-xs uppercase tracking-wide text-[#8A8883]">
+                                        Atendimento
+                                    </p>
+
+                                </div>
+
+
+                                {/* =================================================
+                                    TRANSPARÊNCIA
+                                ================================================== */}
+
+                                <div className="col-span-2 px-6 py-8 sm:col-span-1">
+
+                                    <p className="text-3xl font-medium tabular-nums text-[#292825]">
+
+                                        {numeroTransparencia}%
+
+                                    </p>
+
+                                    <p className="mt-2 text-xs uppercase tracking-wide text-[#8A8883]">
+                                        Transparência
+                                    </p>
+
+                                </div>
 
                             </div>
 
@@ -1054,9 +1211,7 @@ export default function Home() {
 
                     </div>
 
-                </div>
-
-            </section>
+                </section>
 
 
 
@@ -1081,15 +1236,9 @@ export default function Home() {
                     </div>
 
 
-                    <button
-                        type="button"
-                        onClick={() =>
-                            router.push("/imoveis")
-                        }
-                        className="shrink-0 bg-white px-7 py-3.5 text-sm font-semibold text-[#292825] hover:bg-[#F5F4F1] cursor-pointer"
-                    >
-                        Explorar imóveis →
-                    </button>
+                    <button type="button" onClick={() => router.push("/imoveis") }
+                     className="group shrink-0 cursor-pointer bg-white px-7 py-3.5 text-sm font-semibold text-[#292825] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#F1F0ED] hover:text-[#171614]" >
+                    <span className="inline-flex items-center gap-2"> Explorar imóveis <span className="transition-transform duration-300 group-hover:translate-x-1"> → </span> </span> </button>
 
                 </div>
 

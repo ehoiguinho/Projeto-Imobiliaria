@@ -2,8 +2,11 @@ import Link from "next/link";
 import { Building2, MapPin } from "lucide-react";
 
 export default function ImovelCard({ imovel }) {
-  const imagem = imovel.imagem
-    ? `http://localhost:3000${imovel.imagem}`
+  console.log("IMOVEL RECEBIDO PELO CARD:", imovel);
+  console.log("IMAGEM RECEBIDA:", imovel.imagem);
+
+  const imagem = imovel.imagem?.caminho
+    ? `http://localhost:3000${imovel.imagem.caminho}`
     : null;
 
   return (

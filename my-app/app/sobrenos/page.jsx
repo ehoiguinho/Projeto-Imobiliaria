@@ -1,13 +1,15 @@
 "use client";
 
-import {
-    Building2,
-    Heart,
-    ShieldCheck,
-    ArrowRight
-} from "lucide-react";
+import {Building2, Heart, ShieldCheck, ArrowRight} from "lucide-react";
+
+import { useRouter } from "next/navigation";
+
+
 
 export default function SobreNosPage() {
+
+     const router = useRouter();
+
 
     return (
         <main className="min-h-screen bg-[#F7F5F0] text-[#292825]">
@@ -292,19 +294,20 @@ export default function SobreNosPage() {
                     </div>
 
 
-                    <a
-                        href="/imoveis"
-                        className="flex shrink-0 items-center gap-3 bg-white px-7 py-3.5 text-sm font-semibold text-[#292825] transition hover:bg-[#F0EEE9]"
-                    >
-                        Ver imóveis
-
-                        <ArrowRight
-                            size={16}
-                            strokeWidth={1.8}
-                        />
-
-                    </a>
-
+                        <button
+                            type="button"
+                            onClick={() =>
+                                router.push("/imoveis")
+                            }
+                            className="group shrink-0 cursor-pointer bg-white px-7 py-3.5 text-sm font-semibold text-[#292825] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#F1F0ED] hover:text-[#171614]"
+                        >
+                            <span className="inline-flex items-center gap-2">
+                                Ver imóveis
+                                <span className="transition-transform duration-300 group-hover:translate-x-1">
+                                    →
+                                </span>
+                            </span>
+                        </button>
                 </div>
 
             </section>

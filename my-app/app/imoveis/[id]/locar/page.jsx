@@ -175,7 +175,7 @@ export default function LocarImovelPage() {
     const disponivel = imovel.disponivel === "S";
 
     return (
-        <main className="min-h-screen bg-[#F7F5F0]">
+        <main className="min-h-screen bg-white">
             <section className="mx-auto max-w-5xl px-6 py-10 lg:px-8 lg:py-14">
                 {/* Voltar */}
                 <button
@@ -193,7 +193,7 @@ export default function LocarImovelPage() {
 
                 <section className="overflow-hidden border border-[#DDDAD3] bg-white">
                     {/* Cabeçalho */}
-                    <div className="border-b border-[#E3E0D9] px-6 py-8 sm:px-8">
+                    <div className="border-b border-[#E3E0D9] bg-[#F7F5F0] px-6 py-8 sm:px-8">
                         <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#8A8883]">
                             Locação
                         </p>
@@ -210,7 +210,7 @@ export default function LocarImovelPage() {
 
                     <div className="p-6 sm:p-8">
                         {/* Imóvel selecionado */}
-                        <div className="border border-[#E3E0D9] bg-[#FCFBF8] p-6 sm:p-7">
+                        <div className="border border-[#E3E0D9] bg-white p-6 sm:p-7">
                             <div className="flex flex-col gap-7 sm:flex-row sm:items-start sm:justify-between">
                                 <div className="max-w-2xl">
                                     <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#8A8883]">
@@ -471,95 +471,123 @@ export default function LocarImovelPage() {
             </section>
 
             {/* Footer Vitta */}
-            <footer className="bg-[#292825] text-white">
-                <div className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
-                    <div className="grid gap-10 md:grid-cols-3">
-                        {/* Logo */}
-                        <div>
-                            <Link
+           <footer className="bg-[#F7F5F0]">
+
+                <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+
+                    <div className="grid grid-cols-1 gap-12 md:grid-cols-4">
+
+
+                        {/* MARCA */}
+
+                        <div className="md:col-span-2">
+
+                            <a
                                 href="/"
-                                className="inline-flex items-center gap-3"
+                                className="inline-block"
                             >
-                                <span className="flex h-10 w-10 items-center justify-center bg-white text-lg font-semibold text-[#292825]">
-                                    V
+
+                                <span className="block text-2xl font-semibold tracking-[0.16em] text-[#292825]">
+                                    VITTA
                                 </span>
 
-                                <span>
-                                    <span className="block text-lg font-semibold tracking-[0.08em]">
-                                        VITTA
-                                    </span>
-
-                                    <span className="block text-[9px] tracking-[0.28em] text-[#A19E98]">
-                                        IMOBILIÁRIA
-                                    </span>
+                                <span className="mt-1 block text-[9px] font-medium tracking-[0.3em] text-[#8A8883]">
+                                    IMOBILIÁRIA
                                 </span>
-                            </Link>
 
-                            <p className="mt-5 max-w-xs text-sm leading-6 text-[#A19E98]">
-                                Encontrar um imóvel é encontrar seu lugar.
+                            </a>
+
+                            <p className="mt-6 max-w-sm text-sm leading-7 text-[#77746E]">
+                                Encontre imóveis que combinam com você
+                                e descubra um lugar para chamar de lar.
                             </p>
+
                         </div>
 
-                        {/* Navegação */}
-                        <div>
-                            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#A19E98]">
-                                Navegação
-                            </p>
 
-                            <div className="mt-5 flex flex-col gap-3 text-sm">
-                                <Link
+                        {/* NAVEGAÇÃO */}
+
+                        <div>
+
+                            <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-[#292825]">
+                                Navegação
+                            </h3>
+
+                            <div className="mt-5 flex flex-col gap-3">
+
+                                <a
                                     href="/"
-                                    className="text-[#D8D5CE] transition-opacity hover:opacity-70"
+                                    className="text-sm text-[#77746E] transition hover:text-[#292825]"
                                 >
                                     Início
-                                </Link>
+                                </a>
 
-                                <Link
+                                <a
                                     href="/imoveis"
-                                    className="text-[#D8D5CE] transition-opacity hover:opacity-70"
+                                    className="text-sm text-[#77746E] transition hover:text-[#292825]"
                                 >
                                     Imóveis
-                                </Link>
+                                </a>
 
-                                <Link
+                                <a
                                     href="/sobrenos"
-                                    className="text-[#D8D5CE] transition-opacity hover:opacity-70"
+                                    className="text-sm text-[#77746E] transition hover:text-[#292825]"
                                 >
                                     Sobre nós
-                                </Link>
+                                </a>
 
-                                <Link
-                                    href="/atendimento"
-                                    className="text-[#D8D5CE] transition-opacity hover:opacity-70"
+                                <a
+                                    href="/login"
+                                    className="text-sm text-[#77746E] transition hover:text-[#292825]"
                                 >
-                                    Atendimento
-                                </Link>
+                                    Entrar
+                                </a>
+
                             </div>
+
                         </div>
 
-                        {/* Atendimento */}
+
+                        {/* ATENDIMENTO */}
+
                         <div>
-                            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#A19E98]">
-                                Atendimento
-                            </p>
 
-                            <div className="mt-5 space-y-2 text-sm text-[#D8D5CE]">
-                                <p>Segunda a sexta</p>
-                                <p>08:00 às 18:00</p>
-                                <p className="pt-2 text-[#A19E98]">
-                                    contato@vittaimobiliaria.com
-                                </p>
+                            <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-[#292825]">
+                                Atendimento
+                            </h3>
+
+                            <div className="mt-5 flex flex-col gap-3 text-sm text-[#77746E]">
+
+                                <span>
+                                    Segunda a sexta 08:00 às 18:00
+                                </span>
+
+                                <a
+                                    href="/atendimento"
+                                    className="transition hover:text-[#292825]"
+                                >
+                                    Fale conosco →
+                                </a>
+
                             </div>
+
                         </div>
+
                     </div>
 
-                    <div className="mt-12 border-t border-[#46443F] pt-6">
-                        <p className="text-xs text-[#8A8883]">
+
+                    {/* COPYRIGHT */}
+
+                     <div className="mt-12 border-t border-[#E7E5E0] pt-6">
+
+                        <p className="text-center text-xs text-[#A19E98]">
                             © {new Date().getFullYear()} Vitta Imobiliária.
                             Todos os direitos reservados.
                         </p>
+
                     </div>
                 </div>
+
             </footer>
         </main>
     );

@@ -1,13 +1,6 @@
 "use client";
 
-import {
-    MapPin,
-    Building2,
-    CircleDollarSign,
-    Search,
-    ChevronDown,
-    Settings
-} from "lucide-react";
+import {MapPin, Building2, CircleDollarSign, Search, ChevronDown, Settings} from "lucide-react";
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -26,25 +19,35 @@ export default function Home() {
     const [numeroImoveis, setNumeroImoveis] = useState(0);
     const [numeroAtendimento, setNumeroAtendimento] = useState(0);
     const [numeroTransparencia, setNumeroTransparencia] = useState(0);
-
-    /*
-     * USUÁRIO AUTENTICADO
-     */
+    
     const [usuario, setUsuario] = useState(null);
     const [carregandoUsuario, setCarregandoUsuario] = useState(true);
 
-    /*
-     * IMÓVEIS EM DESTAQUE
-     */
     const [imoveisDestaque, setImoveisDestaque] = useState([]);
     const [carregandoDestaques, setCarregandoDestaques] = useState(true);
 
+    const [textoTitulo, setTextoTitulo] = useState("");
+    const tituloCompleto = "Seu próximo imóvel começa aqui.";
 
-    /*
-     * ==========================================================
-     * CARREGAR USUÁRIO LOGADO
-     * ==========================================================
-     */
+
+
+
+    useEffect(() => {
+    let index = 0;
+
+    const intervalo = setInterval(() => {
+        if (index < tituloCompleto.length) {
+        setTextoTitulo(tituloCompleto.slice(0, index + 1));
+        index++;
+        } else {
+        clearInterval(intervalo);
+        }
+    }, 55);
+
+    return () => clearInterval(intervalo);
+
+}, []);
+
 
     useEffect(() => {
 
@@ -91,12 +94,6 @@ export default function Home() {
     }, []);
 
 
-    /*
-     * ==========================================================
-     * CARREGAR IMÓVEIS EM DESTAQUE
-     * ==========================================================
-     */
-
     useEffect(() => {
 
         async function carregarDestaques() {
@@ -137,11 +134,6 @@ export default function Home() {
 
     }, []);
 
-/*
- * ==========================================================
- * ANIMAÇÃO DA SEÇÃO INSTITUCIONAL
- * ==========================================================
- */
 
 useEffect(() => {
 
@@ -179,12 +171,6 @@ useEffect(() => {
 }, []);
 
 
-/*
- * ==========================================================
- * CONTADORES
- * ==========================================================
- */
-
 useEffect(() => {
 
     if (!animacaoEstatisticas) {
@@ -201,11 +187,7 @@ useEffect(() => {
             1
         );
 
-        /*
-         * Ease-out:
-         * começa mais rápido e desacelera
-         * suavemente no final.
-         */
+       
         const suavizado =
             1 - Math.pow(1 - progresso, 3);
 
@@ -245,13 +227,6 @@ useEffect(() => {
 }, [animacaoEstatisticas]);
 
 
-
-    /*
-     * ==========================================================
-     * BUSCA DE IMÓVEIS
-     * ==========================================================
-     */
-
     function buscarImoveis(e) {
 
         e.preventDefault();
@@ -280,12 +255,6 @@ useEffect(() => {
 
     }
 
-
-    /*
-     * ==========================================================
-     * LOGOUT
-     * ==========================================================
-     */
 
     async function logout() {
 
@@ -595,8 +564,9 @@ useEffect(() => {
                                 VITTA IMOBILIÁRIA
                             </p>
 
-                            <h1 className="max-w-xl text-5xl font-medium leading-[1.05] tracking-[-0.04em] text-white sm:text-6xl lg:text-7xl">
-                                Um lugar para viver o que realmente importa.
+                            <h1 className="mt-5 min-h-[130px] max-w-[650px] text-5xl font-medium leading-[1.02] tracking-[-0.045em] text-white xl:min-h-[135px] xl:text-[64px]">
+                                {textoTitulo}
+                                <span className="ml-1 inline-block h-[0.85em] w-px animate-pulse bg-white/70 align-middle" />
                             </h1>
 
                             <p className="mt-7 max-w-lg text-base leading-relaxed text-white/75 sm:text-lg">

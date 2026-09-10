@@ -23,7 +23,7 @@ export default function AppShell({ children }) {
      * A Home possui sua própria navbar sobre o hero.
      * Portanto, a navbar global não aparece em "/".
      */
-    const mostrarNavbar = pathname !== "/";
+    const mostrarNavbar = pathname !== "/" && pathname !== "/login" && pathname !=="/cadastro";
 
     /*
      * ============================================================

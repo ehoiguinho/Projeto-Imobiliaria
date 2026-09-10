@@ -1,54 +1,47 @@
 "use client";
 
-import toast from "react-hot-toast";
-import { useState } from "react";
+import { useEffect ,useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { Building2, User, Mail, Lock, ArrowLeft, UserPlus } from "lucide-react";
+import { ArrowLeft, ShieldCheck } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function CadastroPage() {
-
     const router = useRouter();
 
     const [nome, setNome] = useState("");
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
     const [confirmarSenha, setConfirmarSenha] = useState("");
-
     const [erro, setErro] = useState("");
-    const [sucesso, setSucesso] = useState("");
     const [carregando, setCarregando] = useState(false);
+    const [textoTitulo, setTextoTitulo] = useState("");
+    const [textoDescricao, setTextoDescricao] = useState("");
 
     async function cadastrar(e) {
         e.preventDefault();
 
         setErro("");
-        setSucesso("");
 
-        if (!nome.trim() || !email.trim() || !senha || !confirmarSenha) {
+        if (!nome || !email || !senha || !confirmarSenha) {
             setErro("Preencha todos os campos.");
-            toast.error("Preencha todos os campos.");
             return;
         }
 
         if (senha !== confirmarSenha) {
             setErro("As senhas não coincidem.");
-            toast.error("As senhas não coincidem.");
             return;
         }
 
         if (senha.length < 6) {
             setErro("A senha deve possuir pelo menos 6 caracteres.");
-            toast.error("A senha deve possuir pelo menos 6 caracteres.");
             return;
         }
 
-        const toastId = toast.loading("Criando sua conta...");
+        setCarregando(true);
+
+        const loadingToast = toast.loading("Criando sua conta...");
 
         try {
-
-            setCarregando(true);
-
             const resposta = await fetch(
                 "http://localhost:3000/usuario/cadastro",
                 {
@@ -57,8 +50,8 @@ export default function CadastroPage() {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        nome: nome.trim(),
-                        email: email.trim(),
+                        nome,
+                        email,
                         senha,
                     }),
                 }
@@ -68,352 +61,328 @@ export default function CadastroPage() {
 
             if (!resposta.ok) {
                 throw new Error(
-                    dados.msg || "Não foi possível criar sua conta."
+                    dados.mensagem || "Não foi possível criar sua conta."
                 );
             }
 
-            setSucesso("Conta criada com sucesso! Redirecionando...");
-
             toast.success("Conta criada com sucesso!", {
-                id: toastId,
+                id: loadingToast,
             });
 
             setTimeout(() => {
                 router.push("/login");
             }, 1500);
+        } catch (error) {
+            toast.error(
+                error.message || "Erro ao criar a conta.",
+                {
+                    id: loadingToast,
+                }
+            );
 
-        } catch (ex) {
-
-            setErro(ex.message);
-
-            toast.error(ex.message, {
-                id: toastId,
-            });
-
+            setErro(
+                error.message || "Não foi possível criar sua conta."
+            );
         } finally {
-
             setCarregando(false);
-
         }
+
     }
 
+    const tituloCompleto = "Seu próximo lugar começa aqui.";
+    const descricaoCompleta = "Cadastre-se para encontrar imóveis, acompanhar suas locações e ter acesso aos serviços da Vitta.";
+
+    useEffect(() => {
+    let tituloIndex = 0;
+    let descricaoIndex = 0;
+    let descricaoIniciada = false;
+
+    const intervalo = setInterval(() => {
+        if (tituloIndex < tituloCompleto.length) {
+            setTextoTitulo(
+                tituloCompleto.slice(0, tituloIndex + 1)
+            );
+
+            tituloIndex++;
+            return;
+        }
+
+        if (!descricaoIniciada) {
+            descricaoIniciada = true;
+        }
+
+        if (descricaoIndex < descricaoCompleta.length) {
+            setTextoDescricao(
+                descricaoCompleta.slice(0, descricaoIndex + 1)
+            );
+
+            descricaoIndex++;
+            return;
+        }
+
+        clearInterval(intervalo);
+    }, 45);
+
+    return () => clearInterval(intervalo);
+
+}, []);
+
     return (
-        <main className="min-h-screen bg-zinc-50">
+        <main className="relative min-h-screen overflow-hidden bg-[#171614]">
 
+            {/* Imagem de fundo */}
+            <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{
+                    backgroundImage: "url('/images/login.jpg')",
+                }}
+            />
 
-                <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+            {/* Overlay principal */}
+            <div className="absolute inset-0 bg-[#171614]/35" />
 
-                    <Link
-                        href="/login"
-                        className="flex items-center gap-2 text-sm font-medium text-zinc-600 transition hover:text-zinc-900"
+            {/* Gradiente para dar profundidade à composição */}
+            <div
+                className="absolute inset-0"
+                style={{
+                    background:
+                        "linear-gradient(90deg, rgba(23,22,20,0.62) 0%, rgba(23,22,20,0.25) 45%, rgba(23,22,20,0.38) 100%)",
+                }}
+            />
+
+            {/* Conteúdo */}
+            <div className="relative z-10 flex min-h-screen flex-col">
+
+                {/* Logo */}
+                <header className="px-8 py-7 sm:px-12 sm:py-9">
+                    <button
+                        type="button"
+                        onClick={() => router.push("/")}
+                        className="cursor-pointer text-left transition-opacity hover:opacity-70"
                     >
-                        <ArrowLeft size={17} />
-                        Voltar para login
-                    </Link>
+                        <div className="text-[25px] font-semibold tracking-[0.18em] text-white">
+                            VITTA
+                        </div>
 
-                </div>
-          
+                        <div className="mt-0.5 text-[8px] font-medium tracking-[0.42em] text-white/65">
+                            IMOBILIÁRIA
+                        </div>
+                    </button>
+                </header>
 
-            <section className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-6 py-12">
+                {/* Conteúdo principal */}
+                <div className="flex flex-1 items-center px-6 py-8 sm:px-10 lg:px-16 xl:px-24">
 
-                <div className="w-full max-w-md -translate-y-10">
+                    <div className="flex w-full items-center justify-between gap-12">
 
-                    <div className="mb-8 text-center">
+                        {/* Texto institucional */}
+                        <div className="hidden max-w-[550px] -translate-y-48 text-white lg:block">
 
-                        <h1 className="text-2xl font-bold text-zinc-900">
-                            Crie sua conta
-                        </h1>
+                            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/60">
+                                Comece sua jornada
+                            </p>
 
-                        <p className="mt-2 text-sm text-zinc-500">
-                            Cadastre-se para encontrar seu próximo imóvel.
-                        </p>
+                            <h1 className="mt-5 min-h-[130px] max-w-[500px] text-5xl font-medium leading-[1.02] tracking-[-0.045em] text-white xl:min-h-[135px] xl:text-[64px]">
+                                {textoTitulo}
+                                <span className="ml-1 inline-block h-[0.85em] w-px animate-pulse bg-white/70 align-middle" />
+                            </h1>
 
-                    </div>
+                            <p className="mt-7 min-h-[84px] max-w-[460px] text-sm leading-7 text-white/65">
+                                {textoDescricao}
+                            </p>
+                            
+                        </div>
 
-                    <div className="rounded-2xl border border-zinc-200 bg-white p-7 shadow-sm">
+                        {/* Formulário */}
+                        <section className="w-full max-w-[500px] -translate-y-10 border border-white/30 bg-white p-8 shadow-2xl backdrop-blur-xl sm:p-10 lg:mr-[3vw]">
 
-                        <form
-                            onSubmit={cadastrar}
-                            className="space-y-5"
-                        >
+                            {/* Identificação */}
+                            <div className="mb-8">
+                                <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#77746E]">
+                                    Nova conta
+                                </p>
 
-                            <div>
+                                <h2 className="mt-3 text-4xl font-medium leading-[1.05] tracking-[-0.04em] text-[#292825] sm:text-[48px]">
+                                    Crie sua conta.
+                                </h2>
+                                
+                            </div>
 
-                                <label className="mb-2 block text-sm font-medium text-zinc-700">
-                                    Nome
-                                </label>
+                            <form
+                                onSubmit={cadastrar}
+                                className="space-y-5"
+                            >
 
-                                <div className="relative">
-
-                                    <User
-                                        size={18}
-                                        className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"
-                                    />
+                                {/* Nome */}
+                                <div>
+                                    <label
+                                        htmlFor="nome"
+                                        className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.18em] text-[#77746E]"
+                                    >
+                                        Nome
+                                    </label>
 
                                     <input
+                                        id="nome"
                                         type="text"
                                         value={nome}
-                                        onChange={(e) => setNome(e.target.value)}
-                                        placeholder="Digite seu nome"
-                                        className="w-full rounded-lg border border-zinc-300 bg-white py-2.5 pl-10 pr-3 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                        onChange={(e) =>
+                                            setNome(e.target.value)
+                                        }
+                                        placeholder="Seu nome completo"
+                                        className="w-full border-b border-[#CFCBC3] bg-transparent px-0 py-3 text-sm text-[#292825] outline-none transition-colors placeholder:text-[#A19E98] focus:border-[#292825]"
                                     />
-
                                 </div>
 
-                            </div>
-
-                            <div>
-
-                                <label className="mb-2 block text-sm font-medium text-zinc-700">
-                                    E-mail
-                                </label>
-
-                                <div className="relative">
-
-                                    <Mail
-                                        size={18}
-                                        className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"
-                                    />
+                                {/* E-mail */}
+                                <div>
+                                    <label
+                                        htmlFor="email"
+                                        className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.18em] text-[#77746E]"
+                                    >
+                                        E-mail
+                                    </label>
 
                                     <input
+                                        id="email"
                                         type="email"
                                         value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        placeholder="Digite seu e-mail"
-                                        className="w-full rounded-lg border border-zinc-300 bg-white py-2.5 pl-10 pr-3 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                        onChange={(e) =>
+                                            setEmail(e.target.value)
+                                        }
+                                        placeholder="seu@email.com"
+                                        className="w-full border-b border-[#CFCBC3] bg-transparent px-0 py-3 text-sm text-[#292825] outline-none transition-colors placeholder:text-[#A19E98] focus:border-[#292825]"
                                     />
-
                                 </div>
 
-                            </div>
-
-                            <div>
-
-                                <label className="mb-2 block text-sm font-medium text-zinc-700">
-                                    Senha
-                                </label>
-
-                                <div className="relative">
-
-                                    <Lock
-                                        size={18}
-                                        className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"
-                                    />
+                                {/* Senha */}
+                                <div>
+                                    <label
+                                        htmlFor="senha"
+                                        className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.18em] text-[#77746E]"
+                                    >
+                                        Senha
+                                    </label>
 
                                     <input
+                                        id="senha"
                                         type="password"
                                         value={senha}
-                                        onChange={(e) => setSenha(e.target.value)}
-                                        placeholder="Digite sua senha"
-                                        className="w-full rounded-lg border border-zinc-300 bg-white py-2.5 pl-10 pr-3 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                        onChange={(e) =>
+                                            setSenha(e.target.value)
+                                        }
+                                        placeholder="Mínimo de 6 caracteres"
+                                        className="w-full border-b border-[#CFCBC3] bg-transparent px-0 py-3 text-sm text-[#292825] outline-none transition-colors placeholder:text-[#A19E98] focus:border-[#292825]"
                                     />
-
                                 </div>
 
-                            </div>
-
-                            <div>
-
-                                <label className="mb-2 block text-sm font-medium text-zinc-700">
-                                    Confirmar senha
-                                </label>
-
-                                <div className="relative">
-
-                                    <Lock
-                                        size={18}
-                                        className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"
-                                    />
+                                {/* Confirmar senha */}
+                                <div>
+                                    <label
+                                        htmlFor="confirmarSenha"
+                                        className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.18em] text-[#77746E]"
+                                    >
+                                        Confirmar senha
+                                    </label>
 
                                     <input
+                                        id="confirmarSenha"
                                         type="password"
                                         value={confirmarSenha}
-                                        onChange={(e) => setConfirmarSenha(e.target.value)}
+                                        onChange={(e) =>
+                                            setConfirmarSenha(e.target.value)
+                                        }
                                         placeholder="Digite a senha novamente"
-                                        className="w-full rounded-lg border border-zinc-300 bg-white py-2.5 pl-10 pr-3 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                        className="w-full border-b border-[#CFCBC3] bg-transparent px-0 py-3 text-sm text-[#292825] outline-none transition-colors placeholder:text-[#A19E98] focus:border-[#292825]"
+                                    />
+                                </div>
+
+                                {/* Erro */}
+                                {erro && (
+                                    <div className="border border-[#D5D1C9] bg-[#F1F0ED]/80 px-4 py-3 text-xs leading-5 text-[#55534E]">
+                                        {erro}
+                                    </div>
+                                )}
+
+                                {/* Segurança */}
+                                <div className="flex items-start gap-3 pt-1">
+                                    <ShieldCheck
+                                        size={18}
+                                        strokeWidth={1.5}
+                                        className="mt-0.5 shrink-0 text-[#77746E]"
                                     />
 
+                                    <p className="text-[11px] leading-5 text-[#8A8883]">
+                                        Seus dados são protegidos e utilizados
+                                        exclusivamente para os serviços da Vitta.
+                                    </p>
                                 </div>
 
-                            </div>
-
-                            {erro && (
-                                <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                                    {erro}
-                                </div>
-                            )}
-
-                            {sucesso && (
-                                <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
-                                    {sucesso}
-                                </div>
-                            )}
-
-                            <button
-                                type="submit"
-                                disabled={carregando}
-                                className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
-                            >
-                                {carregando ? (
-                                    "Criando conta..."
-                                ) : (
-                                    <>
-                                        <UserPlus size={18} />
-                                        Cadastrar
-                                    </>
-                                )}
-                            </button>
-
-                        </form>
-
-                        <div className="mt-6 border-t border-zinc-100 pt-6 text-center">
-
-                            <p className="text-sm text-zinc-500">
-                                Já possui uma conta?
-                            </p>
-
-                            <Link
-                                href="/login"
-                                className="mt-1 inline-block text-sm font-semibold text-blue-600 hover:text-blue-700"
-                            >
-                                Entrar na minha conta
-                            </Link>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-            <footer className="border-t border-zinc-200 bg-zinc-100">
-
-                <div className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
-
-                    <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
-
-                        <div>
-
-                            <div className="flex items-center gap-2">
-
-                                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-900 text-white">
-
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="1.8"
-                                        className="h-5 w-5"
-                                    >
-
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="m3 10 9-7 9 7"
-                                        />
-
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M5 9.5V21h14V9.5"
-                                        />
-
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M9 21v-6h6v6"
-                                        />
-
-                                    </svg>
-
-                                </div>
-
-                                <span className="font-semibold text-zinc-900">
-                                    Sua Imobiliária
-                                </span>
-
-                            </div>
-
-                            <p className="mt-4 max-w-sm text-sm leading-relaxed text-zinc-500">
-                                Encontre imóveis que combinam com você e encontre o lugar ideal para chamar de lar.
-                            </p>
-
-                        </div>
-
-                        <div>
-
-                            <h3 className="text-sm font-semibold text-zinc-900">
-                                Navegação
-                            </h3>
-
-                            <div className="mt-4 flex flex-col gap-3 text-sm">
-
-                                <a
-                                    href="/"
-                                    className="text-zinc-500 transition hover:text-zinc-900"
+                                {/* Botão */}
+                                <button
+                                    type="submit"
+                                    disabled={carregando}
+                                    className="group flex w-full cursor-pointer items-center justify-between bg-[#292825] px-6 py-4 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#171614] disabled:cursor-not-allowed disabled:opacity-60"
                                 >
-                                    Início
-                                </a>
+                                    <span>
+                                        {carregando
+                                            ? "Criando conta..."
+                                            : "Criar minha conta"}
+                                    </span>
 
-                                <a
-                                    href="/imoveis"
-                                    className="text-zinc-500 transition hover:text-zinc-900"
-                                >
-                                    Imóveis
-                                </a>
+                                    {!carregando && (
+                                        <span className="transition-transform duration-300 group-hover:translate-x-1">
+                                            →
+                                        </span>
+                                    )}
+                                </button>
+                            </form>
 
-                                <a
-                                    href="/login"
-                                    className="text-zinc-500 transition hover:text-zinc-900"
+                            {/* Login */}
+                            <div className="mt-7 flex items-center justify-between border-t border-[#DAD7D0] pt-6">
+                                <p className="text-xs text-[#8A8883]">
+                                    Já possui uma conta?
+                                </p>
+
+                                <button
+                                    type="button"
+                                    onClick={() => router.push("/login")}
+                                    className="cursor-pointer text-xs font-semibold text-[#292825] transition-opacity hover:opacity-60"
                                 >
                                     Entrar
-                                </a>
-
+                                </button>
                             </div>
 
-                        </div>
-
-                        <div>
-
-                            <h3 className="text-sm font-semibold text-zinc-900">
-                                Atendimento
-                            </h3>
-
-                            <div className="mt-4 flex flex-col gap-3 text-sm text-zinc-500">
-
-                                <span>
-                                    Segunda a sexta
-                                </span>
-
-                                <span>
-                                    08:00 às 18:00
-                                </span>
-
-                                <span>
-                                    contato@suaimobiliaria.com
-                                </span>
-
-                            </div>
-
-                        </div>
-
+                            {/* Voltar */}
+                            <button
+                                type="button"
+                                onClick={() => router.push("/")}
+                                className="mt-6 flex cursor-pointer items-center gap-2 text-xs text-[#8A8883] transition-colors hover:text-[#292825]"
+                            >
+                                <ArrowLeft
+                                    size={14}
+                                    strokeWidth={1.7}
+                                />
+                                Voltar para o início
+                            </button>
+                        </section>
                     </div>
-
-                    <div className="mt-12 border-t border-zinc-200 pt-6">
-
-                        <p className="text-center text-sm text-zinc-400">
-                            © {new Date().getFullYear()} Sua Imobiliária. Todos os direitos reservados.
-                        </p>
-
-                    </div>
-
                 </div>
 
-            </footer>
+                {/* Rodapé */}
+                <footer className="flex items-center justify-between border-t border-white/10 px-8 py-5 sm:px-12">
+                    <div>
+                        <p className="text-[9px] font-semibold tracking-[0.25em] text-white/75">
+                            VITTA IMOBILIÁRIA
+                        </p>
+                        
+                    </div>
 
+                    <p className="text-[9px] text-white/40">
+                        © 2026 Vitta Imobiliária
+                    </p>
+                </footer>
+            </div>
         </main>
     );
 }
-

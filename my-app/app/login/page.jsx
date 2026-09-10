@@ -3,12 +3,7 @@
 import toast from "react-hot-toast";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  Mail,
-  LockKeyhole,
-  Building2,
-  ArrowLeft,
-} from "lucide-react";
+import { Mail, LockKeyhole, ArrowLeft, ArrowRight, ShieldCheck } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -17,6 +12,7 @@ export default function LoginPage() {
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
   const [carregando, setCarregando] = useState(false);
+ 
 
   async function fazerLogin(event) {
     event.preventDefault();
@@ -62,128 +58,253 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-[calc(100vh-80px)] bg-slate-50 px-4 py-12">
-      <div className="mx-auto flex min-h-[calc(100vh-176px)] max-w-md items-center justify-center">
-        <section className="w-full rounded-2xl border border-slate-200 bg-white p-8 shadow-sm sm:p-10">
+    <main className="min-h-screen bg-white text-[#292825]">
+      <div className="grid min-h-screen lg:grid-cols-[1.05fr_0.95fr]">
 
-          <div className="mb-8 text-center">
-            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
-              <Building2 size={27} strokeWidth={1.8} />
-            </div>
+        {/* =========================================================
+            LADO INSTITUCIONAL
+        ========================================================= */}
+        <section className="relative hidden overflow-hidden bg-[#292825] lg:flex">
 
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-              Bem-vindo de volta
-            </h1>
+          {/* Imagem */}
+          <div
+            className="absolute inset-0 bg-cover bg-[center_80%]"
+            style={{
+              backgroundImage: "url('/images/login.jpg')",
+            }}
+          />
 
-          </div>
+          {/* Overlay */}
+          <div className="absolute inset-0 bg-[#171614]/75" />
 
-          <form onSubmit={fazerLogin} className="space-y-5">
+          {/* Conteúdo */}
+          <div className="relative z-10 flex w-full flex-col justify-between p-12 xl:p-16">
 
-            <div>
-              <label
-                htmlFor="email"
-                className="mb-2 block text-sm font-medium text-slate-700"
-              >
-                E-mail
-              </label>
-
-              <div className="relative">
-                <Mail
-                  size={18}
-                  strokeWidth={1.8}
-                  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-                />
-
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  placeholder="seuemail@exemplo.com"
-                  autoComplete="email"
-                  required
-                  className="w-full rounded-xl border border-slate-300 bg-white py-3 pl-11 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-50"
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className="mb-2 flex items-center justify-between">
-                <label
-                  htmlFor="senha"
-                  className="block text-sm font-medium text-slate-700"
-                >
-                  Senha
-                </label>
-
-                <button
-                  type="button"
-                  onClick={() => router.push("/esqueci-senha")}
-                  className="text-sm font-medium text-blue-600 transition hover:text-blue-700"
-                >
-                  Esqueci minha senha
-                </button>
-              </div>
-
-              <div className="relative">
-                <LockKeyhole
-                  size={18}
-                  strokeWidth={1.8}
-                  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-                />
-
-                <input
-                  id="senha"
-                  type="password"
-                  value={senha}
-                  onChange={(event) => setSenha(event.target.value)}
-                  placeholder="Digite sua senha"
-                  autoComplete="current-password"
-                  required
-                  className="w-full rounded-xl border border-slate-300 bg-white py-3 pl-11 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-50"
-                />
-              </div>
-            </div>
-
-            {erro && (
-              <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3">
-                <p className="text-sm leading-5 text-red-700">
-                  {erro}
-                </p>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={carregando}
-              className="w-full rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {carregando ? "Entrando..." : "Entrar"}
-            </button>
-          </form>
-
-          <div className="mt-7 border-t border-slate-100 pt-6 text-center">
-            <p className="text-sm text-slate-500">
-              Ainda não possui uma conta?
-            </p>
-
+            {/* Logo */}
             <button
               type="button"
-              onClick={() => router.push("/cadastro")}
-              className="mt-1 text-sm font-semibold text-blue-600 transition hover:text-blue-700"
+              onClick={() => router.push("/")}
+              className="w-fit cursor-pointer text-left transition-opacity hover:opacity-75"
             >
-              Criar conta
-            </button>
-          </div>
+              <div className="text-[27px] font-semibold tracking-[0.18em] text-white">
+                VITTA
+              </div>
 
-          <button
-            type="button"
-            onClick={() => router.push("/")}
-            className="mx-auto mt-6 flex items-center gap-2 text-sm text-slate-500 transition hover:text-slate-900"
-          >
-            <ArrowLeft size={16} />
-            Voltar para o início
-          </button>
+              <div className="mt-1 text-[9px] font-medium tracking-[0.42em] text-[#CFCBC3]">
+                IMOBILIÁRIA
+              </div>
+            </button>
+
+            {/* Mensagem */}
+            <div className="max-w-xl -translate-y-28">
+
+              <span className="mb-6 block text-[10px] font-semibold uppercase tracking-[0.3em] text-[#CFCBC3]">
+                Seu próximo endereço
+              </span>
+
+              <h1 className="t-5 min-h-[130px] max-w-[500px] text-5xl font-medium leading-[1.02] tracking-[-0.045em] text-white xl:min-h-[135px] xl:text-[64px]">
+                Encontre um lugar
+                <br />
+                para chamar de seu.
+              </h1>
+
+              <p className="mt-6 max-w-md text-sm leading-7 text-[#D5D1C9]">
+                A Vitta conecta você aos imóveis certos para o seu momento,
+                com segurança, transparência e uma experiência simples.
+              </p>
+
+              <div className="mt-8 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.16em] text-[#CFCBC3]">
+                <span className="h-px w-8 bg-[#77746E]" />
+                Vitta Imobiliária
+              </div>
+            </div>
+
+            {/* Rodapé */}
+            <div className="flex translate-y-5 items-center justify-between border-t border-white/10 pt-6">
+              <p className="text-[11px] text-[#A19E98]">
+                © 2026 Vitta
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* =========================================================
+            LADO DO LOGIN
+        ========================================================= */}
+        <section className="flex min-h-screen items-center justify-center px-6 py-12 sm:px-10 lg:px-16">
+
+          <div className="w-full max-w-x1 p-25 border border-[#292825]/15 bg-white p-5 backdrop-blur-sm">
+
+
+            {/* Logo mobile */}
+            <div className="mb-14 lg:hidden">
+              <button
+                type="button"
+                onClick={() => router.push("/")}
+                className="cursor-pointer text-left transition-opacity hover:opacity-70"
+              >
+                <div className="text-2xl font-semibold tracking-[0.18em] text-[#292825]">
+                  VITTA
+                </div>
+
+                <div className="mt-1 text-[8px] font-medium tracking-[0.4em] text-[#8A8883]">
+                  IMOBILIÁRIA
+                </div>
+              </button>
+            </div>
+
+            {/* Cabeçalho */}
+            <div className="mb-10">
+
+              <h2 className="text-4xl font-medium leading-tight tracking-[-0.03em] text-[#292825] sm:text-5xl">
+                Bem-vindo de volta.
+              </h2>
+
+            </div>
+
+            {/* Formulário */}
+            <form onSubmit={fazerLogin} className="space-y-6">
+
+              {/* E-mail */}
+              <div>
+                <label
+                  htmlFor="email"
+                  className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.12em] text-[#55534E]"
+                >
+                  E-mail
+                </label>
+
+                <div className="relative">
+                  <Mail
+                    size={17}
+                    strokeWidth={1.6}
+                    className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#8A8883]"
+                  />
+
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    placeholder="seuemail@exemplo.com"
+                    autoComplete="email"
+                    required
+                    className="w-full border border-[#DAD7D0] bg-white py-3.5 pl-11 pr-4 text-sm text-[#292825] outline-none transition-all duration-300 placeholder:text-[#A19E98] focus:border-[#77746E] focus:bg-[#FCFBF9]"
+                  />
+                </div>
+              </div>
+
+              {/* Senha */}
+              <div>
+                <div className="mb-2 flex items-center justify-between">
+
+                  <label
+                    htmlFor="senha"
+                    className="block text-[11px] font-semibold uppercase tracking-[0.12em] text-[#55534E]"
+                  >
+                    Senha
+                  </label>
+
+                  <button
+                    type="button"
+                    onClick={() => router.push("/esqueci-senha")}
+                    className="cursor-pointer text-xs font-medium text-[#77746E] transition-colors hover:text-[#292825]"
+                  >
+                    Esqueci minha senha
+                  </button>
+                </div>
+
+                <div className="relative">
+                  <LockKeyhole
+                    size={17}
+                    strokeWidth={1.6}
+                    className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#8A8883]"
+                  />
+
+                  <input
+                    id="senha"
+                    type="password"
+                    value={senha}
+                    onChange={(event) => setSenha(event.target.value)}
+                    placeholder="Digite sua senha"
+                    autoComplete="current-password"
+                    required
+                    className="w-full border border-[#DAD7D0] bg-white py-3.5 pl-11 pr-4 text-sm text-[#292825] outline-none transition-all duration-300 placeholder:text-[#A19E98] focus:border-[#77746E] focus:bg-[#FCFBF9]"
+                  />
+                </div>
+              </div>
+
+              {/* Erro */}
+              {erro && (
+                <div className="border border-[#D5D1C9] bg-[#EEEDE9] px-4 py-3.5">
+                  <p className="text-sm leading-5 text-[#55534E]">
+                    {erro}
+                  </p>
+                </div>
+              )}
+
+              {/* Botão */}
+              <button
+                type="submit"
+                disabled={carregando}
+                className="group flex w-full cursor-pointer items-center justify-center gap-3 bg-[#292825] px-5 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#171614] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
+              >
+                {carregando ? (
+                  "Entrando..."
+                ) : (
+                  <>
+                    Entrar
+                    <ArrowRight
+                      size={17}
+                      strokeWidth={1.7}
+                      className="transition-transform duration-300 group-hover:translate-x-1"
+                    />
+                  </>
+                )}
+              </button>
+            </form>
+
+            {/* Segurança */}
+            <div className="mt-8 flex items-start gap-3 border-t border-[#E3E0D9] pt-6">
+              <ShieldCheck
+                size={17}
+                strokeWidth={1.6}
+                className="mt-0.5 shrink-0 text-[#77746E]"
+              />
+
+              <p className="text-xs leading-5 text-[#8A8883]">
+                Seus dados são protegidos e utilizados exclusivamente para
+                gerenciamento da sua conta e das suas locações.
+              </p>
+            </div>
+
+            {/* Cadastro */}
+            <div className="mt-8 border-t border-[#E3E0D9] pt-7 text-center">
+
+              <p className="text-sm text-[#77746E]">
+                Ainda não possui uma conta?
+              </p>
+
+              <button
+                type="button"
+                onClick={() => router.push("/cadastro")}
+                className="mt-2 cursor-pointer text-sm font-semibold text-[#292825] transition-opacity hover:opacity-60"
+              >
+                Criar minha conta
+              </button>
+            </div>
+
+            {/* Voltar */}
+            <button
+              type="button"
+              onClick={() => router.push("/")}
+              className="mx-auto mt-8 flex cursor-pointer items-center gap-2 text-xs font-medium uppercase tracking-[0.12em] text-[#8A8883] transition-colors hover:text-[#292825]"
+            >
+              <ArrowLeft size={15} strokeWidth={1.6} />
+              Voltar para o início
+            </button>
+
+          </div>
         </section>
       </div>
     </main>

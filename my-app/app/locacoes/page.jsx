@@ -2,933 +2,1291 @@
 
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
+import {
+    ArrowRight,
+    Building2,
+    ChevronDown,
+    ClipboardList,
+    CreditCard,
+    FileText,
+    Loader2,
+    MapPin,
+} from "lucide-react";
 
 export default function LocacoesPage() {
-  const [contratos, setContratos] = useState([]);
-  const [contratoSelecionado, setContratoSelecionado] = useState(null);
-  const [alugueis, setAlugueis] = useState([]);
 
-  const [mostrarContratos, setMostrarContratos] = useState(false);
+    const [contratos, setContratos] = useState([]);
+    const [contratoSelecionado, setContratoSelecionado] = useState(null);
+    const [alugueis, setAlugueis] = useState([]);
 
-  const [carregandoContratos, setCarregandoContratos] = useState(true);
-  const [carregandoAlugueis, setCarregandoAlugueis] = useState(false);
-  const [pagandoAluguel, setPagandoAluguel] = useState(null);
-  const [erro, setErro] = useState("");
+    const [mostrarContratos, setMostrarContratos] = useState(false);
 
-  /*
-   * ============================================================
-   * CARREGAR CONTRATOS
-   * ============================================================
-   */
-  async function carregarContratos() {
-    try {
-      setCarregandoContratos(true);
-      setErro("");
+    const [carregandoContratos, setCarregandoContratos] = useState(true);
+    const [carregandoAlugueis, setCarregandoAlugueis] = useState(false);
+    const [pagandoAluguel, setPagandoAluguel] = useState(null);
+    const [erro, setErro] = useState("");
 
-      const resposta = await fetch(
-        "http://localhost:3000/locacao/minhas",
-        {
-          method: "GET",
-          credentials: "include"
-        }
-      );
 
-      const dados = await resposta.json();
+    /*
+     * ============================================================
+     * CARREGAR CONTRATOS
+     * ============================================================
+     */
 
-      if (!resposta.ok) {
-        throw new Error(
-          dados.msg || "Erro ao carregar contratos"
-        );
-      }
+    async function carregarContratos() {
 
-      const contratosUnicos = dados.filter(
-        (contrato, index, array) => {
-          return (
-            array.findIndex(
-              (item) => item.id === contrato.id
-            ) === index
-          );
-        }
-      );
+        try {
 
-      setContratos(contratosUnicos);
+            setCarregandoContratos(true);
+            setErro("");
 
-    } catch (error) {
-      setErro(error.message);
-      toast.error(error.message);
-
-    } finally {
-      setCarregandoContratos(false);
-    }
-  }
-
-  async function carregarAlugueis(contratoId, mostrarToast = false) {
-
-    let toastId = null;
-
-    if (mostrarToast) {
-        toastId = toast.loading(
-            "Atualizando seus pagamentos..."
-        );
-    }
-
-    try {
-        setCarregandoAlugueis(true);
-        setErro("");
-
-        setContratoSelecionado(contratoId);
-        setAlugueis([]);
-        setMostrarContratos(false);
-
-        localStorage.setItem(
-            "contratoSelecionado",
-            String(contratoId)
-        );
-
-        const resposta = await fetch(
-            `http://localhost:3000/aluguel/contrato/${contratoId}`,
-            {
-                method: "GET",
-                credentials: "include"
-            }
-        );
-
-        const dados = await resposta.json();
-
-        if (!resposta.ok) {
-            throw new Error(
-                dados.msg || "Erro ao carregar aluguéis"
+            const resposta = await fetch(
+                "http://localhost:3000/locacao/minhas",
+                {
+                    method: "GET",
+                    credentials: "include"
+                }
             );
+
+            const dados = await resposta.json();
+
+            if (!resposta.ok) {
+
+                throw new Error(
+                    dados.msg || "Erro ao carregar contratos"
+                );
+
+            }
+
+            const contratosUnicos = dados.filter(
+                (contrato, index, array) => {
+
+                    return (
+                        array.findIndex(
+                            (item) =>
+                                item.id === contrato.id
+                        ) === index
+                    );
+
+                }
+            );
+
+            setContratos(contratosUnicos);
+
+        } catch (error) {
+
+            setErro(error.message);
+
+            toast.error(error.message);
+
+        } finally {
+
+            setCarregandoContratos(false);
+
         }
 
-        setAlugueis(dados);
+    }
+
+
+    /*
+     * ============================================================
+     * CARREGAR ALUGUÉIS
+     * ============================================================
+     */
+
+    async function carregarAlugueis(
+        contratoId,
+        mostrarToast = false
+    ) {
+
+        let toastId = null;
 
         if (mostrarToast) {
+
+            toastId = toast.loading(
+                "Atualizando seus pagamentos..."
+            );
+
+        }
+
+        try {
+
+            setCarregandoAlugueis(true);
+            setErro("");
+
+            setContratoSelecionado(contratoId);
+            setAlugueis([]);
+            setMostrarContratos(false);
+
+            localStorage.setItem(
+                "contratoSelecionado",
+                String(contratoId)
+            );
+
+            const resposta = await fetch(
+                `http://localhost:3000/aluguel/contrato/${contratoId}`,
+                {
+                    method: "GET",
+                    credentials: "include"
+                }
+            );
+
+            const dados = await resposta.json();
+
+            if (!resposta.ok) {
+
+                throw new Error(
+                    dados.msg || "Erro ao carregar aluguéis"
+                );
+
+            }
+
+            setAlugueis(dados);
+
+            if (mostrarToast) {
+
+                toast.success(
+                    "Pagamentos atualizados!",
+                    {
+                        id: toastId
+                    }
+                );
+
+            }
+
+        } catch (error) {
+
+            setErro(error.message);
+            setAlugueis([]);
+
+            if (mostrarToast && toastId) {
+
+                toast.error(
+                    error.message,
+                    {
+                        id: toastId
+                    }
+                );
+
+            } else {
+
+                toast.error(error.message);
+
+            }
+
+        } finally {
+
+            setCarregandoAlugueis(false);
+
+        }
+
+    }
+
+
+    /*
+     * ============================================================
+     * PAGAMENTO
+     * ============================================================
+     */
+
+    async function pagarAluguel(aluguelId) {
+
+        const toastId = toast.loading(
+            "Preparando pagamento..."
+        );
+
+        try {
+
+            setPagandoAluguel(aluguelId);
+            setErro("");
+
+            localStorage.setItem(
+                "pagamentoEmAndamento",
+                "true"
+            );
+
+            const resposta = await fetch(
+                `http://localhost:3000/pagamento/${aluguelId}`,
+                {
+                    method: "POST",
+                    credentials: "include"
+                }
+            );
+
+            const dados = await resposta.json();
+
+            if (!resposta.ok) {
+
+                throw new Error(
+                    dados.msg || "Erro ao iniciar pagamento"
+                );
+
+            }
+
+            if (!dados.url) {
+
+                throw new Error(
+                    "A URL de pagamento não foi retornada."
+                );
+
+            }
+
             toast.success(
-                "Pagamentos atualizados!",
+                "Redirecionando para o pagamento...",
                 {
                     id: toastId
                 }
             );
-        }
 
-    } catch (error) {
-        setErro(error.message);
-        setAlugueis([]);
+            window.location.href = dados.url;
 
-        if (mostrarToast && toastId) {
+        } catch (error) {
+
+            localStorage.removeItem(
+                "pagamentoEmAndamento"
+            );
+
+            setErro(error.message);
+            setPagandoAluguel(null);
+
             toast.error(
                 error.message,
                 {
                     id: toastId
                 }
             );
-        } else {
-            toast.error(error.message);
+
         }
 
-    } finally {
-        setCarregandoAlugueis(false);
-    }
-}
-
-  async function pagarAluguel(aluguelId) {
-    const toastId = toast.loading(
-      "Preparando pagamento..."
-    );
-
-    try {
-      setPagandoAluguel(aluguelId);
-      setErro("");
-
-      /*
-       * Indica que o usuário iniciou um pagamento.
-       *
-       * Essa informação será utilizada quando ele
-       * retornar do checkout do AbacatePay.
-       */
-      localStorage.setItem(
-        "pagamentoEmAndamento",
-        "true"
-      );
-
-      const resposta = await fetch(
-        `http://localhost:3000/pagamento/${aluguelId}`,
-        {
-          method: "POST",
-          credentials: "include"
-        }
-      );
-
-      const dados = await resposta.json();
-
-      if (!resposta.ok) {
-        throw new Error(
-          dados.msg || "Erro ao iniciar pagamento"
-        );
-      }
-
-      if (!dados.url) {
-        throw new Error(
-          "A URL de pagamento não foi retornada."
-        );
-      }
-
-      toast.success(
-        "Redirecionando para o pagamento...",
-        {
-          id: toastId
-        }
-      );
-
-      window.location.href = dados.url;
-
-    } catch (error) {
-      /*
-       * Se não conseguiu criar o checkout,
-       * não devemos deixar a flag salva.
-       */
-      localStorage.removeItem(
-        "pagamentoEmAndamento"
-      );
-
-      setErro(error.message);
-      setPagandoAluguel(null);
-
-      toast.error(
-        error.message,
-        {
-          id: toastId
-        }
-      );
-    }
-  }
-
-  useEffect(() => {
-    carregarContratos();
-  }, []);
-
-  
-  useEffect(() => {
-    if (contratos.length === 0) {
-      return;
     }
 
-    const contratoSalvo =
-      localStorage.getItem("contratoSelecionado");
-
-    if (!contratoSalvo) {
-      return;
-    }
-
-    const contratoExiste = contratos.some(
-      (contrato) =>
-        String(contrato.id) === String(contratoSalvo)
-    );
-
-    if (!contratoExiste) {
-      return;
-    }
 
     /*
-     * Verifica se o usuário acabou de retornar
-     * de um pagamento.
+     * ============================================================
+     * EFEITOS
+     * ============================================================
      */
-    const pagamentoEmAndamento =
-      localStorage.getItem(
-        "pagamentoEmAndamento"
-      );
 
-    if (pagamentoEmAndamento === "true") {
-      
-      localStorage.removeItem(
-        "pagamentoEmAndamento"
-      );
+    useEffect(() => {
 
-      /*
-       * Recarrega os aluguéis diretamente do backend.
-       *
-       * O webhook é quem atualizou o banco.
-       */
-      carregarAlugueis(
-        Number(contratoSalvo),
-        true
-      );
+        carregarContratos();
 
-      return;
-    }
+    }, []);
+
+
+    useEffect(() => {
+
+        if (contratos.length === 0) {
+            return;
+        }
+
+        const contratoSalvo =
+            localStorage.getItem(
+                "contratoSelecionado"
+            );
+
+        if (!contratoSalvo) {
+            return;
+        }
+
+        const contratoExiste = contratos.some(
+            (contrato) =>
+                String(contrato.id) ===
+                String(contratoSalvo)
+        );
+
+        if (!contratoExiste) {
+            return;
+        }
+
+        const pagamentoEmAndamento =
+            localStorage.getItem(
+                "pagamentoEmAndamento"
+            );
+
+        if (pagamentoEmAndamento === "true") {
+
+            localStorage.removeItem(
+                "pagamentoEmAndamento"
+            );
+
+            carregarAlugueis(
+                Number(contratoSalvo),
+                true
+            );
+
+            return;
+
+        }
+
+        carregarAlugueis(
+            Number(contratoSalvo)
+        );
+
+    }, [contratos]);
+
 
     /*
-     * Carregamento normal da página.
+     * ============================================================
+     * DADOS
+     * ============================================================
      */
-    carregarAlugueis(
-      Number(contratoSalvo)
+
+    const contratoAtual = contratos.find(
+        (contrato) =>
+            String(contrato.id) ===
+            String(contratoSelecionado)
     );
 
-  }, [contratos]);
- 
-  const contratoAtual = contratos.find(
-    (contrato) =>
-      String(contrato.id) ===
-      String(contratoSelecionado)
-  );
 
-  const alugueisPagos = alugueis.filter(
-    (aluguel) =>
-      aluguel.status === "PAGO"
-  ).length;
+    const alugueisPagos = alugueis.filter(
+        (aluguel) =>
+            aluguel.status === "PAGO"
+    ).length;
 
-  const alugueisPendentes = alugueis.filter(
-    (aluguel) =>
-      aluguel.status === "PENDENTE" ||
-      aluguel.status === "ATRASADO"
-  ).length;
 
-  const totalPendente = alugueis
-    .filter(
-      (aluguel) =>
-        aluguel.status === "PENDENTE" ||
-        aluguel.status === "ATRASADO"
-    )
-    .reduce(
-      (total, aluguel) =>
-        total + Number(aluguel.valor || 0),
-      0
-    );
+    const alugueisPendentes = alugueis.filter(
+        (aluguel) =>
+            aluguel.status === "PENDENTE" ||
+            aluguel.status === "ATRASADO"
+    ).length;
 
-  function obterEstiloStatus(status) {
-    switch (status) {
-      case "PAGO":
-        return {
-          container:
-            "bg-emerald-50 text-emerald-700 border-emerald-200",
-          ponto:
-            "bg-emerald-500",
-          texto:
-            "Pago"
-        };
 
-      case "ATRASADO":
-        return {
-          container:
-            "bg-red-50 text-red-700 border-red-200",
-          ponto:
-            "bg-red-500",
-          texto:
-            "Atrasado"
-        };
+    const totalPendente = alugueis
+        .filter(
+            (aluguel) =>
+                aluguel.status === "PENDENTE" ||
+                aluguel.status === "ATRASADO"
+        )
+        .reduce(
+            (total, aluguel) =>
+                total + Number(aluguel.valor || 0),
+            0
+        );
 
-      case "CANCELADO":
-        return {
-          container:
-            "bg-slate-100 text-slate-500 border-slate-200",
-          ponto:
-            "bg-slate-400",
-          texto:
-            "Cancelado"
-        };
 
-      default:
-        return {
-          container:
-            "bg-amber-50 text-amber-700 border-amber-200",
-          ponto:
-            "bg-amber-500",
-          texto:
-            "Pendente"
-        };
+    /*
+     * ============================================================
+     * STATUS
+     * ============================================================
+     */
+
+    function obterEstiloStatus(status) {
+
+        switch (status) {
+
+            case "PAGO":
+
+                return {
+                    container:
+                        "border-[#CFCBC3] bg-[#F7F5F0] text-[#55534E]",
+                    ponto:
+                        "bg-[#55534E]",
+                    texto:
+                        "Pago"
+                };
+
+
+            case "ATRASADO":
+
+                return {
+                    container:
+                        "border-[#BDB9B1] bg-[#EEEDE9] text-[#292825]",
+                    ponto:
+                        "bg-[#292825]",
+                    texto:
+                        "Atrasado"
+                };
+
+
+            case "CANCELADO":
+
+                return {
+                    container:
+                        "border-[#E3E0D9] bg-[#F5F4F1] text-[#A19E98]",
+                    ponto:
+                        "bg-[#A19E98]",
+                    texto:
+                        "Cancelado"
+                };
+
+
+            default:
+
+                return {
+                    container:
+                        "border-[#DAD7D0] bg-white text-[#77746E]",
+                    ponto:
+                        "bg-[#8A8883]",
+                    texto:
+                        "Pendente"
+                };
+
+        }
+
     }
-  }
 
-  /*
-   * ============================================================
-   * RENDER
-   * ============================================================
-   */
-  return (
-    <main className="min-h-full bg-slate-50 px-4 py-5 sm:px-6 lg:px-10 lg:py-6">
 
-      {/* Cabeçalho */}
-      <header className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-          Minhas locações
-        </h1>
+    /*
+     * ============================================================
+     * RENDER
+     * ============================================================
+     */
 
-        <p className="mt-1 text-sm text-slate-500">
-          Consulte seus contratos e acompanhe seus pagamentos.
-        </p>
-      </header>
+    return (
 
-      {/* Erro */}
-      {erro && (
-        <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          <strong>Erro:</strong> {erro}
-        </div>
-      )}
+        <main className="min-h-full bg-[#F7F5F0] px-6 py-10 text-[#292825] lg:px-10">
 
-      {/* Loading inicial */}
-      {carregandoContratos ? (
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="h-5 w-32 animate-pulse rounded bg-slate-200" />
 
-          <div className="mt-3 h-12 animate-pulse rounded-lg bg-slate-100" />
-        </div>
+            <div className="mx-auto max-w-6xl">
 
-      ) : contratos.length === 0 ? (
 
-        <div className="rounded-xl border border-slate-200 bg-white px-6 py-12 text-center shadow-sm">
+                {/* =====================================================
+                    CABEÇALHO
+                ====================================================== */}
 
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100">
-            🏠
-          </div>
+                <header className="mb-10">
 
-          <h2 className="mt-4 font-bold text-slate-900">
-            Nenhuma locação encontrada
-          </h2>
+                    <div className="flex items-start gap-4">
 
-          <p className="mx-auto mt-1 max-w-md text-sm text-slate-500">
-            Você ainda não possui contratos de locação vinculados à sua conta.
-          </p>
+                        <div>
 
-        </div>
+                            <h1 className="mt-2 text-3xl font-medium tracking-[-0.03em] text-[#292825] sm:text-4xl">
+                                Minhas locações
+                            </h1>
 
-      ) : (
-
-        <section className="space-y-4">
-
-          <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
-
-            <button
-              type="button"
-              onClick={() =>
-                setMostrarContratos(!mostrarContratos)
-              }
-              className="flex w-full items-center justify-between gap-4 px-4 py-4 text-left transition hover:bg-slate-50 sm:px-5"
-            >
-
-              <div className="flex min-w-0 items-center gap-3">
-
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-lg">
-                  🏠
-                </div>
-
-                <div className="min-w-0">
-
-                  <div className="flex items-center gap-2">
-
-                    <h2 className="text-sm font-bold text-slate-900">
-                      Meus contratos
-                    </h2>
-
-                    <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
-                      {contratos.length}
-                    </span>
-
-                  </div>
-
-                  <p className="mt-0.5 truncate text-xs text-slate-500">
-
-                    {contratoAtual
-                      ? `Contrato #${contratoAtual.id} • ${
-                          contratoAtual.imovel ||
-                          "Imóvel vinculado"
-                        }`
-                      : "Selecione um contrato para consultar"}
-
-                  </p>
-
-                </div>
-
-              </div>
-
-              <span
-                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-sm text-slate-500 transition-transform ${
-                  mostrarContratos
-                    ? "rotate-180"
-                    : ""
-                }`}
-              >
-                ↓
-              </span>
-
-            </button>
-
-            {mostrarContratos && (
-              <div className="border-t border-slate-100 p-3">
-
-                <div className="space-y-1.5">
-
-                  {contratos.map((contrato) => {
-
-                    const ativo =
-                      String(contrato.id) ===
-                      String(contratoSelecionado);
-
-                    return (
-                      <button
-                        key={contrato.id}
-                        type="button"
-                        onClick={() =>
-                          carregarAlugueis(
-                            contrato.id
-                          )
-                        }
-                        className={`flex w-full items-center justify-between gap-3 rounded-lg border px-3 py-2.5 text-left transition ${
-                          ativo
-                            ? "border-blue-200 bg-blue-50"
-                            : "border-transparent hover:border-slate-200 hover:bg-slate-50"
-                        }`}
-                      >
-
-                        <div className="flex min-w-0 items-center gap-3">
-
-                          <div
-                            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm ${
-                              ativo
-                                ? "bg-blue-600 text-white"
-                                : "bg-slate-100 text-slate-500"
-                            }`}
-                          >
-                            🏠
-                          </div>
-
-                          <div className="min-w-0">
-
-                            <p
-                              className={`text-sm font-semibold ${
-                                ativo
-                                  ? "text-blue-900"
-                                  : "text-slate-900"
-                              }`}
-                            >
-                              Contrato #{contrato.id}
+                            <p className="mt-2 max-w-xl text-sm leading-6 text-[#77746E]">
+                                Consulte seus contratos e acompanhe
+                                seus pagamentos.
                             </p>
-
-                            <p className="truncate text-xs text-slate-500">
-                              {contrato.imovel ||
-                                "Imóvel vinculado"}
-                            </p>
-
-                          </div>
 
                         </div>
 
-                        <span className="text-slate-400">
-                          →
-                        </span>
-
-                      </button>
-                    );
-                  })}
-
-                </div>
-
-              </div>
-            )}
-
-          </div>
-
-          {!contratoSelecionado && (
-
-            <div className="rounded-xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center">
-
-              <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100">
-                📋
-              </div>
-
-              <h2 className="mt-3 text-sm font-bold text-slate-900">
-                Selecione um contrato
-              </h2>
-
-              <p className="mt-1 text-xs text-slate-500">
-                Abra "Meus contratos" para escolher uma locação.
-              </p>
-
-              <button
-                type="button"
-                onClick={() =>
-                  setMostrarContratos(true)
-                }
-                className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-blue-700"
-              >
-                Ver contratos
-              </button>
-
-            </div>
-          )}
-
-          {contratoAtual && (
-            <>
-
-              {/* Resumo compacto */}
-              {!carregandoAlugueis && (
-
-                <div className="grid grid-cols-3 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-
-                  <div className="px-3 py-3 sm:px-5">
-
-                    <p className="text-[11px] font-medium text-slate-500">
-                      Aluguéis
-                    </p>
-
-                    <p className="mt-1 text-xl font-bold text-slate-900">
-                      {alugueis.length}
-                    </p>
-
-                  </div>
-
-                  <div className="border-l border-slate-100 px-3 py-3 sm:px-5">
-
-                    <p className="text-[11px] font-medium text-slate-500">
-                      Pagos
-                    </p>
-
-                    <p className="mt-1 text-xl font-bold text-emerald-600">
-                      {alugueisPagos}
-                    </p>
-
-                  </div>
-
-                  <div className="border-l border-slate-100 px-3 py-3 sm:px-5">
-
-                    <p className="text-[11px] font-medium text-slate-500">
-                      Em aberto
-                    </p>
-
-                    <p className="mt-1 text-lg font-bold text-amber-600">
-                      {totalPendente.toLocaleString(
-                        "pt-BR",
-                        {
-                          style: "currency",
-                          currency: "BRL"
-                        }
-                      )}
-                    </p>
-
-                  </div>
-
-                </div>
-              )}
-
-              {/* Histórico */}
-              <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-
-                <div className="border-b border-slate-100 px-4 py-3 sm:px-5">
-
-                  <div className="flex items-center justify-between">
-
-                    <div>
-
-                      <h2 className="text-sm font-bold text-slate-900">
-                        Histórico de pagamentos
-                      </h2>
-
-                      <p className="mt-0.5 text-xs text-slate-500">
-                        Vencimentos e situação dos aluguéis.
-                      </p>
-
                     </div>
 
-                    {alugueis.length > 0 && (
+                </header>
 
-                      <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-600">
-                        {alugueis.length}
-                      </span>
 
-                    )}
+                {/* =====================================================
+                    ERRO
+                ====================================================== */}
 
-                  </div>
+                {erro && (
 
-                </div>
+                    <div className="mb-6 border border-[#D6D2CA] bg-white px-5 py-4">
 
-                <div>
-
-                  {/* Loading */}
-                  {carregandoAlugueis && (
-
-                    <div className="space-y-px">
-
-                      {[1, 2, 3, 4].map((item) => (
-
-                        <div
-                          key={item}
-                          className="h-14 animate-pulse border-b border-slate-100 bg-slate-50"
-                        />
-
-                      ))}
-
-                    </div>
-
-                  )}
-
-                  {/* Nenhum aluguel */}
-                  {!carregandoAlugueis &&
-                    contratoSelecionado &&
-                    alugueis.length === 0 && (
-
-                      <div className="px-5 py-10 text-center">
-
-                        <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100">
-                          📄
-                        </div>
-
-                        <h3 className="mt-3 text-sm font-semibold text-slate-900">
-                          Nenhum pagamento encontrado
-                        </h3>
-
-                        <p className="mt-1 text-xs text-slate-500">
-                          Não existem registros para este contrato.
+                        <p className="text-sm font-medium text-[#55534E]">
+                            <span className="font-semibold">
+                                Erro:
+                            </span>{" "}
+                            {erro}
                         </p>
 
-                      </div>
+                    </div>
 
-                    )}
+                )}
 
-                  {/* Desktop */}
-                  {!carregandoAlugueis &&
-                    alugueis.length > 0 && (
 
-                      <>
+                {/* =====================================================
+                    LOADING CONTRATOS
+                ====================================================== */}
 
-                        <div className="hidden md:block">
+                {carregandoContratos ? (
 
-                          {/* Cabeçalho da tabela */}
-                          <div className="grid grid-cols-[1.2fr_1fr_1fr_1.2fr] border-b border-slate-100 bg-slate-50 px-5 py-2.5 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                    <div className="border border-[#E3E0D9] bg-white p-6">
 
-                            <span>
-                              Referência
-                            </span>
+                        <div className="h-4 w-32 animate-pulse bg-[#E7E5E0]" />
 
-                            <span>
-                              Vencimento
-                            </span>
+                        <div className="mt-4 h-12 animate-pulse bg-[#F1F0ED]" />
 
-                            <span>
-                              Valor
-                            </span>
+                    </div>
 
-                            <span className="text-right">
-                              Situação
-                            </span>
 
-                          </div>
+                ) : contratos.length === 0 ? (
 
-                          {alugueis.map((aluguel) => {
 
-                            const estilo =
-                              obterEstiloStatus(
-                                aluguel.status
-                              );
+                    /* =================================================
+                       SEM CONTRATOS
+                    ================================================== */
 
-                            return (
+                    <div className="border border-[#E3E0D9] bg-white px-6 py-16 text-center">
 
-                              <div
-                                key={aluguel.id}
-                                className="grid grid-cols-[1.2fr_1fr_1fr_1.2fr] items-center border-b border-slate-100 px-5 py-3 last:border-b-0 hover:bg-slate-50"
-                              >
+                        <div className="mx-auto flex h-12 w-12 items-center justify-center bg-[#F1F0ED] text-[#77746E]">
 
-                                <div>
+                            <Building2
+                                size={21}
+                                strokeWidth={1.4}
+                            />
 
-                                  <p className="text-sm font-semibold text-slate-900">
-                                    {aluguel.mes}
-                                  </p>
+                        </div>
 
-                                  <p className="text-[10px] text-slate-400">
-                                    #{aluguel.id}
-                                  </p>
+                        <h2 className="mt-5 text-base font-semibold text-[#292825]">
+                            Nenhuma locação encontrada
+                        </h2>
+
+                        <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#8A8883]">
+                            Você ainda não possui contratos
+                            de locação vinculados à sua conta.
+                        </p>
+
+                    </div>
+
+
+                ) : (
+
+
+                    /* =================================================
+                       CONTEÚDO
+                    ================================================== */
+
+                    <section className="space-y-5">
+
+
+                        {/* =================================================
+                            SELETOR DE CONTRATOS
+                        ================================================== */}
+
+                        <div className="border border-[#E3E0D9] bg-white">
+
+
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setMostrarContratos(
+                                        !mostrarContratos
+                                    )
+                                }
+                                className="group flex w-full cursor-pointer items-center justify-between gap-4 px-5 py-5 text-left transition hover:bg-[#FCFBF8]"
+                            >
+
+                                <div className="flex min-w-0 items-center gap-4">
+
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-[#F1F0ED] text-[#55534E]">
+
+                                        <FileText
+                                            size={18}
+                                            strokeWidth={1.5}
+                                        />
+
+                                    </div>
+
+
+                                    <div className="min-w-0">
+
+                                        <div className="flex items-center gap-2">
+
+                                            <h2 className="text-sm font-semibold text-[#292825]">
+                                                Meus contratos
+                                            </h2>
+
+                                            <span className="bg-[#F1F0ED] px-2 py-0.5 text-[10px] font-semibold text-[#77746E]">
+                                                {contratos.length}
+                                            </span>
+
+                                        </div>
+
+
+                                        <p className="mt-1 truncate text-xs text-[#8A8883]">
+
+                                            {contratoAtual
+                                                ? `Contrato #${contratoAtual.id} • ${
+                                                      contratoAtual.imovel ||
+                                                      "Imóvel vinculado"
+                                                  }`
+                                                : "Selecione um contrato para consultar"}
+
+                                        </p>
+
+                                    </div>
 
                                 </div>
 
-                                <p className="text-sm text-slate-600">
-                                  {new Date(
-                                    aluguel.vencimento
-                                  ).toLocaleDateString(
-                                    "pt-BR"
-                                  )}
+
+                                <ChevronDown
+                                    size={18}
+                                    strokeWidth={1.6}
+                                    className={`shrink-0 text-[#8A8883] transition-transform duration-300 ${
+                                        mostrarContratos
+                                            ? "rotate-180"
+                                            : ""
+                                    }`}
+                                />
+
+                            </button>
+
+
+                            {mostrarContratos && (
+
+                                <div className="border-t border-[#E3E0D9] p-3">
+
+                                    <div className="space-y-1">
+
+                                        {contratos.map(
+                                            (contrato) => {
+
+                                                const ativo =
+                                                    String(
+                                                        contrato.id
+                                                    ) ===
+                                                    String(
+                                                        contratoSelecionado
+                                                    );
+
+                                                return (
+
+                                                    <button
+                                                        key={
+                                                            contrato.id
+                                                        }
+                                                        type="button"
+                                                        onClick={() =>
+                                                            carregarAlugueis(
+                                                                contrato.id
+                                                            )
+                                                        }
+                                                        className={`group flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-3 text-left transition ${
+                                                            ativo
+                                                                ? "bg-[#292825] text-white"
+                                                                : "text-[#55534E] hover:bg-[#F7F5F0]"
+                                                        }`}
+                                                    >
+
+                                                        <div className="flex min-w-0 items-center gap-3">
+
+                                                            <Building2
+                                                                size={16}
+                                                                strokeWidth={1.5}
+                                                                className={
+                                                                    ativo
+                                                                        ? "text-white"
+                                                                        : "text-[#8A8883]"
+                                                                }
+                                                            />
+
+                                                            <div className="min-w-0">
+
+                                                                <p
+                                                                    className={`text-sm font-semibold ${
+                                                                        ativo
+                                                                            ? "text-white"
+                                                                            : "text-[#292825]"
+                                                                    }`}
+                                                                >
+                                                                    Contrato | {contrato.id}
+                                                                </p>
+
+                                                               
+
+                                                            </div>
+
+                                                        </div>
+
+
+                                                        <ArrowRight
+                                                            size={15}
+                                                            strokeWidth={1.6}
+                                                            className={`shrink-0 transition-transform duration-200 ${
+                                                                ativo
+                                                                    ? "text-[#CFCBC3]"
+                                                                    : "text-[#A19E98] group-hover:translate-x-1"
+                                                            }`}
+                                                        />
+
+                                                    </button>
+
+                                                );
+
+                                            }
+                                        )}
+
+                                    </div>
+
+                                </div>
+
+                            )}
+
+                        </div>
+
+
+                        {/* =================================================
+                            SEM CONTRATO SELECIONADO
+                        ================================================== */}
+
+                        {!contratoSelecionado && (
+
+                            <div className="border border-dashed border-[#D5D1C9] bg-white px-6 py-14 text-center">
+
+                                <div className="mx-auto flex h-11 w-11 items-center justify-center bg-[#F1F0ED] text-[#77746E]">
+
+                                    <FileText
+                                        size={19}
+                                        strokeWidth={1.4}
+                                    />
+
+                                </div>
+
+                                <h2 className="mt-4 text-sm font-semibold text-[#292825]">
+                                    Selecione um contrato
+                                </h2>
+
+                                <p className="mt-1 text-xs text-[#8A8883]">
+                                    Abra "Meus contratos" para
+                                    escolher uma locação.
                                 </p>
 
-                                <p className="text-sm font-semibold text-slate-900">
-                                  {Number(
-                                    aluguel.valor
-                                  ).toLocaleString(
-                                    "pt-BR",
-                                    {
-                                      style:
-                                        "currency",
-                                      currency:
-                                        "BRL"
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setMostrarContratos(
+                                            true
+                                        )
                                     }
-                                  )}
-                                </p>
+                                    className="group mt-5 inline-flex cursor-pointer items-center gap-2 bg-[#292825] px-5 py-2.5 text-xs font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#171614]"
+                                >
 
-                                <div className="flex items-center justify-end gap-2">
+                                    Ver contratos
 
-                                  <span
-                                    className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-semibold ${estilo.container}`}
-                                  >
-
-                                    <span
-                                      className={`h-1.5 w-1.5 rounded-full ${estilo.ponto}`}
+                                    <ArrowRight
+                                        size={14}
+                                        strokeWidth={1.7}
+                                        className="transition-transform duration-300 group-hover:translate-x-1"
                                     />
 
-                                    {estilo.texto}
+                                </button>
 
-                                  </span>
+                            </div>
 
-                                  {(aluguel.status ===
-                                    "PENDENTE" ||
-                                    aluguel.status ===
-                                      "ATRASADO") && (
+                        )}
 
-                                    <button
-                                      type="button"
-                                      disabled={
-                                        pagandoAluguel ===
-                                        aluguel.id
-                                      }
-                                      onClick={() =>
-                                        pagarAluguel(
-                                          aluguel.id
-                                        )
-                                      }
-                                      className="rounded-md bg-blue-600 px-2.5 py-1.5 text-[10px] font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
-                                    >
-                                      {pagandoAluguel ===
-                                      aluguel.id
-                                        ? "..."
-                                        : "Pagar"}
-                                    </button>
 
-                                  )}
+                        {/* =================================================
+                            CONTRATO SELECIONADO
+                        ================================================== */}
+
+                        {contratoAtual && (
+
+                            <>
+
+                                {/* =================================================
+                                    RESUMO
+                                ================================================== */}
+
+                                {!carregandoAlugueis && (
+
+                                    <div className="grid grid-cols-3 border border-[#E3E0D9] bg-white">
+
+
+                                        <div className="px-5 py-5">
+
+                                            <p className="text-[10px] font-semibold uppercase tracking-wide text-[#A19E98]">
+                                                Aluguéis
+                                            </p>
+
+                                            <p className="mt-2 text-2xl font-medium tabular-nums text-[#292825]">
+                                                {alugueis.length}
+                                            </p>
+
+                                        </div>
+
+
+                                        <div className="border-l border-[#E3E0D9] px-5 py-5">
+
+                                            <p className="text-[10px] font-semibold uppercase tracking-wide text-[#A19E98]">
+                                                Pagos
+                                            </p>
+
+                                            <p className="mt-2 text-2xl font-medium tabular-nums text-[#55534E]">
+                                                {alugueisPagos}
+                                            </p>
+
+                                        </div>
+
+
+                                        <div className="border-l border-[#E3E0D9] px-5 py-5">
+
+                                            <p className="text-[10px] font-semibold uppercase tracking-wide text-[#A19E98]">
+                                                Em aberto
+                                            </p>
+
+                                            <p className="mt-2 text-xl font-medium tabular-nums text-[#292825]">
+
+                                                {totalPendente.toLocaleString(
+                                                    "pt-BR",
+                                                    {
+                                                        style:
+                                                            "currency",
+                                                        currency:
+                                                            "BRL"
+                                                    }
+                                                )}
+
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+                                )}
+
+
+                                {/* =================================================
+                                    HISTÓRICO
+                                ================================================== */}
+
+                                <div className="overflow-hidden border border-[#E3E0D9] bg-white">
+
+
+                                    <div className="border-b border-[#E3E0D9] px-5 py-5">
+
+                                        <div className="flex items-center justify-between gap-4">
+
+                                            <div>
+
+                                                <div className="flex items-center gap-3">
+
+                                                    <CreditCard
+                                                        size={17}
+                                                        strokeWidth={1.5}
+                                                        className="text-[#77746E]"
+                                                    />
+
+                                                    <h2 className="text-sm font-semibold text-[#292825]">
+                                                        Histórico de pagamentos
+                                                    </h2>
+
+                                                </div>
+
+                                                <p className="mt-1 pl-7 text-xs text-[#8A8883]">
+                                                    Vencimentos e situação
+                                                    dos aluguéis.
+                                                </p>
+
+                                            </div>
+
+
+                                            {alugueis.length > 0 && (
+
+                                                <span className="bg-[#F1F0ED] px-2.5 py-1 text-[10px] font-semibold text-[#77746E]">
+                                                    {alugueis.length}
+                                                </span>
+
+                                            )}
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div>
+
+
+                                        {/* =================================================
+                                            LOADING
+                                        ================================================== */}
+
+                                        {carregandoAlugueis && (
+
+                                            <div className="space-y-px">
+
+                                                {[1, 2, 3, 4].map(
+                                                    (item) => (
+
+                                                        <div
+                                                            key={
+                                                                item
+                                                            }
+                                                            className="h-16 animate-pulse border-b border-[#E3E0D9] bg-[#FCFBF8]"
+                                                        />
+
+                                                    )
+                                                )}
+
+                                            </div>
+
+                                        )}
+
+
+                                        {/* =================================================
+                                            NENHUM ALUGUEL
+                                        ================================================== */}
+
+                                        {!carregandoAlugueis &&
+                                            contratoSelecionado &&
+                                            alugueis.length === 0 && (
+
+                                                <div className="px-5 py-14 text-center">
+
+                                                    <div className="mx-auto flex h-10 w-10 items-center justify-center bg-[#F1F0ED] text-[#8A8883]">
+
+                                                        <FileText
+                                                            size={17}
+                                                            strokeWidth={1.4}
+                                                        />
+
+                                                    </div>
+
+                                                    <h3 className="mt-4 text-sm font-semibold text-[#292825]">
+                                                        Nenhum pagamento encontrado
+                                                    </h3>
+
+                                                    <p className="mt-1 text-xs text-[#8A8883]">
+                                                        Não existem registros
+                                                        para este contrato.
+                                                    </p>
+
+                                                </div>
+
+                                            )}
+
+
+                                        {/* =================================================
+                                            PAGAMENTOS
+                                        ================================================== */}
+
+                                        {!carregandoAlugueis &&
+                                            alugueis.length > 0 && (
+
+                                                <>
+
+
+                                                    {/* =================================================
+                                                        DESKTOP
+                                                    ================================================== */}
+
+                                                    <div className="hidden md:block">
+
+
+                                                        <div className="grid grid-cols-[1.2fr_1fr_1fr_1.3fr] border-b border-[#E3E0D9] bg-[#FCFBF8] px-5 py-3 text-[9px] font-semibold uppercase tracking-[0.15em] text-[#A19E98]">
+
+                                                            <span>
+                                                                Referência
+                                                            </span>
+
+                                                            <span>
+                                                                Vencimento
+                                                            </span>
+
+                                                            <span>
+                                                                Valor
+                                                            </span>
+
+                                                            <span className="text-right">
+                                                                Situação
+                                                            </span>
+
+                                                        </div>
+
+
+                                                        {alugueis.map(
+                                                            (aluguel) => {
+
+                                                                const estilo =
+                                                                    obterEstiloStatus(
+                                                                        aluguel.status
+                                                                    );
+
+                                                                return (
+
+                                                                    <div
+                                                                        key={
+                                                                            aluguel.id
+                                                                        }
+                                                                        className="grid grid-cols-[1.2fr_1fr_1fr_1.3fr] items-center border-b border-[#E3E0D9] px-5 py-4 last:border-b-0 transition hover:bg-[#FCFBF8]"
+                                                                    >
+
+
+                                                                        <div>
+
+                                                                            <p className="text-sm font-semibold text-[#292825]">
+                                                                                {
+                                                                                    aluguel.mes
+                                                                                }
+                                                                            </p>
+
+                                                                            <p className="mt-0.5 text-[10px] text-[#A19E98]">
+                                                                                #
+                                                                                {
+                                                                                    aluguel.id
+                                                                                }
+                                                                            </p>
+
+                                                                        </div>
+
+
+                                                                        <p className="text-sm text-[#77746E]">
+
+                                                                            {new Date(
+                                                                                aluguel.vencimento
+                                                                            ).toLocaleDateString(
+                                                                                "pt-BR"
+                                                                            )}
+
+                                                                        </p>
+
+
+                                                                        <p className="text-sm font-semibold text-[#292825]">
+
+                                                                            {Number(
+                                                                                aluguel.valor
+                                                                            ).toLocaleString(
+                                                                                "pt-BR",
+                                                                                {
+                                                                                    style:
+                                                                                        "currency",
+                                                                                    currency:
+                                                                                        "BRL"
+                                                                                }
+                                                                            )}
+
+                                                                        </p>
+
+
+                                                                        <div className="flex items-center justify-end gap-3">
+
+                                                                            <span
+                                                                                className={`inline-flex items-center gap-1.5 border px-2.5 py-1.5 text-[9px] font-semibold uppercase tracking-wide ${estilo.container}`}
+                                                                            >
+
+                                                                                <span
+                                                                                    className={`h-1.5 w-1.5 ${estilo.ponto}`}
+                                                                                />
+
+                                                                                {
+                                                                                    estilo.texto
+                                                                                }
+
+                                                                            </span>
+
+
+                                                                            {(aluguel.status ===
+                                                                                "PENDENTE" ||
+                                                                                aluguel.status ===
+                                                                                    "ATRASADO") && (
+
+                                                                                <button
+                                                                                    type="button"
+                                                                                    disabled={
+                                                                                        pagandoAluguel ===
+                                                                                        aluguel.id
+                                                                                    }
+                                                                                    onClick={() =>
+                                                                                        pagarAluguel(
+                                                                                            aluguel.id
+                                                                                        )
+                                                                                    }
+                                                                                    className="group inline-flex cursor-pointer items-center gap-1.5 bg-[#292825] px-3 py-1.5 text-[9px] font-semibold uppercase tracking-wide text-white transition-all duration-200 hover:bg-[#171614] disabled:cursor-not-allowed disabled:opacity-50"
+                                                                                >
+
+                                                                                    {pagandoAluguel ===
+                                                                                    aluguel.id ? (
+
+                                                                                        <Loader2
+                                                                                            size={
+                                                                                                12
+                                                                                            }
+                                                                                            className="animate-spin"
+                                                                                        />
+
+                                                                                    ) : (
+
+                                                                                        <CreditCard
+                                                                                            size={
+                                                                                                12
+                                                                                            }
+                                                                                            strokeWidth={
+                                                                                                1.6
+                                                                                            }
+                                                                                        />
+
+                                                                                    )}
+
+                                                                                    {pagandoAluguel ===
+                                                                                    aluguel.id
+                                                                                        ? "Processando"
+                                                                                        : "Pagar"}
+
+                                                                                </button>
+
+                                                                            )}
+
+                                                                        </div>
+
+                                                                    </div>
+
+                                                                );
+
+                                                            }
+                                                        )}
+
+                                                    </div>
+
+
+                                                    {/* =================================================
+                                                        MOBILE
+                                                    ================================================== */}
+
+                                                    <div className="divide-y divide-[#E3E0D9] md:hidden">
+
+                                                        {alugueis.map(
+                                                            (aluguel) => {
+
+                                                                const estilo =
+                                                                    obterEstiloStatus(
+                                                                        aluguel.status
+                                                                    );
+
+                                                                return (
+
+                                                                    <div
+                                                                        key={
+                                                                            aluguel.id
+                                                                        }
+                                                                        className="px-5 py-4"
+                                                                    >
+
+                                                                        <div className="flex items-start justify-between gap-3">
+
+                                                                            <div>
+
+                                                                                <p className="text-sm font-semibold text-[#292825]">
+                                                                                    {
+                                                                                        aluguel.mes
+                                                                                    }
+                                                                                </p>
+
+                                                                                <p className="mt-1 text-xs text-[#8A8883]">
+
+                                                                                    Vencimento:{" "}
+
+                                                                                    {new Date(
+                                                                                        aluguel.vencimento
+                                                                                    ).toLocaleDateString(
+                                                                                        "pt-BR"
+                                                                                    )}
+
+                                                                                </p>
+
+                                                                            </div>
+
+
+                                                                            <span
+                                                                                className={`inline-flex items-center gap-1.5 border px-2 py-1 text-[9px] font-semibold uppercase tracking-wide ${estilo.container}`}
+                                                                            >
+
+                                                                                <span
+                                                                                    className={`h-1.5 w-1.5 ${estilo.ponto}`}
+                                                                                />
+
+                                                                                {
+                                                                                    estilo.texto
+                                                                                }
+
+                                                                            </span>
+
+                                                                        </div>
+
+
+                                                                        <div className="mt-4 flex items-center justify-between gap-3">
+
+                                                                            <strong className="text-sm font-semibold text-[#292825]">
+
+                                                                                {Number(
+                                                                                    aluguel.valor
+                                                                                ).toLocaleString(
+                                                                                    "pt-BR",
+                                                                                    {
+                                                                                        style:
+                                                                                            "currency",
+                                                                                        currency:
+                                                                                            "BRL"
+                                                                                    }
+                                                                                )}
+
+                                                                            </strong>
+
+
+                                                                            {(aluguel.status ===
+                                                                                "PENDENTE" ||
+                                                                                aluguel.status ===
+                                                                                    "ATRASADO") && (
+
+                                                                                <button
+                                                                                    type="button"
+                                                                                    disabled={
+                                                                                        pagandoAluguel ===
+                                                                                        aluguel.id
+                                                                                    }
+                                                                                    onClick={() =>
+                                                                                        pagarAluguel(
+                                                                                            aluguel.id
+                                                                                        )
+                                                                                    }
+                                                                                    className="inline-flex cursor-pointer items-center gap-2 bg-[#292825] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#171614] disabled:cursor-not-allowed disabled:opacity-50"
+                                                                                >
+
+                                                                                    {pagandoAluguel ===
+                                                                                    aluguel.id ? (
+
+                                                                                        <Loader2
+                                                                                            size={
+                                                                                                13
+                                                                                            }
+                                                                                            className="animate-spin"
+                                                                                        />
+
+                                                                                    ) : (
+
+                                                                                        <CreditCard
+                                                                                            size={
+                                                                                                13
+                                                                                            }
+                                                                                            strokeWidth={
+                                                                                                1.6
+                                                                                            }
+                                                                                        />
+
+                                                                                    )}
+
+                                                                                    {pagandoAluguel ===
+                                                                                    aluguel.id
+                                                                                        ? "Processando..."
+                                                                                        : "Pagar"}
+
+                                                                                </button>
+
+                                                                            )}
+
+                                                                        </div>
+
+                                                                    </div>
+
+                                                                );
+
+                                                            }
+                                                        )}
+
+                                                    </div>
+
+                                                </>
+
+                                            )}
+
+                                    </div>
 
                                 </div>
 
-                              </div>
+                            </>
 
-                            );
-                          })}
+                        )}
 
-                        </div>
+                    </section>
 
-                        {/* Mobile */}
-                        <div className="divide-y divide-slate-100 md:hidden">
+                )}
 
-                          {alugueis.map((aluguel) => {
+            </div>
 
-                            const estilo =
-                              obterEstiloStatus(
-                                aluguel.status
-                              );
+        </main>
 
-                            return (
+    );
 
-                              <div
-                                key={aluguel.id}
-                                className="px-4 py-3"
-                              >
-
-                                <div className="flex items-center justify-between gap-3">
-
-                                  <div>
-
-                                    <p className="text-sm font-semibold text-slate-900">
-                                      {aluguel.mes}
-                                    </p>
-
-                                    <p className="mt-0.5 text-xs text-slate-500">
-                                      Vencimento:{" "}
-                                      {new Date(
-                                        aluguel.vencimento
-                                      ).toLocaleDateString(
-                                        "pt-BR"
-                                      )}
-                                    </p>
-
-                                  </div>
-
-                                  <span
-                                    className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-1 text-[10px] font-semibold ${estilo.container}`}
-                                  >
-
-                                    <span
-                                      className={`h-1.5 w-1.5 rounded-full ${estilo.ponto}`}
-                                    />
-
-                                    {estilo.texto}
-
-                                  </span>
-
-                                </div>
-
-                                <div className="mt-2 flex items-center justify-between">
-
-                                  <strong className="text-sm text-slate-900">
-
-                                    {Number(
-                                      aluguel.valor
-                                    ).toLocaleString(
-                                      "pt-BR",
-                                      {
-                                        style:
-                                          "currency",
-                                        currency:
-                                          "BRL"
-                                      }
-                                    )}
-
-                                  </strong>
-
-                                  {(aluguel.status ===
-                                    "PENDENTE" ||
-                                    aluguel.status ===
-                                      "ATRASADO") && (
-
-                                    <button
-                                      type="button"
-                                      disabled={
-                                        pagandoAluguel ===
-                                        aluguel.id
-                                      }
-                                      onClick={() =>
-                                        pagarAluguel(
-                                          aluguel.id
-                                        )
-                                      }
-                                      className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60"
-                                    >
-
-                                      {pagandoAluguel ===
-                                      aluguel.id
-                                        ? "Processando..."
-                                        : "Pagar"}
-
-                                    </button>
-
-                                  )}
-
-                                </div>
-
-                              </div>
-
-                            );
-                          })}
-
-                        </div>
-
-                      </>
-
-                    )}
-
-                </div>
-
-              </div>
-
-            </>
-          )}
-
-        </section>
-      )}
-
-    </main>
-  );
 }

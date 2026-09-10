@@ -90,7 +90,7 @@ export default function AlugueisAdmin() {
     });
 
     return (
-        <main className="p-8">
+        <main className="p-8 bg-white">
             <button
                 type="button"
                 onClick={() => router.push("/admin")}

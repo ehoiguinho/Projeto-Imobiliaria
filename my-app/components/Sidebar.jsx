@@ -3,122 +3,242 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import {
+    Building2,
+    ClipboardList,
+    LayoutDashboard,
+    Plus,
+} from "lucide-react";
 
 export default function Sidebar() {
-  const pathname = usePathname();
-  const router = useRouter();
 
-  const [usuario, setUsuario] = useState(null);
+    const pathname = usePathname();
+    const router = useRouter();
 
-  useEffect(() => {
-    async function buscarUsuarioLogado() {
-      try {
-        const resposta = await fetch(
-          "http://localhost:3000/login/usuario",
-          {
-            method: "GET",
-            credentials: "include"
-          }
-        );
+    const [usuario, setUsuario] = useState(null);
 
-        if (!resposta.ok) {
-          const erro = await resposta.json();
-          console.log("ERRO AO BUSCAR USUÁRIO:", resposta.status, erro);
-          return;
+
+    useEffect(() => {
+
+        async function buscarUsuarioLogado() {
+
+            try {
+
+                const resposta = await fetch(
+                    "http://localhost:3000/login/usuario",
+                    {
+                        method: "GET",
+                        credentials: "include"
+                    }
+                );
+
+                if (!resposta.ok) {
+
+                    const erro = await resposta.json();
+
+                    console.log(
+                        "ERRO AO BUSCAR USUÁRIO:",
+                        resposta.status,
+                        erro
+                    );
+
+                    return;
+                }
+
+                const dados = await resposta.json();
+
+                setUsuario(dados);
+
+            } catch (error) {
+
+                console.log(
+                    "Erro ao buscar usuário:",
+                    error
+                );
+
+            }
+
         }
 
-        const dados = await resposta.json();
-        setUsuario(dados);
+        buscarUsuarioLogado();
 
-      } catch (error) {
-        console.log("Erro ao buscar usuário:", error);
-      }
-    }
+    }, []);
 
-    buscarUsuarioLogado();
-  }, []);
 
-  // Perfil 1 = ADMIN
-  const ehAdministrador = usuario?.perfil === 1;
+    // Perfil 1 = ADMIN
+    const ehAdministrador = usuario?.perfil === 1;
 
-  const links = [
-    { href: "/imoveis", label: "Imóveis" },
-    { href: "/locacoes", label: "Minhas locações" }
-];
 
-if (ehAdministrador) {
-    links.push(
+    const links = [
         {
-            href: "/admin",
-            label: "Gerenciar"
+            href: "/imoveis",
+            label: "Imóveis",
+            icon: Building2
         },
         {
-            href: "/imoveis/cadastro",
-            label: "Cadastrar imóvel"
+            href: "/locacoes",
+            label: "Minhas locações",
+            icon: ClipboardList
         }
-    );
-}
+    ];
 
-  async function fazerLogout() {
-    try {
-      const resposta = await fetch(
-        "http://localhost:3000/login/logout",
-        {
-          method: "POST",
-          credentials: "include"
-        }
-      );
 
-      if (resposta.ok) {
-        setUsuario(null);
-        router.push("/login");
-        router.refresh();
-      } else {
-        console.log("Não foi possível realizar o logout.");
-      }
+    if (ehAdministrador) {
 
-    } catch (error) {
-      console.log("Erro ao realizar logout:", error);
+        links.push(
+            {
+                href: "/admin",
+                label: "Gerenciar",
+                icon: LayoutDashboard
+            },
+            {
+                href: "/imoveis/cadastro",
+                label: "Cadastrar imóvel",
+                icon: Plus
+            }
+        );
+
     }
-  }
 
-  return (
-<aside className="flex h-full w-64 shrink-0 flex-col border-r border-slate-200 bg-white px-5 py-6 shadow-sm">      {/* Cabeçalho */}
-      
-      <div className="mb-10">
-        <h1 className="text-xl font-bold text-slate-900">
-          Imobiliária
-        </h1>
-        </div>
-      {ehAdministrador && (
-        <div>
-        <p className="mt-1 text-sm text-slate-500">
-          Painel administrativo
-        </p>
-        <br></br>
-      </div>)}
 
-      {/* Navegação */}
-      <nav className="flex flex-1 flex-col gap-2">
-        {links.map((link) => {
-          const ativo = pathname === link.href;
+    async function fazerLogout() {
 
-          return (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`rounded-lg px-4 py-3 text-sm font-medium transition ${
-                ativo
-                  ? "bg-blue-600 text-white"
-                  : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-              }`}
-            >
-              {link.label}
-            </Link>
-          );
-        })}
-      </nav>
+        try {
 
-    </aside>
-  );
+            const resposta = await fetch(
+                "http://localhost:3000/login/logout",
+                {
+                    method: "POST",
+                    credentials: "include"
+                }
+            );
+
+            if (resposta.ok) {
+
+                setUsuario(null);
+
+                router.push("/login");
+                router.refresh();
+
+            } else {
+
+                console.log(
+                    "Não foi possível realizar o logout."
+                );
+
+            }
+
+        } catch (error) {
+
+            console.log(
+                "Erro ao realizar logout:",
+                error
+            );
+
+        }
+
+    }
+
+
+    return (
+
+        <aside className="flex h-full w-64 shrink-0 flex-col border-r border-[#E3E0D9] bg-[#F7F5F0] px-5 py-7">
+
+
+            {/* =====================================================
+                LOGO
+            ====================================================== */}
+
+            <div className="mb-10 px-2">
+
+                <Link
+                    href="/"
+                    className="inline-block"
+                >
+
+                    <div className="text-[22px] font-semibold tracking-[0.18em] text-[#292825]">
+                        VITTA
+                    </div>
+
+                    <div className="mt-0.5 text-[8px] font-medium tracking-[0.32em] text-[#8A8883]">
+                        IMOBILIÁRIA
+                    </div>
+
+                </Link>
+
+
+                <div className="mt-6 border-t border-[#E3E0D9] pt-4">
+
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#A19E98]">
+                        Área administrativa
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            {/* =====================================================
+                NAVEGAÇÃO
+            ====================================================== */}
+
+            <nav className="flex flex-1 flex-col gap-1">
+
+                {links.map((link) => {
+
+                    const ativo =
+                        pathname === link.href ||
+                        (
+                            link.href === "/admin" &&
+                            pathname.startsWith("/admin/")
+                        );
+
+                    const Icon = link.icon;
+
+                    return (
+
+                        <Link
+                            key={link.href}
+                            href={link.href}
+                            className={`group flex items-center gap-3 px-3 py-3 text-sm font-medium transition-all duration-200 ${
+                                ativo
+                                    ? "bg-[#292825] text-white"
+                                    : "text-[#77746E] hover:bg-[#ECEAE5] hover:text-[#292825]"
+                            }`}
+                        >
+
+                            <Icon
+                                size={17}
+                                strokeWidth={1.6}
+                                className={`shrink-0 transition-transform duration-200 ${
+                                    ativo
+                                        ? ""
+                                        : "group-hover:translate-x-0.5"
+                                }`}
+                            />
+
+                            <span>
+                                {link.label}
+                            </span>
+
+                            {ativo && (
+
+                                <span className="ml-auto text-xs text-[#A19E98]">
+                                    →
+                                </span>
+
+                            )}
+
+                        </Link>
+
+                    );
+
+                })}
+
+            </nav>
+
+        </aside>
+
+    );
+
 }

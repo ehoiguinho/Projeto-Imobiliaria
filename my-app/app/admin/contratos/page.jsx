@@ -102,7 +102,7 @@ const contratosCancelados = contratos.filter(
 ).length;
 
 return (
-    <main className="min-h-screen p-8">
+    <main className="min-h-screen p-8 bg-white">
         <div className="mx-auto max-w-7xl">
 
 

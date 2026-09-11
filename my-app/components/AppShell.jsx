@@ -315,9 +315,6 @@ export default function AppShell({ children }) {
                             </button>
 
 
-                            {/* =================================================
-                                AJUDA
-                            ================================================== */}
 
                             <div
                                 ref={menuAjudaRef}

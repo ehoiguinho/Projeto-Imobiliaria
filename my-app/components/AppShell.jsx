@@ -248,8 +248,8 @@ export default function AppShell({ children }) {
                         <Image
                             src="/images/logo.png"
                             alt="Vitta Imobiliária"
-                            width={180}
-                            height={55}
+                            width={240}
+                            height={80}
                             priority
                             className="h-10 w-auto object-contain"
                         />

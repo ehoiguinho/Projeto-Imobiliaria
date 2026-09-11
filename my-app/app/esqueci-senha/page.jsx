@@ -2,6 +2,7 @@
 
 import { API_URL } from "@/lib/api";
 import { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Mail, ArrowLeft, CheckCircle } from "lucide-react";
 
@@ -103,35 +104,6 @@ export default function EsqueciSenhaPage() {
             <div className="relative z-10 flex min-h-screen items-center justify-center px-6 py-12">
 
                 <section className="w-full max-w-xl">
-
-                    {/* =================================================
-                        LOGO
-                    ================================================== */}
-
-                    <div className="mb-8 text-center">
-
-                        <button
-                            type="button"
-                            onClick={() => router.push("/")}
-                            className="cursor-pointer text-left transition-opacity duration-300 hover:opacity-70"
-                        >
-
-                            <span className="block text-2xl font-semibold tracking-[0.18em] text-white">
-                                VITTA
-                            </span>
-
-                            <span className="mt-0.5 block text-[8px] font-semibold tracking-[0.35em] text-white/70">
-                                IMOBILIÁRIA
-                            </span>
-
-                        </button>
-
-                    </div>
-
-
-                    {/* =================================================
-                        CARD
-                    ================================================== */}
 
                     <div className="border border-white/20 bg-white/95 p-8 shadow-2xl backdrop-blur-xl sm:p-10">
 

@@ -2,6 +2,7 @@
 
 import { API_URL } from "@/lib/api";
 import { Suspense, useEffect, useState } from "react";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { LockKeyhole, ArrowLeft, CheckCircle } from "lucide-react";
 

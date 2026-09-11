@@ -2,6 +2,7 @@
 
 import { API_URL } from "@/lib/api";
 import { useEffect ,useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
 import toast from "react-hot-toast";
@@ -158,16 +159,48 @@ export default function CadastroPage() {
                     <button
                         type="button"
                         onClick={() => router.push("/")}
-                        className="cursor-pointer text-left transition-opacity hover:opacity-70"
-                    >
-                        <div className="text-[25px] font-semibold tracking-[0.18em] text-white">
+                            className="group ml-9 flex items-center gap-3"
+                            >
+                        <Image
+                            src="/images/logo.png"
+                        alt="Vitta Imobiliária"
+                        width={240}
+                        height={80}
+                        priority
+                        className="h-10 w-auto object-contain"
+                        />
+            
+                    <div className="leading-none text-left">
+            
+                        <span
+                            className="
+                            block
+                            text-lg
+                            font-semibold
+                            tracking-[0.18em]
+                            text-white
+                                "
+                            >
                             VITTA
-                        </div>
-
-                        <div className="mt-0.5 text-[8px] font-medium tracking-[0.42em] text-white/65">
+                            </span>
+            
+                        <span
+                            className="
+                            mt-1
+                            block
+                            text-[8px]
+                            font-medium
+                            tracking-[0.28em]
+                            text-[#B8B5AF]
+                            "
+                            >
                             IMOBILIÁRIA
-                        </div>
-                    </button>
+                        </span>
+                      
+                    </div>
+                      
+            </button>
+
                 </header>
 
                 {/* Conteúdo principal */}

@@ -2,6 +2,7 @@
 
 import { API_URL } from "@/lib/api";
 import toast from "react-hot-toast";
+import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Mail, LockKeyhole, ArrowLeft, ArrowRight, ShieldCheck } from "lucide-react";
@@ -83,18 +84,49 @@ export default function LoginPage() {
 
             {/* Logo */}
             <button
-              type="button"
-              onClick={() => router.push("/")}
-              className="w-fit cursor-pointer text-left transition-opacity hover:opacity-75"
-            >
-              <div className="text-[27px] font-semibold tracking-[0.18em] text-white">
-                VITTA
-              </div>
-
-              <div className="mt-1 text-[9px] font-medium tracking-[0.42em] text-[#CFCBC3]">
-                IMOBILIÁRIA
-              </div>
-            </button>
+               type="button"
+                onClick={() => router.push("/")}
+                 className="group flex items-center gap-3"
+                 >
+                <Image
+                 src="/images/logo.png"
+                alt="Vitta Imobiliária"
+                width={240}
+                height={80}
+                priority
+                className="h-10 w-auto object-contain"
+                />
+  
+          <div className="leading-none text-left">
+  
+              <span
+                  className="
+                  block
+                  text-lg
+                  font-semibold
+                  tracking-[0.18em]
+                  text-white
+                      "
+                  >
+                  VITTA
+                  </span>
+  
+              <span
+                  className="
+                  mt-1
+                  block
+                  text-[8px]
+                  font-medium
+                  tracking-[0.28em]
+                  text-[#B8B5AF]
+                  "
+                  >
+                  IMOBILIÁRIA
+              </span>
+  
+          </div>
+  
+      </button>
 
             {/* Mensagem */}
             <div className="max-w-xl -translate-y-28">

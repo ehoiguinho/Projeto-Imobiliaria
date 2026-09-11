@@ -426,49 +426,49 @@ export default function Home() {
                     ================================================== */}
 
                     <button
-                                            type="button"
-                                            onClick={() => router.push("/")}
-                                            className="group flex items-center gap-3"
-                                        >
-                                            <Image
-                                                src="/images/logo.png"
-                                                alt="Vitta Imobiliária"
-                                                width={240}
-                                                height={80}
-                                                priority
-                                                className="h-10 w-auto object-contain"
-                                            />
+                        type="button"
+                        onClick={() => router.push("/")}
+                        className="group flex items-center gap-3"
+                            >
+                            <Image
+                            src="/images/logo.png"
+                            alt="Vitta Imobiliária"
+                            width={240}
+                            height={80}
+                            priority
+                            className="h-10 w-auto object-contain"
+                            />
                     
-                                            <div className="leading-none text-left">
+                            <div className="leading-none text-left">
                     
-                                                <span
-                                                    className="
-                                                        block
-                                                        text-lg
-                                                        font-semibold
-                                                        tracking-[0.18em]
-                                                        text-white
-                                                    "
-                                                >
-                                                    VITTA
-                                                </span>
+                                <span
+                                    className="
+                                    block
+                                    text-lg
+                                    font-semibold
+                                    tracking-[0.18em]
+                                    text-white
+                                        "
+                                    >
+                                    VITTA
+                                    </span>
                     
-                                                <span
-                                                    className="
-                                                        mt-1
-                                                        block
-                                                        text-[8px]
-                                                        font-medium
-                                                        tracking-[0.28em]
-                                                        text-[#B8B5AF]
-                                                    "
-                                                >
-                                                    IMOBILIÁRIA
-                                                </span>
+                                <span
+                                    className="
+                                    mt-1
+                                    block
+                                    text-[8px]
+                                    font-medium
+                                    tracking-[0.28em]
+                                    text-[#B8B5AF]
+                                    "
+                                    >
+                                    IMOBILIÁRIA
+                                </span>
                     
-                                            </div>
+                            </div>
                     
-                                        </button>
+                         </button>
 
 
 

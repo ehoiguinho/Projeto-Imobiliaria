@@ -1,54 +1,85 @@
-# 🏠 Vitta Imobiliária — Sistema de Gestão Imobiliária
+# 🏠 Vitta Imobiliária
 
-Sistema completo de gerenciamento imobiliário desenvolvido com arquitetura **Full Stack**, contemplando gerenciamento de imóveis, usuários, contratos, aluguéis e pagamentos online.
+Sistema Full Stack de gestão imobiliária desenvolvido para administrar **imóveis, usuários, contratos, aluguéis e pagamentos PIX**, com autenticação, autorização por perfil, integração com gateway de pagamentos e processamento seguro de Webhooks.
 
-O projeto foi desenvolvido com foco em boas práticas de desenvolvimento, separação de responsabilidades, autenticação e autorização, integração com serviços externos, processamento de webhooks, persistência relacional e construção de uma interface moderna para usuários e administradores.
+O projeto foi desenvolvido com foco em **separação de responsabilidades, regras de negócio no backend, segurança, persistência relacional e integração com serviços externos**.
 
----
+## 🚀 Funcionalidades
 
-# Tecnologias Utilizadas
+### 👤 Usuários e autenticação
 
-## Backend
+* Cadastro e login
+* Autenticação com JWT
+* Cookies HTTP-only
+* Hash de senhas com bcrypt
+* Recuperação e redefinição de senha por e-mail
+* Logout
+* Autorização por perfil (`ADMIN` / `CLIENTE`)
+* Proteção de rotas
 
-* Node.js
-* Express.js
-* JavaScript ES6+
-* PostgreSQL
-* Docker
-* JWT
-* bcrypt
-* Multer
-* Swagger
-* CORS
-* Cookies HTTP
-* REST API
-* Repository Pattern
-* Service Layer
-* MVC
+### 🏠 Imóveis
 
-## Frontend
+* Cadastro, edição e exclusão
+* Listagem pública
+* Imóveis disponíveis e em destaque
+* Busca por cidade e bairro
+* Filtros por faixa de preço
+* Controle de disponibilidade
+* Upload de múltiplas imagens
 
-* Next.js
-* React
-* TypeScript / JavaScript
-* Tailwind CSS
-* Lucide React
-* React Hot Toast
-* Responsive Design
+### 📄 Contratos e aluguéis
 
-## Pagamentos
+* Criação de contratos de locação
+* Associação entre usuário e imóvel
+* Geração automática de **12 parcelas mensais**
+* Controle de vencimento e status
+* Cancelamento de contratos e parcelas pendentes
+* Consulta das locações do usuário
 
-* AbacatePay
-* Webhooks
+### 💳 Pagamentos PIX
+
+Integração com **AbacatePay** para pagamento individual das parcelas.
+
+```text
+Usuário seleciona a parcela
+        ↓
+Backend cria o pagamento
+        ↓
+AbacatePay gera o checkout PIX
+        ↓
+Usuário realiza o pagamento
+        ↓
+AbacatePay envia Webhook
+        ↓
+Backend valida a assinatura
+        ↓
+Pagamento é localizado
+        ↓
+Pagamento e parcela são atualizados
+```
+
+A confirmação do pagamento é realizada pelo **backend através do Webhook**, evitando que o frontend seja responsável por determinar se uma transação foi concluída.
+
+### 🔐 Webhooks e idempotência
+
+O processamento dos Webhooks possui:
+
 * Validação de assinatura
-* Idempotência de eventos
-* Controle de status de pagamentos
+* Preservação do payload original
+* Identificação dos eventos
+* Atualização de pagamentos
+* Atualização das parcelas
+* Registro dos eventos recebidos
+* Tratamento de eventos duplicados
+* Idempotência
+
+Eventos já processados são identificados através da tabela `tb_webhook_evento`, evitando alterações duplicadas no banco.
 
 ---
 
-# Arquitetura
+# 🏗️ Arquitetura
 
-O backend utiliza uma arquitetura baseada na separação de responsabilidades:
+O backend utiliza uma arquitetura em camadas baseada em **Routes, Controllers, Services e Repositories**:
 
 ```text
 Routes
@@ -62,260 +93,74 @@ Repositories
 PostgreSQL
 ```
 
-Também são utilizados middlewares para autenticação, autorização e processamento de requisições.
+### Responsabilidades
 
-### Principais responsabilidades
+| Camada       | Responsabilidade                       |
+| ------------ | -------------------------------------- |
+| Routes       | Definição dos endpoints                |
+| Controllers  | Comunicação HTTP                       |
+| Services     | Regras de negócio                      |
+| Repositories | Acesso ao banco                        |
+| Middlewares  | Autenticação, autorização e validações |
 
-**Routes**
-
-Responsáveis pelo direcionamento das requisições HTTP.
-
-**Controllers**
-
-Responsáveis por receber as requisições e retornar as respostas HTTP.
-
-**Services**
-
-Concentram as regras de negócio da aplicação.
-
-**Repositories**
-
-Responsáveis pelo acesso e manipulação dos dados no banco.
-
-**Middlewares**
-
-Responsáveis por autenticação, autorização e validações intermediárias.
-
-Essa separação reduz o acoplamento e facilita a manutenção e evolução da aplicação.
+Essa estrutura reduz o acoplamento e facilita a manutenção e evolução da aplicação.
 
 ---
 
-# Autenticação e Autorização
+# 🛠️ Tecnologias
 
-O sistema possui autenticação baseada em **JWT**.
+### Backend
 
-Fluxo de autenticação:
-
-```text
-Login
- ↓
-Validação do usuário
- ↓
-bcrypt
- ↓
-JWT
- ↓
-Cookie
- ↓
-Auth Middleware
- ↓
-Acesso à rota protegida
-```
-
-### Recursos implementados
-
-* Cadastro de usuários
-* Login
-* Hash de senha com bcrypt
-* Autenticação via JWT
+* Node.js
+* Express.js
+* JavaScript ES6+
+* PostgreSQL
+* JWT
+* bcrypt
+* Multer
+* Nodemailer
+* Swagger
+* CORS
 * Cookies HTTP
-* Middleware de autenticação
-* Autorização por perfil
-* Controle de acesso administrativo
-* Logout
-* Recuperação de senha
-* Redefinição de senha
+* REST API
 
-### Perfis
+### Frontend
 
-```text
-ADMIN
-CLIENTE
-```
+* Next.js
+* React
+* JavaScript / TypeScript
+* Tailwind CSS
+* Lucide React
+* React Hot Toast
+* Responsive Design
 
-Rotas administrativas são protegidas tanto no backend quanto na interface.
+### Infraestrutura e integração
 
----
-
-# Usuários
-
-* Cadastro de usuários
-* Login
-* Logout
-* Autenticação JWT
-* Hash de senhas
-* Recuperação de senha
-* Redefinição de senha
-* Controle de perfil
-* Proteção de rotas
-* Identificação do usuário autenticado
-
----
-
-# Imóveis
-
-O sistema possui gerenciamento completo de imóveis.
-
-### Funcionalidades
-
-* Cadastro de imóveis
-* Edição de imóveis
-* Exclusão de imóveis
-* Listagem pública
-* Listagem de imóveis disponíveis
-* Imóveis em destaque
-* Controle de disponibilidade
-* Busca por cidade
-* Busca por bairro
-* Filtro por valor mínimo
-* Filtro por valor máximo
-* Upload de imagens
-* Gerenciamento de imagens dos imóveis
-
-### Upload
-
-As imagens são processadas utilizando **Multer**, permitindo múltiplas imagens por imóvel.
-
-Formatos suportados:
-
-```text
-JPG
-JPEG
-PNG
-```
-
----
-
-# Contratos
-
-O sistema permite o gerenciamento dos contratos de locação.
-
-### Funcionalidades
-
-* Criação de contratos
-* Associação entre usuário e imóvel
-* Controle de status
-* Consulta de contratos
-* Visualização dos detalhes da locação
-* Cancelamento de contratos
-
-Ao realizar uma locação, o sistema cria automaticamente a estrutura necessária para o controle das parcelas.
-
----
-
-# Aluguéis
-
-Cada contrato gera automaticamente **12 parcelas mensais**.
-
-### Status disponíveis
-
-```text
-PENDENTE
-PAGO
-ATRASADO
-CANCELADO
-```
-
-### Funcionalidades
-
-* Geração automática das parcelas
-* Consulta de parcelas
-* Pagamento individual
-* Controle de status
-* Controle de pagamento
-* Cancelamento de parcelas pendentes
-* Atualização automática após confirmação do pagamento
-
----
-
-# Pagamentos PIX
-
-O sistema possui integração com a **AbacatePay** para processamento de pagamentos via PIX.
-
-Fluxo implementado:
-
-```text
-Usuário seleciona uma parcela
-        ↓
-Backend cria pagamento
-        ↓
-AbacatePay gera checkout PIX
-        ↓
-Checkout é apresentado ao usuário
-        ↓
-Usuário realiza o pagamento
-        ↓
-AbacatePay envia Webhook
-        ↓
-Backend valida assinatura
-        ↓
-Pagamento é localizado
-        ↓
-Pagamento é marcado como PAGO
-        ↓
-Aluguel é marcado como PAGO
-```
-
-O frontend **não é responsável por confirmar o pagamento**.
-
-A confirmação oficial ocorre através do webhook enviado pela plataforma de pagamento.
-
----
-
-# Webhooks
-
-Foi implementado um sistema de processamento de Webhooks para receber eventos da AbacatePay.
-
-### Recursos implementados
-
-* Recebimento de eventos externos
-* `express.raw()` para preservação do payload original
-* Validação de assinatura
-* Identificação do evento
-* Busca do pagamento relacionado
-* Atualização do pagamento
-* Atualização do aluguel
-* Registro dos eventos recebidos
-* Tratamento de eventos duplicados
+* Docker
+* AbacatePay
+* PIX
+* Webhooks
 * Idempotência
+* Git / GitHub
+* Deploy em Vercel e Render
 
-Eventos já processados não devem gerar uma segunda alteração no banco.
+### Padrões e conceitos
 
-Estrutura utilizada:
-
-```text
-AbacatePay
-     ↓
-Webhook
-     ↓
-Validação
-     ↓
-Identificação do evento
-     ↓
-Busca do pagamento
-     ↓
-Atualização do banco
-```
+* MVC
+* Repository Pattern
+* Service Layer
+* Transactions
+* Authentication
+* Authorization
+* RESTful APIs
 
 ---
 
-# Controle de eventos de Webhook
-
-O projeto possui uma tabela específica para armazenamento dos eventos recebidos:
-
-```text
-tb_webhook_evento
-```
-
-Essa estrutura permite registrar eventos processados e auxilia no controle de **idempotência**, evitando processamento duplicado.
-
----
-
-# Banco de Dados
+# 🗄️ Banco de Dados
 
 O projeto utiliza **PostgreSQL** como banco de dados relacional.
 
-Principais tabelas:
+Principais entidades:
 
 ```text
 tb_usuario
@@ -328,7 +173,7 @@ tb_pagamento
 tb_webhook_evento
 ```
 
-O modelo relacional permite manter os relacionamentos entre:
+Relacionamento principal:
 
 ```text
 Usuário
@@ -342,98 +187,117 @@ Aluguéis
 Pagamentos
 ```
 
----
-
-# Docker
-
-O PostgreSQL é executado através do **Docker**, tornando o ambiente de desenvolvimento mais previsível e reproduzível.
-
-Banco utilizado:
-
-```text
-PostgreSQL 17
-```
-
-Container:
-
-```text
-imobiliaria-postgres
-```
-
-Para iniciar o banco:
-
-```bash
-docker compose up -d
-```
-
-Para verificar os containers:
-
-```bash
-docker ps
-```
+Transações são utilizadas em operações críticas para manter a consistência dos dados.
 
 ---
 
 # 🏢 Área Administrativa
 
-O sistema possui uma área administrativa protegida.
+Área protegida destinada aos usuários com perfil `ADMIN`.
 
-### Funcionalidades
+Permite:
 
-* Dashboard administrativo
 * Gerenciamento de imóveis
-* Cadastro de imóveis
+* Upload de imagens
 * Gerenciamento de contratos
 * Gerenciamento de aluguéis
-* Visualização de informações de locação
-* Controle de usuários autenticados
+* Visualização das locações
+* Controle das informações administrativas
 
-O acesso é restrito a usuários com perfil:
+As permissões são validadas **no backend**, não dependendo apenas da interface.
+
+---
+
+# 📚 Documentação da API
+
+A API possui documentação através do **Swagger**, permitindo visualizar endpoints, parâmetros e respostas disponíveis.
+
+---
+
+# ▶️ Executando o projeto
+
+## 1. Clone o repositório
+
+```bash
+git clone https://github.com/ehoiguinho/Projeto-Imobiliaria.git
+
+cd Projeto-Imobiliaria
+```
+
+## 2. Instale as dependências do backend
+
+```bash
+npm install
+```
+
+## 3. Instale as dependências do frontend
+
+```bash
+cd my-app
+
+npm install
+```
+
+## 4. Inicie o PostgreSQL
+
+Na raiz do projeto:
+
+```bash
+docker compose up -d
+```
+
+## 5. Configure as variáveis de ambiente
+
+Configure as variáveis utilizadas pela aplicação, incluindo as credenciais do banco, JWT, e-mail e AbacatePay.
+
+> As credenciais e chaves utilizadas em produção não são versionadas no repositório.
+
+## 6. Execute o backend
+
+Na raiz:
+
+```bash
+npm start
+```
+
+Backend:
 
 ```text
-ADMIN
+http://localhost:3000
+```
+
+## 7. Execute o frontend
+
+Dentro de `my-app`:
+
+```bash
+npm run dev
+```
+
+Frontend:
+
+```text
+http://localhost:5001
 ```
 
 ---
 
+# 🌐 Deploy
 
-# Documentação da API
+A aplicação possui ambiente publicado, com:
 
-A API possui documentação utilizando **Swagger**, permitindo visualizar e testar os endpoints disponíveis.
+```text
+Frontend → Vercel
+Backend  → Render
+Database → PostgreSQL
+Pagamento → AbacatePay
+```
 
-A documentação facilita:
-
-* Testes dos endpoints
-* Visualização dos parâmetros
-* Consulta das respostas
-* Entendimento da estrutura da API
-* Desenvolvimento e manutenção
-
----
-
-# Segurança
-
-O projeto implementa diferentes camadas de proteção:
-
-* JWT
-* bcrypt
-* Cookies
-* Middleware de autenticação
-* Middleware de autorização
-* Controle de perfil
-* Validação de assinatura de Webhook
-* Idempotência de pagamentos
-* Proteção de rotas administrativas
-* Validação de estado do imóvel no backend
-
-As regras de negócio são aplicadas no backend, evitando depender exclusivamente das validações do frontend.
-
+O fluxo de pagamento e processamento de Webhook foi validado em **ambiente de produção**.
 
 ---
 
-# Estrutura do Projeto
-
-Estrutura simplificada:
+# 📁 Estrutura
 
 ```text
 Projeto-Imobiliaria/
@@ -450,8 +314,7 @@ Projeto-Imobiliaria/
 ├── my-app/
 │   ├── app/
 │   ├── components/
-│   ├── public/
-│   └── ...
+│   └── public/
 │
 ├── docker-compose.yml
 ├── package.json
@@ -460,124 +323,39 @@ Projeto-Imobiliaria/
 
 ---
 
-# ▶️ Como Executar
+# 🎯 Objetivo
 
-## 1. Clonar o repositório
+Projeto desenvolvido para fins **acadêmicos, de estudo e portfólio**, com foco na aplicação prática de conceitos de desenvolvimento Full Stack, arquitetura de software, APIs REST, autenticação, banco de dados, integração com serviços externos e processamento de pagamentos.
 
-```bash
-git clone https://github.com/ehoiguinho/Projeto-Imobiliaria
-```
+## 👨‍💻 Desenvolvedor
 
-```bash
-cd Projeto-Imobiliaria
-```
+**Igor Lins**
+
+Desenvolvedor Full Stack com foco em Back-End, interessado em construção de APIs, arquitetura de aplicações, bancos de dados e resolução de problemas.
 
 ---
 
-## 2. Instalar dependências do backend
-
-```bash
-npm install
-```
-
----
-
-## 3. Instalar dependências do frontend
-
-```bash
-cd my-app
-npm install
-```
-
----
-
-## 4. Iniciar o PostgreSQL
-
-Na raiz do projeto:
-
-```bash
-docker compose up -d
-```
-
----
-
-## 5. Configurar variáveis de ambiente
-
-Configure as variáveis necessárias para o ambiente de desenvolvimento, incluindo:
+### Principais conceitos demonstrados
 
 ```text
-JWT_SECRET
-ABACATEPAY_API_KEY
-```
-
-Além das configurações de banco de dados utilizadas pela aplicação.
-
----
-
-## 6. Executar o backend
-
-Na raiz do projeto:
-
-```bash
-npm start
-```
-
-Backend:
-
-```text
-http://localhost:3000
-```
-
----
-
-## 7. Executar o frontend
-
-Dentro de `my-app`:
-
-```bash
-npm run dev
-```
-
-Frontend:
-
-```text
-http://localhost:5001
-```
-
-
----
-
-# Tecnologias e Conceitos Demonstrados
-
-```text
+Full Stack Development
 Node.js
 Express.js
-PostgreSQL
-Docker
 Next.js
 React
-Tailwind CSS
-JavaScript
+PostgreSQL
+Docker
+REST API
 JWT
 bcrypt
-Multer
-Swagger
-REST API
 Repository Pattern
 Service Layer
-MVC
 Transactions
+Authentication
+Authorization
 Webhooks
 PIX
 AbacatePay
 Idempotency
-Authentication
-Authorization
-Responsive Design
+Deploy
 ```
-
----
-
-# Licença
-
-Projeto desenvolvido para fins acadêmicos, de estudo e portfólio.

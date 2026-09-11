@@ -426,33 +426,41 @@ export default function Home() {
                     ================================================== */}
 
                     <button
-                        type="button"
-                        onClick={() => router.push("/")}
-                        className="group flex items-center gap-3"
-                    >
-
-                        <div className="flex h-10 w-10 items-center justify-center border border-white/40 text-white transition group-hover:bg-white group-hover:text-[#292825]">
-
-                            <span className="text-lg font-semibold tracking-[-0.08em]">
-                                V
-                            </span>
-
-                        </div>
-
-
-                        <div className="leading-none text-left">
-
-                            <span className="block text-lg font-semibold tracking-[0.18em] text-white">
-                                VITTA
-                            </span>
-
-                            <span className="mt-1 block text-[9px] font-medium tracking-[0.28em] text-white/70">
-                                IMOBILIÁRIA
-                            </span>
-
-                        </div>
-
-                    </button>
+                                            type="button"
+                                            onClick={() => router.push("/")}
+                                            className="group flex items-center gap-3"
+                                        >
+                    
+                                            <div className="leading-none text-left">
+                    
+                                                <span
+                                                    className="
+                                                        block
+                                                        text-lg
+                                                        font-semibold
+                                                        tracking-[0.18em]
+                                                        text-white
+                                                    "
+                                                >
+                                                    VITTA
+                                                </span>
+                    
+                                                <span
+                                                    className="
+                                                        mt-1
+                                                        block
+                                                        text-[8px]
+                                                        font-medium
+                                                        tracking-[0.28em]
+                                                        text-[#B8B5AF]
+                                                    "
+                                                >
+                                                    IMOBILIÁRIA
+                                                </span>
+                    
+                                            </div>
+                    
+                                        </button>
 
 
 

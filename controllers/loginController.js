@@ -96,18 +96,23 @@ export default class AutenticaoController {
                         usuario.perfil.id
                     );
 
-                    res.clearCookie("token");
+                    res.clearCookie("token", {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === "production",
+                    sameSite: process.env.NODE_ENV === "production"
+                        ? "none"
+                        : "lax",
+                    path: "/"
+                });
 
-                    res.cookie("token", token, {
-                        httpOnly: true,
-                        secure: process.env.NODE_ENV === "production",
-                        sameSite:
-                            process.env.NODE_ENV === "production"
-                                ? "none"
-                                : "lax",
-                        path: "/"
-                    });
-
+                res.cookie("token", token, {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === "production",
+                    sameSite: process.env.NODE_ENV === "production"
+                        ? "none"
+                        : "lax",
+                    path: "/"
+                });
                     return res.status(200).json({
                         token: token
                     });

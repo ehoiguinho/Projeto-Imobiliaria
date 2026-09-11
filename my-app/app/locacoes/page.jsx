@@ -1,5 +1,7 @@
 "use client";
 
+import { API_URL } from "@/lib/api";
+
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 
@@ -117,7 +119,7 @@ export default function LocacoesPage() {
             );
 
             const resposta = await fetch(
-                `${API_URL}/aluguel/contrato/${contratoId}`,
+                `${API_URL}/locacao/alugueis/${contratoId}`,
                 {
                     method: "GET",
                     credentials: "include"

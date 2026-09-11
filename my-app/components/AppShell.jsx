@@ -217,7 +217,7 @@ export default function AppShell({ children }) {
 
             {mostrarNavbar && (
 
-                <nav className="h-20 w-full border-b border-[#E7E5E0] bg-[#292825]>
+                <nav className="h-20 w-full border-b border-[#45433F] bg-[#292825]">
 
                     <div
                         className="
@@ -239,70 +239,17 @@ export default function AppShell({ children }) {
                         <button
                             type="button"
                             onClick={() => router.push("/")}
-                            className="group flex items-center gap-3"
+                            className="group flex items-center"
                         >
 
-                            {/* Símbolo */}
-
-                            <div
-                                className="
-                                    flex
-                                    h-10
-                                    w-10
-                                    items-center
-                                    justify-center
-                                    border
-                                    border-[#292825]
-                                    bg-[#292825]
-                                    text-white
-                                    transition
-                                    group-hover:bg-[#45433F]
-                                "
-                            >
-
-                               <div className="flex items-center">
-                                    <Image
-                                        src="/images/logo.png"
-                                        alt="Vitta Imobiliária"
-                                        width={140}
-                                        height={40}
-                                        priority
-                                    />
-                                </div>
-
-                            </div>
-
-
-                            {/* Nome */}
-
-                            <div className="leading-none text-left">
-
-                                <span
-                                    className="
-                                        block
-                                        text-lg
-                                        font-semibold
-                                        tracking-[0.18em]
-                                        text-[#292825]
-                                    "
-                                >
-                                    VITTA
-                                </span>
-
-                                <span
-                                    className="
-                                        mt-1
-                                        block
-                                        text-[8px]
-                                        font-medium
-                                        tracking-[0.28em]
-                                        text-[#8A8883]
-                                    "
-                                >
-                                    IMOBILIÁRIA
-                                </span>
-
-                            </div>
+                            <Image
+                                src="/images/logo.png"
+                                alt="Vitta Imobiliária"
+                                width={150}
+                                height={45}
+                                priority
+                                className="h-10 w-auto object-contain"
+                            />
 
                         </button>
 
@@ -337,8 +284,8 @@ export default function AppShell({ children }) {
                                     transition
                                     ${
                                         pathname === "/"
-                                            ? "text-zinc-950"
-                                            : "text-zinc-500 hover:text-zinc-950"
+                                            ? "text-white"
+                                            : "text-[#B8B5AF] hover:text-white"
                                     }
                                 `}
                             >
@@ -359,8 +306,8 @@ export default function AppShell({ children }) {
                                     transition
                                     ${
                                         pathname.startsWith("/imoveis")
-                                            ? "text-zinc-950"
-                                            : "text-zinc-500 hover:text-zinc-950"
+                                            ? "text-white"
+                                            : "text-[#B8B5AF] hover:text-white"
                                     }
                                 `}
                             >
@@ -398,8 +345,8 @@ export default function AppShell({ children }) {
                                         ${
                                             pathname === "/sobrenos" ||
                                             pathname === "/atendimento"
-                                                ? "text-zinc-950"
-                                                : "text-zinc-500 hover:text-zinc-950"
+                                                ? "text-white"
+                                                : "text-[#B8B5AF] hover:text-white"
                                         }
                                     `}
                                 >
@@ -515,7 +462,7 @@ export default function AppShell({ children }) {
                                         w-28
                                         animate-pulse
                                         rounded-full
-                                        bg-[#F1F0ED]
+                                        bg-[#45433F]
                                     "
                                 />
 
@@ -553,9 +500,9 @@ export default function AppShell({ children }) {
                                                 whitespace-nowrap
                                                 text-sm
                                                 font-medium
-                                                text-[#55534E]
+                                                text-[#B8B5AF]
                                                 transition
-                                                hover:text-[#171614]
+                                                hover:text-white
                                             "
                                             aria-expanded={
                                                 menuUsuarioAberto
@@ -690,9 +637,9 @@ export default function AppShell({ children }) {
                                                 cursor-pointer
                                                 items-center
                                                 justify-center
-                                                text-[#77746E]
+                                                text-[#B8B5AF]
                                                 transition
-                                                hover:text-[#292825]
+                                                hover:text-white
                                             "
                                         >
 
@@ -720,14 +667,14 @@ export default function AppShell({ children }) {
                                     }
                                     className="
                                         rounded-full
-                                        bg-zinc-950
+                                        bg-white
                                         px-6
                                         py-2.5
                                         text-sm
                                         font-medium
-                                        text-white
+                                        text-[#292825]
                                         transition
-                                        hover:bg-zinc-800
+                                        hover:bg-[#EDEBE6]
                                     "
                                 >
                                     Entrar

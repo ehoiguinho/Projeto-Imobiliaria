@@ -1,7 +1,7 @@
 "use client";
 
 import { API_URL } from "@/lib/api";
-
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { ChevronDown, Settings } from "lucide-react";
@@ -217,7 +217,7 @@ export default function AppShell({ children }) {
 
             {mostrarNavbar && (
 
-                <nav className="h-20 w-full border-b border-[#E7E5E0] bg-white">
+                <nav className="h-20 w-full border-b border-[#E7E5E0] bg-[#292825]>
 
                     <div
                         className="
@@ -260,15 +260,15 @@ export default function AppShell({ children }) {
                                 "
                             >
 
-                                <span
-                                    className="
-                                        text-lg
-                                        font-medium
-                                        tracking-[-0.08em]
-                                    "
-                                >
-                                    V
-                                </span>
+                               <div className="flex items-center">
+                                    <Image
+                                        src="/images/logo.png"
+                                        alt="Vitta Imobiliária"
+                                        width={140}
+                                        height={40}
+                                        priority
+                                    />
+                                </div>
 
                             </div>
 

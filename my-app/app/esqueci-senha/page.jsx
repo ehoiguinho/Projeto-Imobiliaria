@@ -23,19 +23,22 @@ export default function EsqueciSenhaPage() {
         setCarregando(true);
 
         try {
+            
+           const url = `${API_URL}/login/esqueci-senha`;
 
-            const resposta = await fetch(`${API_URL}/login/esqueci-senha`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    credentials: "include",
-                    body: JSON.stringify({
-                        email
-                    })
-                }
-            );
+            console.log("API_URL:", API_URL);
+            console.log("URL:", url);
+
+            const resposta = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    email
+                })
+            });
 
             const dados = await resposta.json();
 

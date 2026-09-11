@@ -1,13 +1,8 @@
 "use client";
 
-import {
-    MapPin,
-    Building2,
-    CircleDollarSign,
-    Search,
-    ChevronDown,
-    Settings
-} from "lucide-react";
+import { MapPin, Building2, CircleDollarSign, Search, ChevronDown, Settings } from "lucide-react";
+
+import { API_URL } from "@/lib/api";
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -90,8 +85,7 @@ export default function Home() {
 
             try {
 
-                const resposta = await fetch(
-                    "http://localhost:3000/login/usuario",
+                const resposta = await fetch(`${API_URL}/login/usuario`,
                     {
                         method: "GET",
                         credentials: "include"
@@ -195,8 +189,7 @@ export default function Home() {
 
             try {
 
-                const response = await fetch(
-                    "http://localhost:3000/imovel/destaques"
+                const response = await fetch(`${API_URL}/imovel/destaques`
                 );
 
                 if (!response.ok) {
@@ -375,8 +368,7 @@ export default function Home() {
 
         try {
 
-            const resposta = await fetch(
-                "http://localhost:3000/login/logout",
+            const resposta = await fetch(`${API_URL}/login/logout`,
                 {
                     method: "POST",
                     credentials: "include"
@@ -1149,7 +1141,7 @@ export default function Home() {
 
                                     const imagem =
                                         imovel.imagem?.caminho
-                                            ? `http://localhost:3000${imovel.imagem.caminho}`
+                                            ? `${API_URL}${imovel.imagem.caminho}`
                                             : null;
 
                                     return (

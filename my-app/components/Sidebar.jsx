@@ -1,14 +1,10 @@
 "use client";
 
+import { API_URL } from "@/lib/api";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import {
-    Building2,
-    ClipboardList,
-    LayoutDashboard,
-    Plus,
-} from "lucide-react";
+import { Building2, ClipboardList, LayoutDashboard, Plus } from "lucide-react";
 
 export default function Sidebar() {
 
@@ -25,7 +21,7 @@ export default function Sidebar() {
             try {
 
                 const resposta = await fetch(
-                    "http://localhost:3000/login/usuario",
+                    `${API_URL}/login/usuario`,
                     {
                         method: "GET",
                         credentials: "include"
@@ -106,7 +102,7 @@ export default function Sidebar() {
         try {
 
             const resposta = await fetch(
-                "http://localhost:3000/login/logout",
+                `${API_URL}/login/logout`,
                 {
                     method: "POST",
                     credentials: "include"

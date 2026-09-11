@@ -34,7 +34,7 @@ export default function LocacoesPage() {
             setErro("");
 
             const resposta = await fetch(
-                "http://localhost:3000/locacao/minhas",
+                `${API_URL}/locacao/minhas`,
                 {
                     method: "GET",
                     credentials: "include"
@@ -117,7 +117,7 @@ export default function LocacoesPage() {
             );
 
             const resposta = await fetch(
-                `http://localhost:3000/aluguel/contrato/${contratoId}`,
+                `${API_URL}/aluguel/contrato/${contratoId}`,
                 {
                     method: "GET",
                     credentials: "include"
@@ -199,7 +199,7 @@ export default function LocacoesPage() {
             );
 
             const resposta = await fetch(
-                `http://localhost:3000/pagamento/${aluguelId}`,
+                `${API_URL}/pagamento/${aluguelId}`,
                 {
                     method: "POST",
                     credentials: "include"

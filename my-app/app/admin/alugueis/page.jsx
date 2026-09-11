@@ -1,5 +1,6 @@
 "use client";
 
+import { API_URL } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -15,7 +16,7 @@ export default function AlugueisAdmin() {
         async function carregarAlugueis() {
             try {
                 const resposta = await fetch(
-                    "http://localhost:3000/admin/alugueis",
+                    `${API_URL}/admin/alugueis`,
                     {
                         method: "GET",
                         credentials: "include"

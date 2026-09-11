@@ -1,5 +1,7 @@
 "use client";
 
+import { API_URL } from "@/lib/api";
+
 import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { ChevronDown, Settings } from "lucide-react";
@@ -54,7 +56,7 @@ export default function AppShell({ children }) {
             try {
 
                 const resposta = await fetch(
-                    "http://localhost:3000/login/usuario",
+                    `${API_URL}/login/usuario`,
                     {
                         method: "GET",
                         credentials: "include"
@@ -171,7 +173,7 @@ export default function AppShell({ children }) {
         try {
 
             const resposta = await fetch(
-                "http://localhost:3000/login/logout",
+                `${API_URL}/login/logout`,
                 {
                     method: "POST",
                     credentials: "include"

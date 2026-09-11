@@ -1,5 +1,6 @@
 "use client";
 
+import { API_URL } from "@/lib/api";
 import { useEffect ,useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
@@ -42,8 +43,7 @@ export default function CadastroPage() {
         const loadingToast = toast.loading("Criando sua conta...");
 
         try {
-            const resposta = await fetch(
-                "http://localhost:3000/usuario/cadastro",
+            const resposta = await fetch(`${API_URL}/usuario/cadastro`,
                 {
                     method: "POST",
                     headers: {
@@ -375,7 +375,7 @@ export default function CadastroPage() {
                     <p className="text-[9px] text-white/40">
                         © 2026 Vitta Imobiliária
                     </p>
-                    
+
                 </footer>
             </div>
         </main>

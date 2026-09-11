@@ -1,14 +1,8 @@
 "use client";
 
-import {
-  Search,
-  MapPin,
-  Building2,
-  CircleDollarSign,
-  SlidersHorizontal,
-  X
-} from "lucide-react";
+import { Search, MapPin, Building2, CircleDollarSign, SlidersHorizontal, X} from "lucide-react";
 
+import { API_URL } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import ImovelCard from "../../components/ImovelCard";
@@ -47,7 +41,7 @@ export default function ImoveisPage() {
       setErro("");
 
       const resposta = await fetch(
-        "http://localhost:3000/imovel/disponivel",
+        `${API_URL}/imovel/disponivel`,
         {
           method: "GET",
           credentials: "include"

@@ -1,5 +1,6 @@
 "use client";
 
+import { API_URL } from "@/lib/api";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -55,8 +56,7 @@ export default function RedefinirSenhaPage() {
 
         try {
 
-            const resposta = await fetch(
-                "http://localhost:3000/login/redefinir-senha",
+            const resposta = await fetch(`${API_URL}/login/redefinir-senha`,
                 {
                     method: "POST",
                     headers: {

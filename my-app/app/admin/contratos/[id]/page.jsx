@@ -1,5 +1,6 @@
 "use client";
 
+import { API_URL } from "@/lib/api";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -25,7 +26,7 @@ export default function ContratoDetalhesPage() {
                 setCarregando(true);
 
                 const resposta = await fetch(
-                    `http://localhost:3000/admin/contratos/${params.id}`,
+                    `${API_URL}/admin/contratos/${params.id}`,
                     {
                         method: "GET",
                         credentials: "include"
@@ -186,7 +187,7 @@ export default function ContratoDetalhesPage() {
 
 
             const resposta = await fetch(
-                `http://localhost:3000/admin/contratos/${contrato.ctr_id}/cancelar`,
+                `${API_URL}/admin/contratos/${contrato.ctr_id}/cancelar`,
                 {
                     method: "PUT",
                     credentials: "include"

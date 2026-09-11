@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { Building2, MapPin } from "lucide-react";
+import { API_URL } from "@/lib/api";
 
 export default function ImovelCard({ imovel }) {
   console.log("IMOVEL RECEBIDO PELO CARD:", imovel);
   console.log("IMAGEM RECEBIDA:", imovel.imagem);
 
   const imagem = imovel.imagem?.caminho
-    ? `http://localhost:3000${imovel.imagem.caminho}`
+    ? `${API_URL}${imovel.imagem.caminho}`
     : null;
 
   return (

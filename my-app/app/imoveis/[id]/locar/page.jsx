@@ -1,18 +1,9 @@
 "use client";
-
+import { API_URL } from "@/lib/api";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import {
-    ArrowLeft,
-    ArrowRight,
-    Check,
-    FileText,
-    Loader2,
-    MapPin,
-    ShieldCheck,
-    TriangleAlert,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, FileText, Loader2, MapPin, ShieldCheck, TriangleAlert } from "lucide-react";
 
 export default function LocarImovelPage() {
     const params = useParams();
@@ -30,7 +21,7 @@ export default function LocarImovelPage() {
             setErro("");
 
             const resposta = await fetch(
-                `http://localhost:3000/imovel/${params.id}`,
+                `${API_URL}/imovel/${params.id}`,
                 {
                     method: "GET",
                     credentials: "include",
@@ -58,7 +49,7 @@ export default function LocarImovelPage() {
             setSucesso("");
 
             const resposta = await fetch(
-                "http://localhost:3000/locacao",
+                `${API_URL}/locacao`,
                 {
                     method: "POST",
                     headers: {

@@ -1,5 +1,6 @@
 "use client";
 
+import { API_URL } from "@/lib/api";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Mail, ArrowLeft, CheckCircle } from "lucide-react";
@@ -23,8 +24,7 @@ export default function EsqueciSenhaPage() {
 
         try {
 
-            const resposta = await fetch(
-                "http://localhost:3000/login/esqueci-senha",
+            const resposta = await fetch(`${API_URL}/login/esqueci-senha`,
                 {
                     method: "POST",
                     headers: {

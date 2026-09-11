@@ -1,5 +1,6 @@
 "use client";
 
+import { API_URL } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Building2, Check, ChevronDown, MapPin, Save } from "lucide-react";
@@ -30,7 +31,7 @@ export default function EditarImovelPage() {
             try {
 
                 const resposta = await fetch(
-                    `http://localhost:3000/imovel/${params.id}`,
+                    `${API_URL}/imovel/${params.id}`,
                     {
                         method: "GET",
                         credentials: "include"
@@ -105,7 +106,7 @@ export default function EditarImovelPage() {
         try {
 
             const resposta = await fetch(
-                `http://localhost:3000/imovel/${params.id}`,
+                `${API_URL}/imovel/${params.id}`,
                 {
                     method: "PUT",
 

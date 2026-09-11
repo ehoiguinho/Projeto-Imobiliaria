@@ -1,5 +1,6 @@
 "use client";
 
+import { API_URL } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -17,7 +18,7 @@ useEffect(() => {
     async function carregarContratos() {
         try {
             const resposta = await fetch(
-                "http://localhost:3000/admin/contratos",
+                `${API_URL}/admin/contratos`,
                 {
                     method: "GET",
                     credentials: "include"

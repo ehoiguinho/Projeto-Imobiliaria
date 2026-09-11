@@ -1,16 +1,10 @@
 
 "use client";
-
+import { API_URL } from "@/lib/api";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import {
-    ArrowLeft,
-    ArrowRight,
-    Building2,
-    Image as ImageIcon,
-    MapPin,
-} from "lucide-react";
+import {ArrowLeft, ArrowRight, Building2, Image as ImageIcon, MapPin } from "lucide-react";
 
 export default function ImovelDetalhes() {
     const params = useParams();
@@ -30,7 +24,7 @@ export default function ImovelDetalhes() {
                 setErro("");
 
                 const respostaImovel = await fetch(
-                    `http://localhost:3000/imovel/${params.id}`,
+                    `${API_URL}/imovel/${params.id}`,
                     {
                         credentials: "include",
                     }
@@ -45,11 +39,11 @@ export default function ImovelDetalhes() {
                 setImovel(dadosImovel[0] || dadosImovel);
 
                 const respostaImagens = await fetch(
-                    `http://localhost:3000/imovel/${params.id}/imagem`,
-                    {
-                        credentials: "include",
-                    }
-                );
+                `${API_URL}/imovel/${params.id}/imagem`,
+                {
+                    credentials: "include",
+                }
+            );
 
                 if (respostaImagens.ok) {
                     const dadosImagens = await respostaImagens.json();
@@ -163,7 +157,7 @@ export default function ImovelDetalhes() {
 
     const imagemPrincipal =
         imagens.length > 0
-            ? `http://localhost:3000${imagens[0].caminho}`
+            ? `${API_URL}${imagens[0].caminho}`
             : null;
 
     return (
@@ -215,7 +209,7 @@ export default function ImovelDetalhes() {
                                         className="overflow-hidden bg-[#E7E5E0]"
                                     >
                                         <img
-                                            src={`http://localhost:3000${imagem.caminho}`}
+                                            src={`${API_URL}${imagem.caminho}`}
                                             alt="Imagem adicional do imóvel"
                                             className="h-20 w-full object-cover sm:h-24"
                                         />

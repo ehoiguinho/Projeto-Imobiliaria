@@ -1,5 +1,6 @@
 "use client";
 
+import { API_URL } from "@/lib/api";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -26,17 +27,17 @@ export default function AdminPage() {
                 respostaContratos,
                 respostaAlugueis
             ] = await Promise.all([
-                fetch("http://localhost:3000/admin/imoveis", {
+                fetch(`${API_URL}/admin/imoveis`, {
                     method: "GET",
                     credentials: "include"
                 }),
 
-                fetch("http://localhost:3000/admin/contratos", {
+                fetch(`${API_URL}/admin/contratos`, {
                     method: "GET",
                     credentials: "include"
                 }),
 
-                fetch("http://localhost:3000/admin/alugueis", {
+                fetch(`${API_URL}/admin/alugueis`, {
                     method: "GET",
                     credentials: "include"
                 })
@@ -101,7 +102,7 @@ export default function AdminPage() {
     try {
 
         const resposta = await fetch(
-            `http://localhost:3000/imovel/${id}`,
+            `${API_URL}/imovel/${id}`,
             {
                 method: "DELETE",
                 credentials: "include"

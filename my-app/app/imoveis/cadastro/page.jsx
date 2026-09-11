@@ -1,6 +1,7 @@
 "use client";
 
 import toast from "react-hot-toast";
+import { API_URL } from "@/lib/api";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Building2, Camera, Check, ChevronDown, MapPin, Upload } from "lucide-react";
@@ -50,7 +51,7 @@ export default function CadastroImovelPage() {
             }
 
             const resposta = await fetch(
-                "http://localhost:3000/imovel",
+                `${API_URL}/imovel`,
                 {
                     method: "POST",
                     credentials: "include",

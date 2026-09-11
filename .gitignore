@@ -18,3 +18,5 @@ pnpm-debug.log*
 # IDE
 .vscode/
 .idea/
+
+imobiliaria.sql

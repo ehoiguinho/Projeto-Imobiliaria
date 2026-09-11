@@ -1,39 +1,57 @@
 import express from "express";
-import cors from 'cors';
+import cors from "cors";
 import "dotenv/config";
-import usuarioRouter from './routes/usuarioRoute.js'
-import imovelRouter from './routes/imovelRoute.js'
-import locacaoRouter from './routes/locacaoRoute.js'
-import loginRouter from './routes/loginRoute.js'
-import adminRouter from './routes/adminRoute.js'
-import aluguelRouter from './routes/aluguelRoute.js'
-import pagamentoRouter from './routes/pagamentoRoute.js'
-import webhookRouter from './routes/webhookRoute.js';
-import swaggerUi from 'swagger-ui-express'
-import cookieParser from 'cookie-parser';
+
+import usuarioRouter from "./routes/usuarioRoute.js";
+import imovelRouter from "./routes/imovelRoute.js";
+import locacaoRouter from "./routes/locacaoRoute.js";
+import loginRouter from "./routes/loginRoute.js";
+import adminRouter from "./routes/adminRoute.js";
+import aluguelRouter from "./routes/aluguelRoute.js";
+import pagamentoRouter from "./routes/pagamentoRoute.js";
+import webhookRouter from "./routes/webhookRoute.js";
+
+import swaggerUi from "swagger-ui-express";
+import cookieParser from "cookie-parser";
 import { createRequire } from "module";
 
 const require = createRequire(import.meta.url);
 const outputJson = require("./swaggerOutput.json");
+
 const server = express();
 
-server.use('/uploads', express.static('uploads'));
+server.use("/uploads", express.static("uploads"));
 
-//O webhook será tratado separadamente para preservar o corpo original da requisição. 
-//Por isso, a rota do webhook deve ser registrada antes do express.json(). 
-server.use( "/webhook", express.raw({ type: "application/json" }), webhookRouter );
+// O webhook precisa preservar o corpo original da requisição
+// para validação da assinatura da AbacatePay.
+// Por isso, esta rota deve ser registrada antes do express.json().
+server.use(
+    "/webhook",
+    express.raw({
+        type: "application/json"
+    }),
+    webhookRouter
+);
 
 server.use(express.json());
 server.use(cookieParser());
-server.use(cors({
-  origin:'http://localhost:5001', // endereço do frontend da nossa documentação (temporariamente ele está sendo o nosso cliente)
-  credentials: true                // cookies com http only serão enviadados automaticamente apenas se essa flag estiver true
-}));
-server.use("/docs", swaggerUi.serve, swaggerUi.setup(outputJson, {
-    swaggerOptions: {
-        withCredentials: true //para permitir o envio de cookies da nossa rota /docs
-    }
-}))
+
+server.use(
+    cors({
+        origin: process.env.FRONTEND_URL || "http://localhost:5001",
+        credentials: true
+    })
+);
+
+server.use(
+    "/docs",
+    swaggerUi.serve,
+    swaggerUi.setup(outputJson, {
+        swaggerOptions: {
+            withCredentials: true
+        }
+    })
+);
 
 server.use("/usuario", usuarioRouter);
 server.use("/imovel", imovelRouter);
@@ -42,6 +60,9 @@ server.use("/login", loginRouter);
 server.use("/admin", adminRouter);
 server.use("/aluguel", aluguelRouter);
 server.use("/pagamento", pagamentoRouter);
-server.listen(3000, function(){
-    console.log("backend rodando!");
-})
+
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, function () {
+    console.log(`backend rodando na porta ${PORT}!`);
+});

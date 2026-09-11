@@ -16,7 +16,18 @@ export default class Database {
 
     constructor() {
 
-        this.#conexao = new Pool({
+    const usandoNeon = process.env.NODE_ENV === "production";
+
+    const config = usandoNeon
+        ? {
+            connectionString: process.env.DATABASE_URL,
+            ssl: {
+                rejectUnauthorized: false
+            },
+            max: 50,
+            idleTimeoutMillis: 30000
+        }
+        : {
             host: "localhost",
             port: 5432,
             database: "imobiliaria",
@@ -24,8 +35,10 @@ export default class Database {
             password: "postgres",
             max: 50,
             idleTimeoutMillis: 30000
-        });
-    }
+        };
+
+    this.#conexao = new Pool(config);
+}
 
     async AbreTransacao() {
 

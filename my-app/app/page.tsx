@@ -3,7 +3,7 @@
 import { MapPin, Building2, CircleDollarSign, Search, ChevronDown, Settings } from "lucide-react";
 
 import { API_URL } from "@/lib/api";
-
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -430,6 +430,14 @@ export default function Home() {
                                             onClick={() => router.push("/")}
                                             className="group flex items-center gap-3"
                                         >
+                                            <Image
+                                                src="/images/logo.png"
+                                                alt="Vitta Imobiliária"
+                                                width={240}
+                                                height={80}
+                                                priority
+                                                className="h-10 w-auto object-contain"
+                                            />
                     
                                             <div className="leading-none text-left">
                     

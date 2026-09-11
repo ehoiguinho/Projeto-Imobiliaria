@@ -24,10 +24,28 @@ export default function Home() {
     const [numeroAtendimento, setNumeroAtendimento] = useState(0);
     const [numeroTransparencia, setNumeroTransparencia] = useState(0);
 
-    const [usuario, setUsuario] = useState(null);
-    const [carregandoUsuario, setCarregandoUsuario] = useState(true);
+    const [usuario, setUsuario] = useState<{
+        id: number;
+        nome: string;
+        email: string;
+        ativo: string;
+        perfil: number;
+} | null>(null);    const [carregandoUsuario, setCarregandoUsuario] = useState(true);
 
-    const [imoveisDestaque, setImoveisDestaque] = useState([]);
+    const [imoveisDestaque, setImoveisDestaque] = useState<
+    {
+        id: number;
+        descricao: string;
+        bairro: string;
+        cidade: string;
+        endereco: string;
+        valor: number;
+        imagem?: {
+            caminho: string;
+        } | null;
+    }[]
+>([]);    
+    
     const [carregandoDestaques, setCarregandoDestaques] = useState(true);
 
     const [textoTitulo, setTextoTitulo] = useState("");
@@ -38,8 +56,8 @@ export default function Home() {
      * Referências dos dropdowns.
      * Usadas para detectar cliques fora dos menus.
      */
-    const menuAjudaRef = useRef(null);
-    const menuUsuarioRef = useRef(null);
+    const menuAjudaRef = useRef<HTMLDivElement | null>(null);
+    const menuUsuarioRef = useRef<HTMLDivElement | null>(null);
 
 
     /*
@@ -131,35 +149,28 @@ export default function Home() {
      */
     useEffect(() => {
 
-        function fecharMenusAoClicarFora(event) {
+        function fecharMenusAoClicarFora(event: MouseEvent) {
 
-            /*
-             * Fecha o menu Ajuda caso o clique aconteça
-             * fora dele.
-             */
-            if (
-                menuAjudaRef.current &&
-                !menuAjudaRef.current.contains(event.target)
-            ) {
+        if (
+            menuAjudaRef.current &&
+            !menuAjudaRef.current.contains(event.target as Node)
+        ) {
 
-                setMenuAjudaAberto(false);
-
-            }
-
-            /*
-             * Fecha o menu do usuário caso o clique aconteça
-             * fora dele.
-             */
-            if (
-                menuUsuarioRef.current &&
-                !menuUsuarioRef.current.contains(event.target)
-            ) {
-
-                setMenuUsuarioAberto(false);
-
-            }
+            setMenuAjudaAberto(false);
 
         }
+
+        
+        if (
+            menuUsuarioRef.current &&
+            !menuUsuarioRef.current.contains(event.target as Node)
+        ) {
+
+            setMenuUsuarioAberto(false);
+
+        }
+
+    }
 
         document.addEventListener(
             "mousedown",
@@ -265,11 +276,6 @@ export default function Home() {
     }, []);
 
 
-    /*
-     * ============================================================
-     * ANIMAÇÃO DAS ESTATÍSTICAS
-     * ============================================================
-     */
     useEffect(() => {
 
         if (!animacaoEstatisticas) {
@@ -279,41 +285,41 @@ export default function Home() {
         const duracao = 1400;
         const inicio = performance.now();
 
-        function animar(tempoAtual) {
+      function animar(tempoAtual: number) {
 
-            const progresso = Math.min(
-                (tempoAtual - inicio) / duracao,
-                1
-            );
+        const progresso = Math.min(
+            (tempoAtual - inicio) / duracao,
+            1
+        );
 
-            const suavizado =
-                1 - Math.pow(1 - progresso, 3);
+        const suavizado =
+            1 - Math.pow(1 - progresso, 3);
 
-            setNumeroImoveis(
-                Math.floor(100 * suavizado)
-            );
+        setNumeroImoveis(
+            Math.floor(100 * suavizado)
+        );
 
-            setNumeroAtendimento(
-                Math.floor(24 * suavizado)
-            );
+        setNumeroAtendimento(
+            Math.floor(24 * suavizado)
+        );
 
-            setNumeroTransparencia(
-                Math.floor(100 * suavizado)
-            );
+        setNumeroTransparencia(
+            Math.floor(100 * suavizado)
+        );
 
-            if (progresso < 1) {
+        if (progresso < 1) {
 
-                requestAnimationFrame(animar);
+            requestAnimationFrame(animar);
 
-            } else {
+        } else {
 
-                setNumeroImoveis(100);
-                setNumeroAtendimento(24);
-                setNumeroTransparencia(100);
-
-            }
+            setNumeroImoveis(100);
+            setNumeroAtendimento(24);
+            setNumeroTransparencia(100);
 
         }
+
+}
 
         const animationFrame =
             requestAnimationFrame(animar);
@@ -330,7 +336,7 @@ export default function Home() {
      * BUSCA
      * ============================================================
      */
-    function buscarImoveis(e) {
+        function buscarImoveis(e: React.FormEvent<HTMLFormElement>) {
 
         e.preventDefault();
 

@@ -3,11 +3,11 @@
 import { Search, MapPin, Building2, CircleDollarSign, SlidersHorizontal, X} from "lucide-react";
 
 import { API_URL } from "@/lib/api";
-import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";import { useSearchParams } from "next/navigation";
 import ImovelCard from "../../components/ImovelCard";
 
-export default function ImoveisPage() {
+
+  function ImoveisContent() {
 
   const searchParams = useSearchParams();
 
@@ -869,5 +869,30 @@ export default function ImoveisPage() {
 
     </main>
 
+  );
+}
+
+export default function ImoveisPage() {
+  return (
+    <Suspense fallback={
+
+      <main className="min-h-screen bg-white text-[#292825]">
+
+        <div className="flex min-h-screen items-center justify-center">
+
+          <div className="text-center">
+            <div className="mx-auto mb-5 h-8 w-8 animate-spin rounded-full border-2 border-[#DDDAD3] border-t-[#292825]" />
+
+            <p className="text-sm text-[#77746E]">
+              Carregando imóveis...
+            </p>
+
+          </div>
+        </div>
+        
+      </main>
+    }>
+      <ImoveisContent />
+    </Suspense>
   );
 }

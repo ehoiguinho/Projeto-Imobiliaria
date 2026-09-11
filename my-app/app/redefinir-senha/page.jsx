@@ -1,15 +1,11 @@
 "use client";
 
 import { API_URL } from "@/lib/api";
-import { useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-    LockKeyhole,
-    ArrowLeft,
-    CheckCircle
-} from "lucide-react";
+import { LockKeyhole, ArrowLeft, CheckCircle } from "lucide-react";
 
-export default function RedefinirSenhaPage() {
+function RedefinirSenhaContent()  {
 
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -413,5 +409,32 @@ export default function RedefinirSenhaPage() {
             </div>
 
         </main>
+    );
+}
+
+export default function RedefinirSenhaPage() {
+
+    return (
+        <Suspense
+            fallback={
+                <main className="min-h-screen bg-white text-[#292825]">
+
+                    <div className="flex min-h-screen items-center justify-center">
+
+                        <div className="text-center">
+                            <div className="mx-auto mb-5 h-8 w-8 animate-spin rounded-full border-2 border-[#DDDAD3] border-t-[#292825]" />
+
+                            <p className="text-sm text-[#77746E]">
+                                Carregando...
+                            </p>
+                        </div>
+
+                    </div>
+                    
+                </main>
+            }
+        >
+            <RedefinirSenhaContent />
+        </Suspense>
     );
 }

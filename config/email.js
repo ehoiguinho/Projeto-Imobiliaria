@@ -1,18 +1,29 @@
 import nodemailer from "nodemailer";
+import dns from "dns";
+
+const smtpIPv4 = await new Promise((resolve, reject) => {
+    dns.resolve4("smtp.gmail.com", (err, addresses) => {
+        if (err) {
+            reject(err);
+            return;
+        }
+
+        resolve(addresses[0]);
+    });
+});
 
 const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
+    host: smtpIPv4,
     port: 587,
     secure: false,
     requireTLS: true,
-    family: 4,
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASSWORD
     }
 });
-export async function enviarEmailRecuperacao(email, nome, link) {
 
+export async function enviarEmailRecuperacao(email, nome, link) {
     await transporter.sendMail({
         from: `"Projeto Imobiliária" <${process.env.EMAIL_USER}>`,
         to: email,
@@ -40,7 +51,6 @@ Se você não solicitou a recuperação de senha, ignore este e-mail.
                 padding: 30px;
                 color: #1e293b;
             ">
-
                 <h2>Recuperação de senha</h2>
 
                 <p>
@@ -81,7 +91,6 @@ Se você não solicitou a recuperação de senha, ignore este e-mail.
                     Se você não solicitou a recuperação de senha,
                     ignore este e-mail.
                 </p>
-
             </div>
         `
     });

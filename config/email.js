@@ -1,33 +1,12 @@
-import nodemailer from "nodemailer";
-import dns from "dns";
+import { Resend } from "resend";
 
-const smtpIPv4 = await new Promise((resolve, reject) => {
-    dns.resolve4("smtp.gmail.com", (err, addresses) => {
-        if (err) {
-            reject(err);
-            return;
-        }
-
-        resolve(addresses[0]);
-    });
-});
-
-const transporter = nodemailer.createTransport({
-    host: smtpIPv4,
-    port: 587,
-    secure: false,
-    requireTLS: true,
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD
-    }
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function enviarEmailRecuperacao(email, nome, link) {
-    await transporter.sendMail({
-        from: `"Projeto Imobiliária" <${process.env.EMAIL_USER}>`,
-        to: email,
-        subject: "Recuperação de senha - Projeto Imobiliária",
+    const { data, error } = await resend.emails.send({
+        from: "Vitta Imobiliária <onboarding@resend.dev>",
+        to: [email],
+        subject: "Recuperação de senha - Vitta Imobiliária",
 
         text: `
 Olá, ${nome || "usuário"}!
@@ -49,8 +28,9 @@ Se você não solicitou a recuperação de senha, ignore este e-mail.
                 max-width: 600px;
                 margin: 0 auto;
                 padding: 30px;
-                color: #1e293b;
+                color: #292825;
             ">
+
                 <h2>Recuperação de senha</h2>
 
                 <p>
@@ -72,7 +52,7 @@ Se você não solicitou a recuperação de senha, ignore este e-mail.
                         style="
                             display: inline-block;
                             padding: 12px 24px;
-                            background-color: #2563eb;
+                            background-color: #292825;
                             color: white;
                             text-decoration: none;
                             border-radius: 8px;
@@ -91,7 +71,17 @@ Se você não solicitou a recuperação de senha, ignore este e-mail.
                     Se você não solicitou a recuperação de senha,
                     ignore este e-mail.
                 </p>
+
             </div>
         `
     });
+
+    if (error) {
+        console.error("Erro ao enviar e-mail pelo Resend:", error);
+        throw new Error("Não foi possível enviar o e-mail de recuperação.");
+    }
+
+    console.log("E-mail de recuperação enviado pelo Resend:", data?.id);
+
+    return data;
 }

@@ -83,7 +83,7 @@ export default function LoginPage() {
           <div className="relative z-10 flex w-full flex-col justify-between p-12 xl:p-16">
 
             {/* Logo */}
-            <button
+          <button
                type="button"
                 onClick={() => router.push("/")}
                  className="group flex items-center gap-3"
